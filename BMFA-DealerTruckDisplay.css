@@ -1,0 +1,2 @@
+*{margin:0; padding: 0; box-sizing: border-box; }
+ul.listStyle > li { width: 25%; display: block; float: left; padding: 15px; min-height: 150px; }
