@@ -76,10 +76,11 @@ function prepareTruckTypeMap(trucks) {
 }
 
 function updateDom(truckTypeMap) {
-	var listContainer = document.getElementById('containerId');
-	
+	var BMFA_TruckContainer = document.getElementById('dealerTruckContainerId');
+	BMFA_TruckContainer.className += 'container';
+	var ul = document.createElement('ul');
+	ul.className = 'listStyle';
 	for(var truckType in truckTypeMap) {
-		//console.log(truckType);
 		if(!truckTypeImageUrl[truckType]) {
 			truckType = 'All';
 		}				
@@ -90,9 +91,7 @@ function updateDom(truckTypeMap) {
 		img.src = truckTypeImageUrl[truckType];
 		div.appendChild(img);
 		li.appendChild(div);
-		listContainer.appendChild(li);
+		ul.appendChild(li);
 	}
-	//console.log(truckTypeMap);
+	BMFA_TruckContainer.appendChild(ul);
 }
-
-//loadTruckData();
