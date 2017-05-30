@@ -185,10 +185,57 @@ var displayTruckDetails = function(selectedTruck) {
 }
 
 var addInetrestFrom = function() {
+	var fieldAndType = {
+		'First Name':'input',
+		'Last Name':'input',
+		'Phone':'input',
+		'Email':'input',
+		'Interested In Financing':'select',
+		'Make An Offer':'input',
+		'City':'input',
+		'State':'select'
+	}
+	
 	var tab2Div = document.createElement('div');
 	tab2Div.id = tab2Id;
-	
+	tab2Div.style.display = 'none';
+	for(var fieldName in fieldAndType) {
+		var dynamicDom = document.createElement(fieldAndType[fieldName]);
+		dynamicDom.name = fieldName.replace(/\s/g,'');
+		if(fieldName === 'Interested In Financing') {
+			var option = document.createElement('option');
+			option.innerHTML = 'test';
+			dynamicDom.appendChild(option);
+		} else if(fieldName === 'State') {
+			var option = document.createElement('option');
+			option.innerHTML = 'test';
+			dynamicDom.appendChild(option);
+		} else {
+			dynamicDom.placeholder = fieldName;
+		}
+		tab2Div.appendChild(dynamicDom);
+	}
+	var submitButton = document.createElement('button');
+	submitButton.type = 'button';
+	submitButton.innerHTML = 'Submit Fire Truck Inquiry';
+	tab2Div.appendChild(submitButton);
+	bindEvents(submitEnquiry, [submitButton]);
 	return tab2Div;
+}
+
+var submitEnquiry = function() {
+	console.log('submit called');
+	var inquirJSON = {};
+	var inquiryTab = document.getElementById(tab2Id);
+	var inputTagList = inquiryTab.getElementsByTagName('input');
+	var selectTagList = inquiryTab.getElementsByTagName('select');
+	for(var index = 0; index < inputTagList.length; index++) {
+		inquirJSON[inputTagList[index].name] = inputTagList[index].value;				
+	}
+	for(var index = 0; index < selectTagList.length; index++) {
+		inquirJSON[selectTagList[index].name] = selectTagList[index].value;				
+	}
+	console.log(inquirJSON);
 }
 
 var tabClickHandling = function(selectedTab) {
