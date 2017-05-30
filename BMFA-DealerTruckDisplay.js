@@ -24,6 +24,7 @@ var tab2Id = 'inquiryTab';
 
 var loadTruckData = function() {
 	var xhttp;
+	BMFA_TruckContainer = document.getElementById('dealerTruckContainerId');
 	if ( window.XMLHttpRequest ) {
 		// code for modern browsers
 		xhttp = new XMLHttpRequest();
@@ -283,9 +284,6 @@ var createTabs = function() {
 	ul.appendChild(li2);
 	
 	return ul;
-}
-window.onload = function() {
-	BMFA_TruckContainer = document.getElementById('dealerTruckContainerId');
 }
 var clearContainerDom = function() {
 	while (BMFA_TruckContainer.hasChildNodes()) {
