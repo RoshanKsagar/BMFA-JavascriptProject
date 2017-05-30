@@ -17,7 +17,12 @@ var truckTypeImageUrl = {
 	'DemoandRefurbUnits' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whta&oid=00Do0000000JLLE&lastMod=1495568791000',
 };
 
-function loadTruckData() {
+var BMFA_TruckContainer = document.getElementById('dealerTruckContainerId');
+var isLocalStorageSupport = (typeof(Storage) !== "undefined");
+var tab1Id = 'descriptionTab';
+var tab2Id = 'inquiryTab';
+
+var loadTruckData = function() {
 	var xhttp;
 	if ( window.XMLHttpRequest ) {
 		// code for modern browsers
@@ -41,7 +46,7 @@ function loadTruckData() {
 	//xhttp.send(string);	
 }
 
-function processTruckData(xhttp) {
+var processTruckData = function(xhttp) {
 	if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
 		var serverResponse = JSON.parse(xhttp.responseText);
 		if(serverResponse.Success) {
@@ -49,7 +54,8 @@ function processTruckData(xhttp) {
 			//console.log(JSON.parse(serverResponse.Data));
 			var trucks = JSON.parse(serverResponse.Data);
 			if(trucks.length) {
-				updateDom( prepareTruckTypeMap(trucks) );
+				prepareTruckTypeMap(trucks);
+				displayCategories( getBMFAStorage() );
 			} else {
 				
 			}						
@@ -58,9 +64,9 @@ function processTruckData(xhttp) {
 		}
 	}
 }
-var truckTypeMap = {};
-function prepareTruckTypeMap(trucks) {
-	truckTypeMap = { All: [] };
+
+var prepareTruckTypeMap = function(trucks) {
+	var truckTypeMap = { All: [] };
 	trucks.forEach(function(truck) {
 		truckTypeMap.All.push(truck);
 		if(truck.apparatusType__c) {
@@ -73,67 +79,154 @@ function prepareTruckTypeMap(trucks) {
 			});
 		}
 	});
-	return truckTypeMap;
+	((isLocalStorageSupport) ? localStorage.setItem('truckTypeMap', JSON.stringify(truckTypeMap)) : (window.truckTypeGlobalMap = truckTypeMap));
 }
 
-function expandCategory(category) {
-	var BMFA_TruckContainer = document.getElementById('dealerTruckContainerId');
-	while (BMFA_TruckContainer.hasChildNodes()) {
-		BMFA_TruckContainer.removeChild(BMFA_TruckContainer.lastChild);
-	}
-	
-	BMFA_TruckContainer.className += 'container';
-	var ul = document.createElement('ul');
-	ul.className = 'FT_listStyle';
-	truckTypeMap[category].forEach( function(truck) {
-		var truckImageSrc = truckTypeImageUrl['All'];
-		if(truck.Cloud_Documents__r && truck.Cloud_Documents__r.records.length) {
-			truckImageSrc = truck.Cloud_Documents__r.records[0].Amazon_S3_Image_URL__c;//Amazon_S3_Main_Thumbnail_URL__c
-		}
-		
-		//console.log(truck.VF_Main_Title__c);
-				
-		var li = document.createElement('li');
-		var div = document.createElement('div');
-		var img = document.createElement('img');
-		img.src = truckImageSrc;
-		div.appendChild(img);
-		li.appendChild(div);
-		ul.appendChild(li);
-	});
-	BMFA_TruckContainer.appendChild(ul);
+var getBMFAStorage = function() {
+	return ((isLocalStorageSupport) ? JSON.parse(localStorage.getItem('truckTypeMap')) : window.truckTypeGlobalMap);
 }
-function updateDom(truckTypeMap) {
-	var BMFA_TruckContainer = document.getElementById('dealerTruckContainerId');
-	while (BMFA_TruckContainer.hasChildNodes()) {
-		BMFA_TruckContainer.removeChild(BMFA_TruckContainer.lastChild);
-	}
-	BMFA_TruckContainer.className += 'container';
-	var ul = document.createElement('ul');
-	ul.className = 'FT_listStyle';
-	for(var truckType in truckTypeMap) {
-		if(!truckTypeImageUrl[truckType]) {
-			truckType = 'All';
-		}				
-		
-		var li = document.createElement('li');
-		var div = document.createElement('div');
-		div.setAttribute('category', truckType);
-		var img = document.createElement('img');
-		img.setAttribute('category', truckType);
-		img.src = truckTypeImageUrl[truckType];		
-		div.appendChild(img);
-		li.appendChild(div);
-		ul.appendChild(li);
-	}
-	BMFA_TruckContainer.appendChild(ul);
-	bindEvents();
+
+var expandCategory = function(element) {
+	var category = element.getAttribute('category');
+	clearContainerDom();
+	BMFA_TruckContainer.appendChild( prepareImageContainer(false, getBMFAStorage()[category]) );
+	bindEvents(prepareTruckDetails, BMFA_TruckContainer.querySelectorAll('img'));
 }
-function bindEvents() {
-	var elements = document.querySelectorAll("img");
+var displayCategories = function(truckTypeMap) {
+	clearContainerDom();
+	BMFA_TruckContainer.appendChild( prepareImageContainer(true, truckTypeMap) );
+	bindEvents(expandCategory, BMFA_TruckContainer.querySelectorAll('img'));
+}
+var bindEvents = function(callback, elements) {
 	for (var i = 0; i < elements.length; i++) {
 		elements[i].addEventListener("click", function(event) {
-			expandCategory(event.target.getAttribute('category'));
+			callback(event.target);
+			/*if(isForCategory) {
+				expandCategory(event.target.getAttribute('truckdata'));
+			} else {
+				prepareTruckDetails(event.target.getAttribute('truckid'));
+			}*/
 		});
+	}
+}
+
+var prepareImageContainer = function(isForCategory, truckDataList) {
+	TruckImageContainer = document.createElement('div');
+	TruckImageContainer.className += 'container';
+	var ul = document.createElement('ul');
+	ul.className = 'FT_listStyle';
+	for(var truck in truckDataList) {
+		if(truckDataList[truck] || isForCategory) {
+			var imgSrc = truckTypeImageUrl[truck];			
+			var li = document.createElement('li');
+			var div = document.createElement('div');
+			var img = document.createElement('img');
+			
+			if(isForCategory) {
+				img.setAttribute('category', truck);
+				if(!imgSrc) {		
+					console.log(truck);
+				}
+			} else {
+				truck = truckDataList[truck];
+				img.setAttribute('truckid', truck.Id);
+				if(truck.Cloud_Documents__r && truck.Cloud_Documents__r.records.length) {
+					imgSrc = truck.Cloud_Documents__r.records[0].Amazon_S3_Image_URL__c;//Amazon_S3_Main_Thumbnail_URL__c
+				}
+			}
+			img.src = ((imgSrc) ? imgSrc : truckTypeImageUrl['All']);
+			div.appendChild(img);
+			li.appendChild(div);
+			ul.appendChild(li);
+		}
+	}	
+	return TruckImageContainer.appendChild(ul);;
+}
+
+var prepareTruckDetails = function(element) {
+	var truckId = element.getAttribute('truckid');
+	var selectedTruck;
+	var isFound = false;
+	getBMFAStorage()['All'].some( function(truck) {
+		selectedTruck = truck;
+		return (isFound = (truck.Id === truckId));
+	});
+	if(isFound) {
+		//console.log(selectedTruck);
+		clearContainerDom();
+		displayTruckDetails(selectedTruck);		
+	}	
+}
+
+var displayTruckDetails = function(selectedTruck) {
+	TruckDetailsContainer = document.createElement('div');
+	TruckImageContainer.className += 'tabs';	
+	var tabs = createTabs();
+	TruckDetailsContainer.appendChild( tabs );
+	
+	var contentDiv = document.createElement('div');
+	contentDiv.className += 'FT_content';
+	
+	var tab1Div = document.createElement('div');
+	tab1Div.id = tab1Id;
+	for(var fields in selectedTruck) {
+		if(typeof selectedTruck[fields] !== 'object') {
+			var div = document.createElement('div');
+			div.innerHTML = fields+ ':' +selectedTruck[fields];
+			tab1Div.appendChild(div);
+		}
+	}
+	contentDiv.appendChild( tab1Div );	
+	// Adding From for user interest.
+	contentDiv.appendChild( addInetrestFrom() );
+	TruckDetailsContainer.appendChild( contentDiv );
+	BMFA_TruckContainer.appendChild(TruckDetailsContainer)
+	bindEvents(tabClickHandling, tabs.getElementsByTagName('a'));
+}
+
+var addInetrestFrom = function() {
+	var tab2Div = document.createElement('div');
+	tab2Div.id = tab2Id;
+	
+	return tab2Div;
+}
+
+var tabClickHandling = function(selectedTab) {
+	var liTab = selectedTab.parentNode;
+	var tabContainer = liTab.parentNode.nextSibling;
+	var activeTabs = liTab.parentNode.getElementsByClassName('FT_active');
+	for(var index = 0; index < activeTabs.length; index++) {
+		document.getElementById(activeTabs[index].getElementsByTagName('a')[0].getAttribute('href').replace(/#/g,'')).style.display = 'none';
+		activeTabs[index].classList.remove('FT_active');
+	}
+	document.getElementById(selectedTab.getAttribute('href').replace(/#/g,'')).style.display = 'block';
+	liTab.className += 'FT_active';
+}
+
+var createTabs = function() {
+	var ul = document.createElement('ul');
+	ul.className = 'FT_tab-links';
+	
+	var li1 = document.createElement('li');
+	li1.className = 'FT_active';
+	var a1 = document.createElement('a');
+	a1.innerHTML = 'DESCRIPTION';
+	a1.href = '#' +tab1Id;
+	li1.appendChild(a1);
+	ul.appendChild(li1);
+	
+	var li2 = document.createElement('li');
+	var a2 = document.createElement('a');
+	a2.innerHTML = 'YES I&#39;M INTERESTED';
+	a2.href = '#' +tab2Id;
+	li2.appendChild(a2);
+	ul.appendChild(li2);
+	
+	return ul;
+}
+
+var clearContainerDom = function() {
+	while (BMFA_TruckContainer.hasChildNodes()) {
+		BMFA_TruckContainer.removeChild(BMFA_TruckContainer.lastChild);
 	}
 }

@@ -1,2 +1,15 @@
 *{margin:0; padding: 0; box-sizing: border-box; }
 ul.FT_listStyle > li { width: 25%; display: block; float: left; padding: 15px; min-height: 150px; }
+body, html{ font-family: 'Open Sans', sans-serif; font-size: 14px;}
+#dealerTruckContainerId{ max-width:1000px; width: 90%; margin: 15px auto;}
+h1 { font-size: 13px; background-color: #f2f2f2; padding: 6px 10px; font-weight: bold; margin-bottom: 15px;}
+p + p { line-height: 20px; padding-top: 10px;}
+.FT_tabs { width: 100%; display: inline-block;}
+.FT_tab-links:after{ display: block; clear: both; content: '';}
+.FT_tab-links li { margin: 0 5px; float: left; list-style: none;}
+.FT_tab-links a{ padding: 10px 15px; display: inline-block; border-radius: 3px 3px 0 0; background: #6494c1; font-size: 13px; font-weight: bold; color: white; text-decoration: none; transition: all linear 0.15s; border-top: 1px solid #000; border-left: 1px solid #000; border-right: 1px solid #000;}
+.FT_tab-links a:hover{ background: #1275d2; text-decoration: none;}
+li.FT_active a, li.FT_active a:hover{ background: #1275d2; color: black;}
+.FT_content{ padding: 15px; border-radius: 3px; box-shadow: -1px 1px 1px rgba(0,0,0,0.15); background: #fff;}
+.FT_tab { display: none; }
+.FT_tab.FT_active { display: block; }
