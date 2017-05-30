@@ -17,7 +17,7 @@ var truckTypeImageUrl = {
 	'DemoandRefurbUnits' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whta&oid=00Do0000000JLLE&lastMod=1495568791000',
 };
 
-var BMFA_TruckContainer = document.getElementById('dealerTruckContainerId');
+var BMFA_TruckContainer;
 var isLocalStorageSupport = (typeof(Storage) !== "undefined");
 var tab1Id = 'descriptionTab';
 var tab2Id = 'inquiryTab';
@@ -190,11 +190,15 @@ var addInetrestFrom = function() {
 		'Last Name':'input',
 		'Phone':'input',
 		'Email':'input',
-		'Interested In Financing':'select',
+		'Purchase Timeframe':'select',
 		'Make An Offer':'input',
 		'City':'input',
-		'State':'select'
+		'State':'select',
+		'Inquiry Message':'textarea'
 	}
+	
+	var PurchaseTimeframeOpt = ['', 'Less than 1 month', '1 month - 3 months', '6 months - 12 months', '12 months+'];
+	var StateOpt = ['', 'CA'];
 	
 	var tab2Div = document.createElement('div');
 	tab2Div.id = tab2Id;
@@ -202,14 +206,18 @@ var addInetrestFrom = function() {
 	for(var fieldName in fieldAndType) {
 		var dynamicDom = document.createElement(fieldAndType[fieldName]);
 		dynamicDom.name = fieldName.replace(/\s/g,'');
-		if(fieldName === 'Interested In Financing') {
-			var option = document.createElement('option');
-			option.innerHTML = 'test';
-			dynamicDom.appendChild(option);
+		if(fieldName === 'Purchase Timeframe') {
+			PurchaseTimeframeOpt.forEach(function(opt) {
+				var option = document.createElement('option');
+				option.innerHTML = opt;
+				dynamicDom.appendChild(option);
+			});
 		} else if(fieldName === 'State') {
-			var option = document.createElement('option');
-			option.innerHTML = 'test';
-			dynamicDom.appendChild(option);
+			StateOpt.forEach(function(opt) {
+				var option = document.createElement('option');
+				option.innerHTML = opt;
+				dynamicDom.appendChild(option);
+			});
 		} else {
 			dynamicDom.placeholder = fieldName;
 		}
@@ -229,11 +237,16 @@ var submitEnquiry = function() {
 	var inquiryTab = document.getElementById(tab2Id);
 	var inputTagList = inquiryTab.getElementsByTagName('input');
 	var selectTagList = inquiryTab.getElementsByTagName('select');
+	var textareaTagList = inquiryTab.getElementsByTagName('textarea');
+	
 	for(var index = 0; index < inputTagList.length; index++) {
 		inquirJSON[inputTagList[index].name] = inputTagList[index].value;				
 	}
 	for(var index = 0; index < selectTagList.length; index++) {
 		inquirJSON[selectTagList[index].name] = selectTagList[index].value;				
+	}
+	for(var index = 0; index < textareaTagList.length; index++) {
+		inquirJSON[textareaTagList[index].name] = textareaTagList[index].value;				
 	}
 	console.log(inquirJSON);
 }
@@ -271,7 +284,9 @@ var createTabs = function() {
 	
 	return ul;
 }
-
+window.onload = function() {
+	BMFA_TruckContainer = document.getElementById('dealerTruckContainerId');
+}
 var clearContainerDom = function() {
 	while (BMFA_TruckContainer.hasChildNodes()) {
 		BMFA_TruckContainer.removeChild(BMFA_TruckContainer.lastChild);
