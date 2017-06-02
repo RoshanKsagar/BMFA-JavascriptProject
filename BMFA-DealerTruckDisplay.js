@@ -17,34 +17,132 @@ var truckTypeImageUrl = {
 	'DemoandRefurbUnits' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whta&oid=00Do0000000JLLE&lastMod=1495568791000',
 };
 
+var GlobalFieldToStrHTML = {
+	VF_Main_Title__c : '<div>{0}</div>',
+	VF_Website_Price__c : '<div>{0} - click <a href="{1}" target="_balnk">here</a> to inquire about this truck</div>',
+	Cloud_Documents__r : ''
+}
+
+var DetailFieldToStrHTML = {
+	'Stock_Number__c' : 'Stock # {0}<br/>',
+	'Description' : '{0}<br/>',
+	'VF_Main_Title__c' : '<div>{0}</div>',
+	'VF_Chassis__c' : '{0}<br/>',
+	'VF_Seating__c' : '{0}<br/>',
+	'Fire_Truck__r.Additional_Chassis_Info__c' : '{0}<br/>',
+	'Fire_Truck__r.Additional_Fire_Body_Info__c' : '{0}<br/>',
+	'VF_Engine__c' : '{0}<br/>',
+	'VF_Transmission_Description__c' : '{0}<br/>',
+	'VF_Engine_Brake__c' : '{0}<br/>',
+	'Fire_Truck__r.Additional_Engine_Info__c' : '{0}<br/>',
+	'VF_Pump__c' : '{0}<br/>',
+	'VF_Current_Annual_Pump_Service_Test__c' : '{0}<br/>',
+	'VF_Water_Tank__c' : '{0}<br/>',
+	'VF_Foam_System__c' : '{0}<br/>',
+	'VF_Foam_Tank_1__c' : '{0}<br/>',
+	'VF_Foam_Tank_2__c' : '{0}<br/>',
+	'Fire_Truck__r.Additional_Pump_Info__c' : '{0}<br/>',
+	'VF_Drivers_Side_Discharges__c' : '{0}<br/>',
+	'VF_Drivers_Side_Suction__c' : '{0}<br/>',
+	'VF_Officers_Side_Discharges__c' : '{0}<br/>',
+	'VF_Officers_Side_Suction__c' : '{0}<br/>',
+	'VF_Front_Discharges__c' : '{0}<br/>',
+	'VF_Front_Suction__c' : '{0}<br/>',
+	'VF_Rear_Discharges__c' : '{0}<br/>',
+	'VF_Rear_Suction__c' : '{0}<br/>',
+	'FT_Deck_Gun__c' : '{0}<br/>',
+	'Fire_Truck__r.Additional_Plumbing_Info__c' : '{0}<br/>',
+	'VF_Booster_Reel__c' : '{0}<br/>',
+	'VF_Crosslays_Speedlays__c' : '{0}<br/>',
+	'VF_Monitor_Description__c' : '{0}<br/>',
+	'VF_Generator_Description__c' : '{0}<br/>',
+	'VF_Lighting_Description__c' : '{0}<br/>',
+	'VF_Heated_Mirrors__c' : '{0}<br/>',
+	'VF_Hard_Suction__c' : '{0}<br/>',
+	'VF_Electric_Reels__c' : '{0}<br/>',
+	'VF_Hydraulic_Reels__c' : '{0}<br/>',
+	'VF_Air_Reels__c' : '{0}<br/>',
+	'VF_Electronic_Siren__c' : '{0}<br/>',
+	'Fire_Truck__r.Additional_Electrical_Info__c' : '{0}<br/>',
+	'VF_Cascade_System__c' : '{0}<br/>',
+	'VF_Breathing_Air__c' : '{0}<br/>',			
+	'VF_Air_Conditioning__c' : '{0}<br/>',
+	'VF_Hydraulic_Ladder_Rack__c' : '{0}<br/>',
+	'VF_Aluminum_Hose_Bed_Cover__c' : '{0}<br/>',
+	'VF_Automatic_Tire_Chains__c' : '{0}<br/>',
+	'VF_Pump_Heat_Pan__c' : '{0}<br/>',
+	'VF_Backup_Camera__c' : '{0}<br/>',
+	'VF_Federal_Q2B_Siren__c' : '{0}<br/>',
+	'FT_Ground_Ladders__c' : '{0}<br/>',
+	'VF_Auto_Lube_System__c' : '{0}<br/>',
+	'Fire_Truck__r.Additional_Features__c' : '{0}<br/>',
+	'VF_Pump_Hours__c' : '{0}<br/>',
+	'VF_Engine_Hours__c' : '{0}<br/>',
+	'VF_Arrowstick_Traffic_Indicator__c' : '{0}<br/>',
+	'VF_LED_Lighting__c' : '{0}<br/>',
+	'VF_Light_Tower__c' : '{0}<br/>',
+	'VF_Telescoping_Lights__c' : '{0}<br/>',
+	'Fire_Truck__r.Additional_Lighting_Info__c' : '{0}<br/>',
+	'VF_Current_Aerial_Certification__c' : '{0}<br/>',
+	'Fire_Truck__r.Aerial_Info__c' : '{0}<br/>',
+	'FT_Aerial_Hours__c' : '{0}<br/>',
+	'VF_Mileage__c' : '{0}<br/>',
+	'Loose_Equipment_Included__c' : '{0}<br/>',
+	'VF_Break_Text_1__c' : '{0}<br/>',
+	'VF_OAL__c' : '{0}<br/>',
+	'VF_OAH__c' : '{0}<br/>',
+	'VF_OAW__c' : '{0}<br/>',
+	'VF_GVRW__c' : '{0}<br/>',
+	'VF_Wheelbase__c' : '{0}<br/>',
+	'Additional_Dimension_Info__c' : '{0}<br/>'
+};
 var BMFA_TruckContainer;
 var isLocalStorageSupport = (typeof(Storage) !== "undefined");
 var tab1Id = 'descriptionTab';
 var tab2Id = 'inquiryTab';
 
-var loadTruckData = function() {
-	var xhttp;
-	BMFA_TruckContainer = document.getElementById('dealerTruckContainerId');
-	if ( window.XMLHttpRequest ) {
-		// code for modern browsers
-		xhttp = new XMLHttpRequest();
-	} else if( window.ActiveXObject ) {
-		// code for old IE browsers
-		xhttp = new ActiveXObject("Microsoft.XMLHTTP");
-	} else {
-		console.log('Your Browser Does Not Support Web-Request!');
+var WebRequestHandler = {			
+	getWebRequestInstance : function() {
+		var xhttp = null;
+		if ( window.XMLHttpRequest ) {
+			// code for modern browsers
+			xhttp = new XMLHttpRequest();
+		} else if( window.ActiveXObject ) {
+			// code for old IE browsers
+			xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		} else {
+			console.log('Your Browser Does Not Support Web-Request!');
+		}
+		return xhttp;
+	},			
+	getRequest : function(callback) {
+		xhttp = this.getWebRequestInstance();
+		if(xhttp) {
+			xhttp.open("GET", "http://34.208.168.193/api/services?accountId=DFTF-00001", true);
+			xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
+			xhttp.send();
+			xhttp.onreadystatechange = function() {
+				callback(this);
+			};
+		}
+	},			
+	postRequest : function(payload, callback) {
+		xhttp = this.getWebRequestInstance();
+		if(xhttp) {
+			xhttp.open("POST", "http://34.208.168.193/api/services?accountId=DFTF-00001", true);
+			//xhttp.setRequestHeader("Content-type", "application/json");
+			xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
+			xhttp.send(payload);
+			xhttp.onreadystatechange = function() {
+				callback(this);
+			};
+		}
 	}
-	
-	xhttp.onreadystatechange = function() {
-		processTruckData(this);
-	};
-	
-	xhttp.open("GET", "http://34.208.168.193/api/services?accountId=DFTF-00001", true);
-	//xhttp.setRequestHeader("Content-type", "application/json");
-	xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
-	//xhttp.open("POST", "Your Rest URL Here", false);
-	xhttp.send();
-	//xhttp.send(string);	
+}
+
+var loadTruckData = function() {
+	BMFA_TruckContainer = document.getElementById('dealerTruckContainerId');
+	WebRequestHandler.getRequest(processTruckData);
 }
 
 var processTruckData = function(xhttp) {
@@ -52,7 +150,6 @@ var processTruckData = function(xhttp) {
 		var serverResponse = JSON.parse(xhttp.responseText);
 		if(serverResponse.Success) {
 			var truckData = JSON.parse(serverResponse.Data);
-			//console.log(JSON.parse(serverResponse.Data));
 			var trucks = JSON.parse(serverResponse.Data);
 			if(trucks.length) {
 				prepareTruckTypeMap(trucks);
@@ -93,20 +190,17 @@ var expandCategory = function(element) {
 	BMFA_TruckContainer.appendChild( prepareImageContainer(false, getBMFAStorage()[category]) );
 	bindEvents(prepareTruckDetails, BMFA_TruckContainer.querySelectorAll('img'));
 }
+
 var displayCategories = function(truckTypeMap) {
 	clearContainerDom();
 	BMFA_TruckContainer.appendChild( prepareImageContainer(true, truckTypeMap) );
 	bindEvents(expandCategory, BMFA_TruckContainer.querySelectorAll('img'));
 }
+
 var bindEvents = function(callback, elements) {
 	for (var i = 0; i < elements.length; i++) {
 		elements[i].addEventListener("click", function(event) {
 			callback(event.target);
-			/*if(isForCategory) {
-				expandCategory(event.target.getAttribute('truckdata'));
-			} else {
-				prepareTruckDetails(event.target.getAttribute('truckid'));
-			}*/
 		});
 	}
 }
@@ -153,11 +247,61 @@ var prepareTruckDetails = function(element) {
 		return (isFound = (truck.Id === truckId));
 	});
 	if(isFound) {
-		//console.log(selectedTruck);
 		clearContainerDom();
+		truckContainer = document.createElement('div');
+		var TruckDetailsHtml = '';
+		for(var field in GlobalFieldToStrHTML) {					
+			var fieldVal = ((selectedTruck[field]) ? selectedTruck[field] : '');
+			if(field === 'Cloud_Documents__r') {
+				truckImageContainer = document.createElement('div');
+				console.log('cloude docs : ', selectedTruck[field]);
+				if(selectedTruck[field]) {
+					var cloudDocs = selectedTruck[field].records;
+					cloudDocs.forEach( function(doc) {
+						var img = document.createElement('img');
+						var imgSrc = truckTypeImageUrl['All'];
+						if(true) {
+							imgSrc = doc['Amazon_S3_Main_Thumbnail_URL__c'];
+						} else {
+							imgSrc = doc['Amazon_S3_Image_URL__c'];
+						}
+						img.src = imgSrc;
+						truckImageContainer.appendChild(img);
+					});
+					TruckDetailsHtml += truckImageContainer.innerHTML;
+				}
+			} else if(field === 'VF_Website_Price__c') {
+				var linkUrl = ((selectedTruck['Truck_Public_URL__c']) ? selectedTruck['Truck_Public_URL__c'] : '');
+				TruckDetailsHtml += GlobalFieldToStrHTML[field].format([fieldVal, linkUrl]);
+			} else {
+				TruckDetailsHtml += GlobalFieldToStrHTML[field].format([fieldVal]);
+			}
+		}
+		truckContainer.innerHTML = TruckDetailsHtml;
+		BMFA_TruckContainer.appendChild(truckContainer);
 		displayTruckDetails(selectedTruck);		
 	}	
 }
+
+// This is the string format function.
+String.prototype.format = function (args) {
+	var str = this;
+	return str.replace(String.prototype.format.regex, function(item) {
+		var intVal = parseInt(item.substring(1, item.length - 1));
+		var replace;
+		if (intVal >= 0) {
+			replace = args[intVal];
+		} else if (intVal === -1) {
+			replace = "{";
+		} else if (intVal === -2) {
+			replace = "}";
+		} else {
+			replace = "";
+		}
+		return replace;
+	});
+};
+String.prototype.format.regex = new RegExp("{-?[0-9]+}", "g");
 
 var displayTruckDetails = function(selectedTruck) {
 	TruckDetailsContainer = document.createElement('div');
@@ -170,13 +314,20 @@ var displayTruckDetails = function(selectedTruck) {
 	
 	var tab1Div = document.createElement('div');
 	tab1Div.id = tab1Id;
-	for(var fields in selectedTruck) {
-		if(typeof selectedTruck[fields] !== 'object') {
-			var div = document.createElement('div');
-			div.innerHTML = fields+ ':' +selectedTruck[fields];
-			tab1Div.appendChild(div);
+	
+	var truckDetailsHtml = '';
+	for(var field in DetailFieldToStrHTML) {
+		var innerFieldVal = '';
+		field.split('.').some(function(innerField, index) {
+			var innerObject = (!(index) ? selectedTruck : (innerObject) ? innerObject : '');
+			innerFieldVal = ((innerObject[innerField]) ? innerObject[innerField] : null);
+			return (innerFieldVal == null);
+		});
+		if(innerFieldVal) {
+			truckDetailsHtml += DetailFieldToStrHTML[field].format([innerFieldVal]);
 		}
 	}
+	tab1Div.innerHTML = truckDetailsHtml;
 	contentDiv.appendChild( tab1Div );	
 	// Adding From for user interest.
 	contentDiv.appendChild( addInetrestFrom() );
@@ -210,13 +361,21 @@ var addInetrestFrom = function() {
 		if(fieldName === 'Purchase Timeframe') {
 			PurchaseTimeframeOpt.forEach(function(opt) {
 				var option = document.createElement('option');
-				option.innerHTML = opt;
+				option.innerHTML = (opt) ? opt: 'Timeframe';
+				if(!opt) {
+					option.disabled = true;
+					option.selected = true;
+				}
 				dynamicDom.appendChild(option);
 			});
 		} else if(fieldName === 'State') {
 			StateOpt.forEach(function(opt) {
 				var option = document.createElement('option');
-				option.innerHTML = opt;
+				option.innerHTML = (opt) ? opt : 'State';
+				if(!opt) {
+					option.disabled = true;
+					option.selected = true;
+				}
 				dynamicDom.appendChild(option);
 			});
 		} else {
@@ -250,6 +409,17 @@ var submitEnquiry = function() {
 		inquirJSON[textareaTagList[index].name] = textareaTagList[index].value;				
 	}
 	console.log(inquirJSON);
+	WebRequestHandler.postRequest(JSON.stringify(inquirJSON), function(xhttp) {
+		console.log(xhttp);
+		if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
+			var serverResponse = JSON.parse(xhttp.responseText);
+			if(serverResponse.Success) {
+									
+			} else {
+				console.log(serverResponse.Message);
+			}
+		}
+	});
 }
 
 var tabClickHandling = function(selectedTab) {
@@ -285,6 +455,7 @@ var createTabs = function() {
 	
 	return ul;
 }
+
 var clearContainerDom = function() {
 	while (BMFA_TruckContainer.hasChildNodes()) {
 		BMFA_TruckContainer.removeChild(BMFA_TruckContainer.lastChild);
