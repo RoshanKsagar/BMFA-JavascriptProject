@@ -260,10 +260,10 @@ var prepareTruckDetails = function(element) {
 					cloudDocs.forEach( function(doc) {
 						var img = document.createElement('img');
 						var imgSrc = truckTypeImageUrl['All'];
-						if(true) {
-							imgSrc = doc['Amazon_S3_Main_Thumbnail_URL__c'];
+						if(doc['Main_Image__c']) {
+							imgSrc = (doc['Amazon_S3_Main_Thumbnail_URL__c'] ? doc['Amazon_S3_Main_Thumbnail_URL__c'] : '');
 						} else {
-							imgSrc = doc['Amazon_S3_Image_URL__c'];
+							imgSrc = (doc['Amazon_S3_Image_URL__c'] ? doc['Amazon_S3_Image_URL__c'] : '');
 						}
 						img.src = imgSrc;
 						truckImageContainer.appendChild(img);
