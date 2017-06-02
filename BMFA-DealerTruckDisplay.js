@@ -101,6 +101,8 @@ var isLocalStorageSupport = (typeof(Storage) !== "undefined");
 var tab1Id = 'descriptionTab';
 var tab2Id = 'inquiryTab';
 
+var DealerAccointId = 'DFTF-00001'; // this value changes as per Dealer.
+
 var WebRequestHandler = {			
 	getWebRequestInstance : function() {
 		var xhttp = null;
@@ -118,7 +120,7 @@ var WebRequestHandler = {
 	getRequest : function(callback) {
 		xhttp = this.getWebRequestInstance();
 		if(xhttp) {
-			xhttp.open("GET", "http://34.208.168.193/api/services?accountId=DFTF-00001", true);
+			xhttp.open("GET", "http://34.208.168.193/api/services?accountId=" + DealerAccointId, true);
 			xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
 			xhttp.send();
 			xhttp.onreadystatechange = function() {
@@ -129,7 +131,7 @@ var WebRequestHandler = {
 	postRequest : function(payload, callback) {
 		xhttp = this.getWebRequestInstance();
 		if(xhttp) {
-			xhttp.open("POST", "http://34.208.168.193/api/services?accountId=DFTF-00001", true);
+			xhttp.open("POST", "http://34.208.168.193/api/services", true);
 			//xhttp.setRequestHeader("Content-type", "application/json");
 			xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
 			xhttp.send(payload);
@@ -260,7 +262,7 @@ var prepareTruckDetails = function(element) {
 					cloudDocs.forEach( function(doc) {
 						var img = document.createElement('img');
 						var imgSrc = truckTypeImageUrl['All'];
-						if(doc['Main_Image__c']) {
+						if(doc['Main_Image__c'] && false) {
 							imgSrc = (doc['Amazon_S3_Main_Thumbnail_URL__c'] ? doc['Amazon_S3_Main_Thumbnail_URL__c'] : '');
 						} else {
 							imgSrc = (doc['Amazon_S3_Image_URL__c'] ? doc['Amazon_S3_Image_URL__c'] : '');
@@ -392,7 +394,6 @@ var addInetrestFrom = function() {
 }
 
 var submitEnquiry = function() {
-	console.log('submit called');
 	var inquirJSON = {};
 	var inquiryTab = document.getElementById(tab2Id);
 	var inputTagList = inquiryTab.getElementsByTagName('input');
@@ -408,6 +409,8 @@ var submitEnquiry = function() {
 	for(var index = 0; index < textareaTagList.length; index++) {
 		inquirJSON[textareaTagList[index].name] = textareaTagList[index].value;				
 	}
+	
+	inquirJSON['AccountId'] = DealerAccointId;
 	console.log(inquirJSON);
 	WebRequestHandler.postRequest(JSON.stringify(inquirJSON), function(xhttp) {
 		console.log(xhttp);
