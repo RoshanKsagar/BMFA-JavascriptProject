@@ -19,7 +19,7 @@ var truckTypeImageUrl = {
 
 var GlobalFieldToStrHTML = {
 	VF_Main_Title__c : '<div>{0}</div>',
-	VF_Website_Price__c : '<div>{0} - click <a href="{1}" target="_balnk">here</a> to inquire about this truck</div>',
+	VF_Website_Price__c : '<div>{0} - <a href="#" onclick="{1}">click here to inquire</a> about this truck</div>',
 	Cloud_Documents__r : ''
 }
 
@@ -96,13 +96,16 @@ var DetailFieldToStrHTML = {
 	'VF_Wheelbase__c' : '{0}<br/>',
 	'Additional_Dimension_Info__c' : '{0}<br/>'
 };
+
 var BMFA_TruckContainer;
+var lastCategorySelected;
 var isLocalStorageSupport = (typeof(Storage) !== "undefined");
 var tab1Id = 'descriptionTab';
 var tab2Id = 'inquiryTab';
 
 var DealerAccointId = 'DFTF-00001'; // this value changes as per Dealer.
 
+/* A javascript Class Module for API requests. */
 var WebRequestHandler = {			
 	getWebRequestInstance : function() {
 		var xhttp = null;
@@ -114,14 +117,15 @@ var WebRequestHandler = {
 			xhttp = new ActiveXObject("Microsoft.XMLHTTP");
 		} else {
 			console.log('Your Browser Does Not Support Web-Request!');
+			return xhttp;
 		}
+		xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
 		return xhttp;
 	},			
 	getRequest : function(callback) {
 		xhttp = this.getWebRequestInstance();
 		if(xhttp) {
 			xhttp.open("GET", "http://34.208.168.193/api/services?accountId=" + DealerAccointId, true);
-			xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
 			xhttp.send();
 			xhttp.onreadystatechange = function() {
 				callback(this);
@@ -131,9 +135,7 @@ var WebRequestHandler = {
 	postRequest : function(payload, callback) {
 		xhttp = this.getWebRequestInstance();
 		if(xhttp) {
-			xhttp.open("POST", "http://34.208.168.193/api/services", true);
-			//xhttp.setRequestHeader("Content-type", "application/json");
-			xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
+			xhttp.open("POST", "http://34.208.168.193/api/services", true);					
 			xhttp.send(payload);
 			xhttp.onreadystatechange = function() {
 				callback(this);
@@ -142,11 +144,17 @@ var WebRequestHandler = {
 	}
 }
 
+/* A function as entry point for all functionality. 
+ * - A div having id 'dealerTruckContainerId', must be present on DOM.
+ */
 var loadTruckData = function() {
 	BMFA_TruckContainer = document.getElementById('dealerTruckContainerId');
 	WebRequestHandler.getRequest(processTruckData);
 }
 
+/* A function handle 'GET' response from request. 
+ * @Param xhttp	: holding instance of XMLHttpRequest.
+ */
 var processTruckData = function(xhttp) {
 	if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
 		var serverResponse = JSON.parse(xhttp.responseText);
@@ -165,6 +173,9 @@ var processTruckData = function(xhttp) {
 	}
 }
 
+/* A function store's and manipulate data. 
+ * @Param trucks	: holding instance of list for all trucks(irrespective of categories).
+ */
 var prepareTruckTypeMap = function(trucks) {
 	var truckTypeMap = { All: [] };
 	trucks.forEach(function(truck) {
@@ -182,23 +193,36 @@ var prepareTruckTypeMap = function(trucks) {
 	((isLocalStorageSupport) ? localStorage.setItem('truckTypeMap', JSON.stringify(truckTypeMap)) : (window.truckTypeGlobalMap = truckTypeMap));
 }
 
+/* A function returns manipulated data either from localsorage or global variable. */
 var getBMFAStorage = function() {
 	return ((isLocalStorageSupport) ? JSON.parse(localStorage.getItem('truckTypeMap')) : window.truckTypeGlobalMap);
 }
 
+/* A function for expand purticuler category. 
+ * @Param element	: holding instance of catagory DOM-element that is currently selected by User.
+ */
 var expandCategory = function(element) {
 	var category = element.getAttribute('category');
+	lastCategorySelected = element;
 	clearContainerDom();
+	constructBackButton('toCatagories');
 	BMFA_TruckContainer.appendChild( prepareImageContainer(false, getBMFAStorage()[category]) );
 	bindEvents(prepareTruckDetails, BMFA_TruckContainer.querySelectorAll('img'));
 }
 
+/* A function for display all possible categories. 
+ * @Param truckTypeMap	: holding instance of list for all trucks respective to categories.
+ */
 var displayCategories = function(truckTypeMap) {
 	clearContainerDom();
 	BMFA_TruckContainer.appendChild( prepareImageContainer(true, truckTypeMap) );
 	bindEvents(expandCategory, BMFA_TruckContainer.querySelectorAll('img'));
 }
 
+/* A function bind click events on DOM elements. 
+ * @Param callback	: holding a function that will class after click event occured.
+ * @Param elements	: holding a list of elements that has to bind with click event.
+ */
 var bindEvents = function(callback, elements) {
 	for (var i = 0; i < elements.length; i++) {
 		elements[i].addEventListener("click", function(event) {
@@ -207,6 +231,35 @@ var bindEvents = function(callback, elements) {
 	}
 }
 
+
+/* A function add back button to DOM. 
+ * @Param toword	: holding string value that indicate where to go after back button clicked. 
+ */
+var constructBackButton = function(toword) {
+	var button = document.createElement('button');
+	button.innerText = 'back';
+	button.setAttribute('jData', toword);
+	BMFA_TruckContainer.appendChild( button );
+	bindEvents(doBack, [button]);
+}
+
+/* A function handles click event on back button. 
+ * @Param button	: button DOM-element. 
+ */		
+var doBack = function(button) {
+	var toBackStr = button.getAttribute('jData');
+	if(toBackStr === 'toCatagories') {
+		displayCategories( getBMFAStorage() );
+	} else if(toBackStr === 'toCatagory') {
+		expandCategory(lastCategorySelected);
+	}
+}
+
+/* A function for display images in container.
+ * @Param isForCategory	: A boolean used to indicate where container is for 
+ *						  all category image fill or extended category image fill.
+ * @Param truckDataList	: A Map/List of truckes for display images on DOM
+ */
 var prepareImageContainer = function(isForCategory, truckDataList) {
 	TruckImageContainer = document.createElement('div');
 	TruckImageContainer.className += 'container';
@@ -214,25 +267,29 @@ var prepareImageContainer = function(isForCategory, truckDataList) {
 	ul.className = 'FT_listStyle';
 	for(var truck in truckDataList) {
 		if(truckDataList[truck] || isForCategory) {
-			var imgSrc = truckTypeImageUrl[truck];			
+			var imgSrc = truckTypeImageUrl[truck];
 			var li = document.createElement('li');
 			var div = document.createElement('div');
 			var img = document.createElement('img');
 			
 			if(isForCategory) {
+				var catDetailDiv = document.createElement('div');
+				catDetailDiv.innerHTML = truck+ '(' +truckDataList[truck].length+ ')';
 				img.setAttribute('category', truck);
 				if(!imgSrc) {		
 					console.log(truck);
 				}
+				div.appendChild(img);
+				div.appendChild(catDetailDiv);
 			} else {
 				truck = truckDataList[truck];
 				img.setAttribute('truckid', truck.Id);
 				if(truck.Cloud_Documents__r && truck.Cloud_Documents__r.records.length) {
 					imgSrc = truck.Cloud_Documents__r.records[0].Amazon_S3_Image_URL__c;//Amazon_S3_Main_Thumbnail_URL__c
 				}
+				div.appendChild(img);
 			}
-			img.src = ((imgSrc) ? imgSrc : truckTypeImageUrl['All']);
-			div.appendChild(img);
+			img.src = ((imgSrc) ? imgSrc : truckTypeImageUrl['All']);					
 			li.appendChild(div);
 			ul.appendChild(li);
 		}
@@ -240,6 +297,9 @@ var prepareImageContainer = function(isForCategory, truckDataList) {
 	return TruckImageContainer.appendChild(ul);;
 }
 
+/* A function handles click event on indivisual truck. 
+ * @Param element	: DOM-element holding image of truck.
+ */	
 var prepareTruckDetails = function(element) {
 	var truckId = element.getAttribute('truckid');
 	var selectedTruck;
@@ -250,6 +310,7 @@ var prepareTruckDetails = function(element) {
 	});
 	if(isFound) {
 		clearContainerDom();
+		constructBackButton('toCatagory');
 		truckContainer = document.createElement('div');
 		var TruckDetailsHtml = '';
 		for(var field in GlobalFieldToStrHTML) {					
@@ -273,8 +334,8 @@ var prepareTruckDetails = function(element) {
 					TruckDetailsHtml += truckImageContainer.innerHTML;
 				}
 			} else if(field === 'VF_Website_Price__c') {
-				var linkUrl = ((selectedTruck['Truck_Public_URL__c']) ? selectedTruck['Truck_Public_URL__c'] : '');
-				TruckDetailsHtml += GlobalFieldToStrHTML[field].format([fieldVal, linkUrl]);
+				//var linkUrl = ((selectedTruck['Truck_Public_URL__c']) ? selectedTruck['Truck_Public_URL__c'] : '');
+				TruckDetailsHtml += GlobalFieldToStrHTML[field].format([fieldVal, 'document.getElementsByName(\''+tab2Id+'\')[0].click()']);
 			} else {
 				TruckDetailsHtml += GlobalFieldToStrHTML[field].format([fieldVal]);
 			}
@@ -285,7 +346,7 @@ var prepareTruckDetails = function(element) {
 	}	
 }
 
-// This is the string format function.
+/* This is the String format function. */
 String.prototype.format = function (args) {
 	var str = this;
 	return str.replace(String.prototype.format.regex, function(item) {
@@ -305,6 +366,9 @@ String.prototype.format = function (args) {
 };
 String.prototype.format.regex = new RegExp("{-?[0-9]+}", "g");
 
+/* A function to diaply details of indivisual truck. 
+ * @Param selectedTruck	: javascript object of selected Truck.
+ */
 var displayTruckDetails = function(selectedTruck) {
 	TruckDetailsContainer = document.createElement('div');
 	TruckImageContainer.className += 'tabs';	
@@ -338,6 +402,7 @@ var displayTruckDetails = function(selectedTruck) {
 	bindEvents(tabClickHandling, tabs.getElementsByTagName('a'));
 }
 
+/* A function to add Intrest form to DOM. */
 var addInetrestFrom = function() {
 	var fieldAndType = {
 		'First Name':'input',
@@ -393,6 +458,7 @@ var addInetrestFrom = function() {
 	return tab2Div;
 }
 
+/* A function to submit from for inquiry. */
 var submitEnquiry = function() {
 	var inquirJSON = {};
 	var inquiryTab = document.getElementById(tab2Id);
@@ -425,6 +491,7 @@ var submitEnquiry = function() {
 	});
 }
 
+/* A function to Tab click handling. */
 var tabClickHandling = function(selectedTab) {
 	var liTab = selectedTab.parentNode;
 	var tabContainer = liTab.parentNode.nextSibling;
@@ -437,6 +504,7 @@ var tabClickHandling = function(selectedTab) {
 	liTab.className += 'FT_active';
 }
 
+/* A function to add tabs to DOM. */
 var createTabs = function() {
 	var ul = document.createElement('ul');
 	ul.className = 'FT_tab-links';
@@ -446,6 +514,7 @@ var createTabs = function() {
 	var a1 = document.createElement('a');
 	a1.innerHTML = 'DESCRIPTION';
 	a1.href = '#' +tab1Id;
+	a1.name = tab1Id;
 	li1.appendChild(a1);
 	ul.appendChild(li1);
 	
@@ -453,6 +522,7 @@ var createTabs = function() {
 	var a2 = document.createElement('a');
 	a2.innerHTML = 'YES I&#39;M INTERESTED';
 	a2.href = '#' +tab2Id;
+	a2.name = tab2Id;
 	li2.appendChild(a2);
 	ul.appendChild(li2);
 	
