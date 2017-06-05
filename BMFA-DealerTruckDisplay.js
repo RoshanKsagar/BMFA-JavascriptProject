@@ -119,13 +119,13 @@ var WebRequestHandler = {
 			console.log('Your Browser Does Not Support Web-Request!');
 			return xhttp;
 		}
-		xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
 		return xhttp;
 	},			
 	getRequest : function(callback) {
 		xhttp = this.getWebRequestInstance();
 		if(xhttp) {
 			xhttp.open("GET", "http://34.208.168.193/api/services?accountId=" + DealerAccointId, true);
+			xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
 			xhttp.send();
 			xhttp.onreadystatechange = function() {
 				callback(this);
@@ -135,7 +135,8 @@ var WebRequestHandler = {
 	postRequest : function(payload, callback) {
 		xhttp = this.getWebRequestInstance();
 		if(xhttp) {
-			xhttp.open("POST", "http://34.208.168.193/api/services", true);					
+			xhttp.open("POST", "http://34.208.168.193/api/services", true);
+			xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
 			xhttp.send(payload);
 			xhttp.onreadystatechange = function() {
 				callback(this);
