@@ -275,7 +275,7 @@ var prepareImageContainer = function(isForCategory, truckDataList) {
 			
 			if(isForCategory) {
 				var catDetailDiv = document.createElement('div');
-				catDetailDiv.innerHTML = truck+ '(' +truckDataList[truck].length+ ')';
+				catDetailDiv.innerHTML = truck+ ' (' +truckDataList[truck].length+ ')';
 				img.setAttribute('category', truck);
 				if(!imgSrc) {		
 					console.log(truck);
