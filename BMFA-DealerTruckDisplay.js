@@ -1,26 +1,32 @@
 var truckTypeImageUrl = {
 	'All' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Wht1&oid=00Do0000000JLLE&lastMod=1495568542000',
-	'RescuePumpersandEngines' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whtz&oid=00Do0000000JLLE&lastMod=1495568876000',
-	'UsedRescueTrucksandSquads' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002WhuY&oid=00Do0000000JLLE&lastMod=1495568998000',
-	'UsedAerialsLadderTrucksandQuints' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whu9&oid=00Do0000000JLLE&lastMod=1495568916000',
-	'UsedTankersandTenders' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whud&oid=00Do0000000JLLE&lastMod=1495569016000',
-	'AmbulancesandTransportUnits' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002WhtL&oid=00Do0000000JLLE&lastMod=1495568688000',
-	'UsedBrushTrucksQuickAttacksMinis' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002WhuO&oid=00Do0000000JLLE&lastMod=1495568956000',
-	'UsedARFFandAirportCrashTrucks' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002WhuE&oid=00Do0000000JLLE&lastMod=1495568936000',
-	'TowersandPlatforms' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whtl&oid=00Do0000000JLLE&lastMod=1495568896000',
-	'CommandUnits' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002WhtQ&oid=00Do0000000JLLE&lastMod=1495568717000',
-	'LooseandMiscellaneousEquipment' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whtp&oid=00Do0000000JLLE&lastMod=1495568834000',
-	'EuropeanStyleUnits' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whtf&oid=00Do0000000JLLE&lastMod=1495568815000',
-	'PacificRimStyleFireApparatus' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whtu&oid=00Do0000000JLLE&lastMod=1495568856000',
-	'VocationalTrucks' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whun&oid=00Do0000000JLLE&lastMod=1495569042000',
-	'UsedPumpersandEngines' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002WhuT&oid=00Do0000000JLLE&lastMod=1495568974000',
-	'DemoandRefurbUnits' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whta&oid=00Do0000000JLLE&lastMod=1495568791000',
+	'Rescue Pumpers and Engines' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whtz&oid=00Do0000000JLLE&lastMod=1495568876000',
+	'Used Rescue Trucksand Squads' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002WhuY&oid=00Do0000000JLLE&lastMod=1495568998000',
+	'Used Aerials, Ladder Trucks and Quints' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whu9&oid=00Do0000000JLLE&lastMod=1495568916000',
+	'Used Tankers and Tenders' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whud&oid=00Do0000000JLLE&lastMod=1495569016000',
+	'Ambulances and Transport Units' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002WhtL&oid=00Do0000000JLLE&lastMod=1495568688000',
+	'Used Brush Trucks, Quick Attacks & Minis' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002WhuO&oid=00Do0000000JLLE&lastMod=1495568956000',
+	'Used ARFF and Airport Crash Trucks' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002WhuE&oid=00Do0000000JLLE&lastMod=1495568936000',
+	'Towers and Platforms' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whtl&oid=00Do0000000JLLE&lastMod=1495568896000',
+	'Command Units' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002WhtQ&oid=00Do0000000JLLE&lastMod=1495568717000',
+	'Loose and Miscellaneous Equipment' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whtp&oid=00Do0000000JLLE&lastMod=1495568834000',
+	'European Style Units' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whtf&oid=00Do0000000JLLE&lastMod=1495568815000',
+	'Pacific Rim Style Fire Apparatus' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whtu&oid=00Do0000000JLLE&lastMod=1495568856000',
+	'Vocational Trucks' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whun&oid=00Do0000000JLLE&lastMod=1495569042000',
+	'Used Pumpers and Engines' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002WhuT&oid=00Do0000000JLLE&lastMod=1495568974000',
+	'Demoand Refurb Units' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whta&oid=00Do0000000JLLE&lastMod=1495568791000',
 };
 
 var GlobalFieldToStrHTML = {
 	VF_Main_Title__c : '<div>{0}</div>',
 	VF_Website_Price__c : '<div>{0} - <a href="#" onclick="{1}">click here to inquire</a> about this truck</div>',
 	Cloud_Documents__r : ''
+}
+
+var MiniDetailFieldToStrHTML = {
+	VF_Main_Title__c : '<div>{0}</div>',
+	Description : '{0}<br/>',
+	VF_Website_Price__c : '{0}</br>',
 }
 
 var DetailFieldToStrHTML = {
@@ -100,8 +106,11 @@ var DetailFieldToStrHTML = {
 var BMFA_TruckContainer;
 var lastCategorySelected;
 var isLocalStorageSupport = (typeof(Storage) !== "undefined");
+var defaultTruckImageKey = 'All';
 var tab1Id = 'descriptionTab';
 var tab2Id = 'inquiryTab';
+var emailRegex =  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+var phoneRegex =  /^[0-9]{10}$/;
 
 var DealerAccointId = 'DFTF-00001'; // this value changes as per Dealer.
 
@@ -183,7 +192,8 @@ var prepareTruckTypeMap = function(trucks) {
 		truckTypeMap.All.push(truck);
 		if(truck.apparatusType__c) {
 			truck.apparatusType__c.split(';').forEach(function(apparatusType) {
-				var trimedKey = apparatusType.replace(/[^\w]/gi, '');
+				//var trimedKey = apparatusType.replace(/[^\w]/gi, '');
+				var trimedKey = apparatusType;
 				if(!truckTypeMap[trimedKey]) {
 					truckTypeMap[trimedKey] = [];
 				}
@@ -284,13 +294,21 @@ var prepareImageContainer = function(isForCategory, truckDataList) {
 				div.appendChild(catDetailDiv);
 			} else {
 				truck = truckDataList[truck];
-				img.setAttribute('truckid', truck.Id);
+				img.setAttribute('truckid', truck.Id); // Attribute to find truck(for Dev)
 				if(truck.Cloud_Documents__r && truck.Cloud_Documents__r.records.length) {
 					imgSrc = truck.Cloud_Documents__r.records[0].Amazon_S3_Image_URL__c;//Amazon_S3_Main_Thumbnail_URL__c
 				}
 				div.appendChild(img);
+				var miniDetailDiv = document.createElement('div');
+				var miniDetailHtml = '';
+				for(var field in MiniDetailFieldToStrHTML) {
+					miniDetailHtml += MiniDetailFieldToStrHTML[field].format([truck[field]]);
+				}
+				miniDetailDiv.innerHTML = miniDetailHtml;
+				miniDetailDiv.innerHTML += '<div>View Details</div>';
+				div.appendChild(miniDetailDiv);
 			}
-			img.src = ((imgSrc) ? imgSrc : truckTypeImageUrl['All']);					
+			img.src = ((imgSrc) ? imgSrc : truckTypeImageUrl[defaultTruckImageKey]);					
 			li.appendChild(div);
 			ul.appendChild(li);
 		}
@@ -323,7 +341,7 @@ var prepareTruckDetails = function(element) {
 					var cloudDocs = selectedTruck[field].records;
 					cloudDocs.forEach( function(doc) {
 						var img = document.createElement('img');
-						var imgSrc = truckTypeImageUrl['All'];
+						var imgSrc = truckTypeImageUrl[defaultTruckImageKey];
 						if(doc['Main_Image__c'] && false) {
 							imgSrc = (doc['Amazon_S3_Main_Thumbnail_URL__c'] ? doc['Amazon_S3_Main_Thumbnail_URL__c'] : '');
 						} else {
@@ -417,18 +435,35 @@ var addInetrestFrom = function() {
 		'Inquiry Message':'textarea'
 	}
 	
+	var fieldToClasses = {
+		'First Name':'input required',
+		'Last Name':'input required',
+		'Phone':'input required phone',
+		'Email':'input required email',
+		'Purchase Timeframe':'input required',
+		'Make An Offer':'input required',
+		'City':'input required',
+		'State':'input required',
+		'Inquiry Message':'input required'
+	}
+	
 	var PurchaseTimeframeOpt = ['', 'Less than 1 month', '1 month - 3 months', '6 months - 12 months', '12 months+'];
 	var StateOpt = ['', 'CA'];
 	
 	var tab2Div = document.createElement('div');
 	tab2Div.id = tab2Id;
 	tab2Div.style.display = 'none';
+	var errorContainerDiv = document.createElement('div');
+	errorContainerDiv.id = 'errorDivId';
+	tab2Div.appendChild(errorContainerDiv);
 	for(var fieldName in fieldAndType) {
 		var dynamicDom = document.createElement(fieldAndType[fieldName]);
 		dynamicDom.name = fieldName.replace(/\s/g,'');
+		dynamicDom.className = fieldToClasses[fieldName];
 		if(fieldName === 'Purchase Timeframe') {
 			PurchaseTimeframeOpt.forEach(function(opt) {
 				var option = document.createElement('option');
+				option.value = (opt) ? opt: '';
 				option.innerHTML = (opt) ? opt: 'Timeframe';
 				if(!opt) {
 					option.disabled = true;
@@ -439,6 +474,7 @@ var addInetrestFrom = function() {
 		} else if(fieldName === 'State') {
 			StateOpt.forEach(function(opt) {
 				var option = document.createElement('option');
+				option.value = (opt) ? opt: '';
 				option.innerHTML = (opt) ? opt : 'State';
 				if(!opt) {
 					option.disabled = true;
@@ -459,37 +495,97 @@ var addInetrestFrom = function() {
 	return tab2Div;
 }
 
-/* A function to submit from for inquiry. */
-var submitEnquiry = function() {
+var setError = function(isAddNewMessage, errorMessage) {
+	var errorContainer = document.getElementById('errorDivId');
+	var errors = errorContainer.getElementsByClassName('error');
+	if(!errors.length && errorMessage) {
+		errorDiv = document.createElement('div');
+		errorDiv.className = 'error';
+		errorDiv.innerHTML  = errorMessage;
+		errorContainer.appendChild(errorDiv);
+	} else if(errors.length) {
+		errors[0].innerHTML = errorMessage;
+	}
+}
+
+/* A function to submit from for inquiry. 
+ * @Param element	: DOM element upon which class will be searched.
+ * @Param className	: class Name to search.
+ */
+var hasClass = function(element, className) {
+	var hadClass = false;
+	element.className.split(' ').some(function(elementClass) {
+		return hadClass = (elementClass === className);
+	});
+	return hadClass;
+}
+
+/* A function to validate data and display error messages if any, before submit. */
+var validateData = function() {
+	var isProcced = true;
 	var inquirJSON = {};
 	var inquiryTab = document.getElementById(tab2Id);
-	var inputTagList = inquiryTab.getElementsByTagName('input');
-	var selectTagList = inquiryTab.getElementsByTagName('select');
-	var textareaTagList = inquiryTab.getElementsByTagName('textarea');
-	
-	for(var index = 0; index < inputTagList.length; index++) {
-		inquirJSON[inputTagList[index].name] = inputTagList[index].value;				
-	}
-	for(var index = 0; index < selectTagList.length; index++) {
-		inquirJSON[selectTagList[index].name] = selectTagList[index].value;				
-	}
-	for(var index = 0; index < textareaTagList.length; index++) {
-		inquirJSON[textareaTagList[index].name] = textareaTagList[index].value;				
-	}
-	
-	inquirJSON['AccountId'] = DealerAccointId;
-	console.log(inquirJSON);
-	WebRequestHandler.postRequest(JSON.stringify(inquirJSON), function(xhttp) {
-		console.log(xhttp);
-		if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
-			var serverResponse = JSON.parse(xhttp.responseText);
-			if(serverResponse.Success) {
-									
-			} else {
-				console.log(serverResponse.Message);
+	var errorContainer = document.getElementById('errorDivId');
+	errorContainer.innerHTML = '';
+	var fieldElementList = inquiryTab.getElementsByClassName('input');
+	var isFirstError = true;
+	for(var index = 0; index < fieldElementList.length; index++) {
+		var element = fieldElementList[index];
+		var elementValue = element.value;
+		var errorMessage;
+		if(elementValue) {
+			if(hasClass(element, 'required')) {
+				if(hasClass(element, 'email')) {
+					isProcced = emailRegex.test(elementValue);
+					errorMessage = 'Invalid Email!';
+				} else if(hasClass(element, 'phone')) {
+					//isError = phoneRegex.test(elementValue);
+					//errorMessage = 'Invalid Phone!';
+				} else {
+					isProcced = true;
+				}			
 			}
+			if(isProcced) {
+				inquirJSON[element.name] = elementValue;
+				element.style.borderColor = 'darkgrey';
+			} else {
+				element.style.borderColor = 'red';
+			}
+		} else if(hasClass(element, 'required')) {
+			element.style.borderColor = 'red';
+			if(isProcced) isProcced = false;
+			errorMessage = 'Please Fill All Required Fields!';
 		}
-	});
+		if(!isProcced && isFirstError) {
+			setError(!isProcced, errorMessage);
+			isFirstError = false;
+		}		
+	}
+	return ((isProcced)? inquirJSON : isProcced);
+}
+
+/* A function to submit from for inquiry. */
+var submitEnquiry = function() {
+
+	var JSON_Buffer = validateData();
+	if(!JSON_Buffer) {
+		console.log('please fill all required values');
+	} else {
+		JSON_Buffer['AccountId'] = DealerAccointId;
+		console.log(JSON_Buffer);
+		
+	    WebRequestHandler.postRequest(JSON.stringify(inquirJSON), function(xhttp) {
+			console.log(xhttp);
+			if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
+				var serverResponse = JSON.parse(xhttp.responseText);
+				if(serverResponse.Success) {
+					setError(false, 'Inquire Successfull!');
+				} else {
+					console.log(serverResponse.Message);
+				}
+			}
+		});
+	}
 }
 
 /* A function to Tab click handling. */
