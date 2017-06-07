@@ -574,7 +574,7 @@ var submitEnquiry = function() {
 		JSON_Buffer['AccountId'] = DealerAccointId;
 		console.log(JSON_Buffer);
 		
-	    WebRequestHandler.postRequest(JSON.stringify(inquirJSON), function(xhttp) {
+	    WebRequestHandler.postRequest(JSON.stringify(JSON_Buffer), function(xhttp) {
 			console.log(xhttp);
 			if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
 				var serverResponse = JSON.parse(xhttp.responseText);
