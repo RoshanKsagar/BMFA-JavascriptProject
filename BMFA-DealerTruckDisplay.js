@@ -110,7 +110,7 @@ var defaultTruckImageKey = 'All';
 var tab1Id = 'descriptionTab';
 var tab2Id = 'inquiryTab';
 var emailRegex =  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-var phoneRegex =  /^[0-9]{10}$/;
+var phoneRegex =  /[0-9]{10}$/;
 
 var DealerAccointId = 'DFTF-00001'; // this value changes as per Dealer.
 
@@ -316,6 +316,20 @@ var prepareImageContainer = function(isForCategory, truckDataList) {
 	return TruckImageContainer.appendChild(ul);;
 }
 
+var addTruckImages = function(ParentNode, ImageList) {
+	ImageList.forEach( function(doc) {
+		var img = document.createElement('img');
+		var imgSrc = truckTypeImageUrl[defaultTruckImageKey];
+		if(doc['Main_Image__c']) {
+			imgSrc = (doc['Amazon_S3_Main_Thumbnail_URL__c'] ? doc['Amazon_S3_Main_Thumbnail_URL__c'] : '');
+		} else {
+			imgSrc = (doc['Amazon_S3_Image_URL__c'] ? doc['Amazon_S3_Image_URL__c'] : '');
+		}
+		img.src = imgSrc;
+		ParentNode.appendChild(img);
+	});
+}
+
 /* A function handles click event on indivisual truck. 
  * @Param element	: DOM-element holding image of truck.
  */	
@@ -330,7 +344,9 @@ var prepareTruckDetails = function(element) {
 	if(isFound) {
 		clearContainerDom();
 		constructBackButton('toCatagory');
-		truckContainer = document.createElement('div');
+		var truckContainer = document.createElement('div');
+		truckContainer.setAttribute('truckId', truckId);
+		var truckPart1Container = document.createElement('div');
 		var TruckDetailsHtml = '';
 		for(var field in GlobalFieldToStrHTML) {					
 			var fieldVal = ((selectedTruck[field]) ? selectedTruck[field] : '');
@@ -339,19 +355,11 @@ var prepareTruckDetails = function(element) {
 				console.log('cloude docs : ', selectedTruck[field]);
 				if(selectedTruck[field]) {
 					var cloudDocs = selectedTruck[field].records;
-					cloudDocs.forEach( function(doc) {
-						var img = document.createElement('img');
-						var imgSrc = truckTypeImageUrl[defaultTruckImageKey];
-						if(doc['Main_Image__c'] && false) {
-							imgSrc = (doc['Amazon_S3_Main_Thumbnail_URL__c'] ? doc['Amazon_S3_Main_Thumbnail_URL__c'] : '');
-						} else {
-							imgSrc = (doc['Amazon_S3_Image_URL__c'] ? doc['Amazon_S3_Image_URL__c'] : '');
-						}
-						img.src = imgSrc;
-						truckImageContainer.appendChild(img);
-					});
-					TruckDetailsHtml += truckImageContainer.innerHTML;
+					addTruckImages(truckImageContainer, selectedTruck[field].records);
+				} else {
+					addTruckImages(truckImageContainer, [{Main_Image__c:true, Amazon_S3_Main_Thumbnail_URL__c:truckTypeImageUrl[defaultTruckImageKey]}]);
 				}
+				TruckDetailsHtml += truckImageContainer.innerHTML;
 			} else if(field === 'VF_Website_Price__c') {
 				//var linkUrl = ((selectedTruck['Truck_Public_URL__c']) ? selectedTruck['Truck_Public_URL__c'] : '');
 				TruckDetailsHtml += GlobalFieldToStrHTML[field].format([fieldVal, 'document.getElementsByName(\''+tab2Id+'\')[0].click()']);
@@ -359,9 +367,10 @@ var prepareTruckDetails = function(element) {
 				TruckDetailsHtml += GlobalFieldToStrHTML[field].format([fieldVal]);
 			}
 		}
-		truckContainer.innerHTML = TruckDetailsHtml;
+		truckPart1Container.innerHTML = TruckDetailsHtml;		
+		truckContainer.appendChild(truckPart1Container);
 		BMFA_TruckContainer.appendChild(truckContainer);
-		displayTruckDetails(selectedTruck);		
+		displayTabs(truckContainer, selectedTruck);		
 	}	
 }
 
@@ -388,7 +397,7 @@ String.prototype.format.regex = new RegExp("{-?[0-9]+}", "g");
 /* A function to diaply details of indivisual truck. 
  * @Param selectedTruck	: javascript object of selected Truck.
  */
-var displayTruckDetails = function(selectedTruck) {
+var displayTabs = function(parentNode, selectedTruck) {
 	TruckDetailsContainer = document.createElement('div');
 	TruckImageContainer.className += 'tabs';	
 	var tabs = createTabs();
@@ -417,7 +426,7 @@ var displayTruckDetails = function(selectedTruck) {
 	// Adding From for user interest.
 	contentDiv.appendChild( addInetrestFrom() );
 	TruckDetailsContainer.appendChild( contentDiv );
-	BMFA_TruckContainer.appendChild(TruckDetailsContainer)
+	parentNode.appendChild(TruckDetailsContainer)
 	bindEvents(tabClickHandling, tabs.getElementsByTagName('a'));
 }
 
@@ -453,9 +462,9 @@ var addInetrestFrom = function() {
 	var tab2Div = document.createElement('div');
 	tab2Div.id = tab2Id;
 	tab2Div.style.display = 'none';
-	var errorContainerDiv = document.createElement('div');
-	errorContainerDiv.id = 'errorDivId';
-	tab2Div.appendChild(errorContainerDiv);
+	var messageContainerDiv = document.createElement('div');
+	messageContainerDiv.id = 'messageContainerId';
+	tab2Div.appendChild(messageContainerDiv);
 	for(var fieldName in fieldAndType) {
 		var dynamicDom = document.createElement(fieldAndType[fieldName]);
 		dynamicDom.name = fieldName.replace(/\s/g,'');
@@ -495,16 +504,17 @@ var addInetrestFrom = function() {
 	return tab2Div;
 }
 
-var setError = function(isAddNewMessage, errorMessage) {
-	var errorContainer = document.getElementById('errorDivId');
-	var errors = errorContainer.getElementsByClassName('error');
-	if(!errors.length && errorMessage) {
-		errorDiv = document.createElement('div');
-		errorDiv.className = 'error';
-		errorDiv.innerHTML  = errorMessage;
-		errorContainer.appendChild(errorDiv);
-	} else if(errors.length) {
-		errors[0].innerHTML = errorMessage;
+var setMessage = function(isSuccess, errorMessage) {
+	var messageContainer = document.getElementById('messageContainerId');
+	var messages = messageContainer.getElementsByClassName('message');
+	if(!messages.length && errorMessage) {
+		messageDiv = document.createElement('div');
+		messageDiv.className = 'message';
+		//messageDiv.className += ((isSuccess) ? 'error' : 'success');
+		messageDiv.innerHTML  = errorMessage;
+		messageContainer.appendChild(messageDiv);
+	} else if(messages.length) {
+		messages[0].innerHTML = errorMessage;
 	}
 }
 
@@ -525,8 +535,8 @@ var validateData = function() {
 	var isProcced = true;
 	var inquirJSON = {};
 	var inquiryTab = document.getElementById(tab2Id);
-	var errorContainer = document.getElementById('errorDivId');
-	errorContainer.innerHTML = '';
+	var messageContainer = document.getElementById('messageContainerId');
+	messageContainer.innerHTML = '';
 	var fieldElementList = inquiryTab.getElementsByClassName('input');
 	var isFirstError = true;
 	for(var index = 0; index < fieldElementList.length; index++) {
@@ -539,8 +549,8 @@ var validateData = function() {
 					isProcced = emailRegex.test(elementValue);
 					errorMessage = 'Invalid Email!';
 				} else if(hasClass(element, 'phone')) {
-					//isError = phoneRegex.test(elementValue);
-					//errorMessage = 'Invalid Phone!';
+					isProcced = phoneRegex.test(elementValue);
+					errorMessage = 'Invalid Phone!';
 				} else {
 					isProcced = true;
 				}			
@@ -557,7 +567,8 @@ var validateData = function() {
 			errorMessage = 'Please Fill All Required Fields!';
 		}
 		if(!isProcced && isFirstError) {
-			setError(!isProcced, errorMessage);
+			element.focus();
+			setMessage(isProcced, errorMessage);
 			isFirstError = false;
 		}		
 	}
@@ -579,9 +590,10 @@ var submitEnquiry = function() {
 			if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
 				var serverResponse = JSON.parse(xhttp.responseText);
 				if(serverResponse.Success) {
-					setError(false, 'Inquire Successfull!');
+					setMessage(true, 'Inquire Successfull!');
 				} else {
 					console.log(serverResponse.Message);
+					setMessage(false, 'Something Wrong. Please Contact Admin!');
 				}
 			}
 		});
@@ -591,14 +603,17 @@ var submitEnquiry = function() {
 /* A function to Tab click handling. */
 var tabClickHandling = function(selectedTab) {
 	var liTab = selectedTab.parentNode;
-	var tabContainer = liTab.parentNode.nextSibling;
+	var currentTabToDisplay = document.getElementById(selectedTab.name);
 	var activeTabs = liTab.parentNode.getElementsByClassName('FT_active');
 	for(var index = 0; index < activeTabs.length; index++) {
-		document.getElementById(activeTabs[index].getElementsByTagName('a')[0].getAttribute('href').replace(/#/g,'')).style.display = 'none';
+		document.getElementById(activeTabs[index].getElementsByTagName('a')[0].name).style.display = 'none';
 		activeTabs[index].classList.remove('FT_active');
 	}
-	document.getElementById(selectedTab.getAttribute('href').replace(/#/g,'')).style.display = 'block';
+	currentTabToDisplay.style.display = 'block';
 	liTab.className += 'FT_active';
+	if(selectedTab.name === tab2Id) {
+		currentTabToDisplay.getElementsByClassName('input')[0].focus();
+	}
 }
 
 /* A function to add tabs to DOM. */
@@ -610,7 +625,7 @@ var createTabs = function() {
 	li1.className = 'FT_active';
 	var a1 = document.createElement('a');
 	a1.innerHTML = 'DESCRIPTION';
-	a1.href = '#' +tab1Id;
+	a1.href = '#';
 	a1.name = tab1Id;
 	li1.appendChild(a1);
 	ul.appendChild(li1);
@@ -618,7 +633,7 @@ var createTabs = function() {
 	var li2 = document.createElement('li');
 	var a2 = document.createElement('a');
 	a2.innerHTML = 'YES I&#39;M INTERESTED';
-	a2.href = '#' +tab2Id;
+	a2.href = '#';
 	a2.name = tab2Id;
 	li2.appendChild(a2);
 	ul.appendChild(li2);
