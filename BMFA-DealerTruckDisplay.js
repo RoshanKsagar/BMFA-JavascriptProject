@@ -1,4 +1,5 @@
 var truckTypeImageUrl = {
+	'Default' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N00000332sy&oid=00Do0000000JLLE&lastMod=1496945762000',
 	'All' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Wht1&oid=00Do0000000JLLE&lastMod=1495568542000',
 	'Rescue Pumpers and Engines' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whtz&oid=00Do0000000JLLE&lastMod=1495568876000',
 	'Used Rescue Trucksand Squads' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002WhuY&oid=00Do0000000JLLE&lastMod=1495568998000',
@@ -26,7 +27,8 @@ var GlobalFieldToStrHTML = {
 var MiniDetailFieldToStrHTML = {
 	VF_Main_Title__c : '<div>{0}</div>',
 	Description : '{0}<br/>',
-	VF_Website_Price__c : '{0}</br>',
+	VF_Additional_Pricing_Text__c : '{0}<br/>',
+	VF_Website_Price__c : '{0}</br>'
 }
 
 var DetailFieldToStrHTML = {
@@ -106,11 +108,11 @@ var DetailFieldToStrHTML = {
 var BMFA_TruckContainer;
 var lastCategorySelected;
 var isLocalStorageSupport = (typeof(Storage) !== "undefined");
-var defaultTruckImageKey = 'All';
+var defaultTruckImageKey = 'Default';
 var tab1Id = 'descriptionTab';
 var tab2Id = 'inquiryTab';
 var emailRegex =  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-var phoneRegex =  /[0-9]{10}$/;
+var phoneRegex =  /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
 
 var DealerAccointId = 'DFTF-00001'; // this value changes as per Dealer.
 
@@ -218,7 +220,7 @@ var expandCategory = function(element) {
 	clearContainerDom();
 	constructBackButton('toCatagories');
 	BMFA_TruckContainer.appendChild( prepareImageContainer(false, getBMFAStorage()[category]) );
-	bindEvents(prepareTruckDetails, BMFA_TruckContainer.querySelectorAll('img'));
+	bindEvent('click', prepareTruckDetails, BMFA_TruckContainer.querySelectorAll('img'));
 }
 
 /* A function for display all possible categories. 
@@ -227,16 +229,16 @@ var expandCategory = function(element) {
 var displayCategories = function(truckTypeMap) {
 	clearContainerDom();
 	BMFA_TruckContainer.appendChild( prepareImageContainer(true, truckTypeMap) );
-	bindEvents(expandCategory, BMFA_TruckContainer.querySelectorAll('img'));
+	bindEvent('click', expandCategory, BMFA_TruckContainer.querySelectorAll('img'));
 }
 
 /* A function bind click events on DOM elements. 
  * @Param callback	: holding a function that will class after click event occured.
  * @Param elements	: holding a list of elements that has to bind with click event.
  */
-var bindEvents = function(callback, elements) {
+var bindEvent = function(eventToBind, callback, elements) {
 	for (var i = 0; i < elements.length; i++) {
-		elements[i].addEventListener("click", function(event) {
+		elements[i].addEventListener(eventToBind, function(event) {
 			callback(event.target);
 		});
 	}
@@ -251,7 +253,7 @@ var constructBackButton = function(toword) {
 	button.innerText = 'back';
 	button.setAttribute('jData', toword);
 	BMFA_TruckContainer.appendChild( button );
-	bindEvents(doBack, [button]);
+	bindEvent('click', doBack, [button]);
 }
 
 /* A function handles click event on back button. 
@@ -427,7 +429,7 @@ var displayTabs = function(parentNode, selectedTruck) {
 	contentDiv.appendChild( addInetrestFrom() );
 	TruckDetailsContainer.appendChild( contentDiv );
 	parentNode.appendChild(TruckDetailsContainer)
-	bindEvents(tabClickHandling, tabs.getElementsByTagName('a'));
+	bindEvent('click', tabClickHandling, tabs.getElementsByTagName('a'));
 }
 
 /* A function to add Intrest form to DOM. */
@@ -492,7 +494,10 @@ var addInetrestFrom = function() {
 				dynamicDom.appendChild(option);
 			});
 		} else {
-			dynamicDom.placeholder = fieldName;
+			dynamicDom.placeholder = fieldName;			
+			if(fieldName === 'Phone') {
+				bindEvent('keyup', processNumberEntry, [dynamicDom]);
+			}
 		}
 		tab2Div.appendChild(dynamicDom);
 	}
@@ -500,10 +505,37 @@ var addInetrestFrom = function() {
 	submitButton.type = 'button';
 	submitButton.innerHTML = 'Submit Fire Truck Inquiry';
 	tab2Div.appendChild(submitButton);
-	bindEvents(submitEnquiry, [submitButton]);
+	bindEvent('click', submitEnquiry, [submitButton]);
 	return tab2Div;
 }
 
+/* A function to validate and mask the phone number.
+ * @Param element	: set message for Error or Success.
+ */
+var processNumberEntry = function(element) {
+	var val = element.value;
+	if(val.length >= 13) {
+		element.value = formatPhone(val.replace(/[^0-9]+/g,'').slice(0, 10));
+		return false;
+	} else {
+		element.value = formatPhone(val.replace(/[^0-9]+/g,''));
+	}
+	
+	function formatPhone(value) {
+		var digitList = value.split('');
+		digitList.forEach(function(char, index) {
+			if(index === 2 || index === 6) {
+				digitList.splice( index+1, 0, '-');
+			}
+		});
+		return digitList.join('');
+	}
+}
+
+/* A function to add page message.
+ * @Param isSuccess	: set message for Error or Success.
+ * @Param errorMessage	: Message to display.
+ */
 var setMessage = function(isSuccess, errorMessage) {
 	var messageContainer = document.getElementById('messageContainerId');
 	var messages = messageContainer.getElementsByClassName('message');
