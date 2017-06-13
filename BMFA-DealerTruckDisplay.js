@@ -115,6 +115,7 @@ var emailRegex =  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))
 var phoneRegex =  /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
 
 var DealerAccointId = 'DFTF-00001'; // this value changes as per Dealer.
+var TruckId;
 
 /* A javascript Class Module for API requests. */
 var WebRequestHandler = {			
@@ -400,6 +401,8 @@ String.prototype.format.regex = new RegExp("{-?[0-9]+}", "g");
  * @Param selectedTruck	: javascript object of selected Truck.
  */
 var displayTabs = function(parentNode, selectedTruck) {
+	
+	TruckId = parentNode.getAttribute('truckid');
 	TruckDetailsContainer = document.createElement('div');
 	TruckImageContainer.className += 'tabs';	
 	var tabs = createTabs();
@@ -408,7 +411,7 @@ var displayTabs = function(parentNode, selectedTruck) {
 	var contentDiv = document.createElement('div');
 	contentDiv.className += 'FT_content';
 	
-	var tab1Div = document.createElement('div');
+	var tab1Div = document.createElement('div');	
 	tab1Div.id = tab1Id;
 	
 	var truckDetailsHtml = '';
@@ -425,7 +428,7 @@ var displayTabs = function(parentNode, selectedTruck) {
 	}
 	tab1Div.innerHTML = truckDetailsHtml;
 	contentDiv.appendChild( tab1Div );	
-	// Adding From for user interest.
+	// Adding From for user interest(tab2).
 	contentDiv.appendChild( addInetrestFrom() );
 	TruckDetailsContainer.appendChild( contentDiv );
 	parentNode.appendChild(TruckDetailsContainer)
@@ -615,6 +618,8 @@ var submitEnquiry = function() {
 		console.log('please fill all required values');
 	} else {
 		JSON_Buffer['AccountId'] = DealerAccointId;
+		JSON_Buffer['TruckId'] = TruckId;
+		
 		console.log(JSON_Buffer);
 		
 	    WebRequestHandler.postRequest(JSON.stringify(JSON_Buffer), function(xhttp) {
