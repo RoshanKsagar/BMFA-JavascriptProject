@@ -25,10 +25,13 @@ var GlobalFieldToStrHTML = {
 }
 
 var MiniDetailFieldToStrHTML = {
-	VF_Main_Title__c : '<div>{0}</div>',
-	Description : '{0}<br/>',
-	VF_Additional_Pricing_Text__c : '{0}<br/>',
-	VF_Website_Price__c : '{0}</br>'
+	VF_Main_Title__c : '<div class="redTxt">{0}</div>',
+	Description : '<div class="gryTxt">{0}</div>'	
+}
+
+var MiniDetailBottomFieldsToStrHTML = {
+	VF_Additional_Pricing_Text__c : '<div>{0}</div>',
+	VF_Website_Price__c : '<div class="blackCost">{0}</div>'
 }
 
 var DetailFieldToStrHTML = {
@@ -136,7 +139,7 @@ var WebRequestHandler = {
 	getRequest : function(callback) {
 		xhttp = this.getWebRequestInstance();
 		if(xhttp) {
-			xhttp.open("GET", "http://34.208.168.193/api/services?accountId=" + DealerAccointId, true);
+			xhttp.open("GET", "https://www.firetruckapi.com/api/services?accountId=" + DealerAccointId, true);
 			xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
 			xhttp.send();
 			xhttp.onreadystatechange = function() {
@@ -147,7 +150,7 @@ var WebRequestHandler = {
 	postRequest : function(payload, callback) {
 		xhttp = this.getWebRequestInstance();
 		if(xhttp) {
-			xhttp.open("POST", "http://34.208.168.193/api/services", true);
+			xhttp.open("POST", "https://www.firetruckapi.com/api/services", true);
 			xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
 			xhttp.send(payload);
 			xhttp.onreadystatechange = function() {
@@ -220,7 +223,7 @@ var expandCategory = function(element) {
 	lastCategorySelected = element;
 	clearContainerDom();
 	constructBackButton('toCatagories');
-	BMFA_TruckContainer.appendChild( prepareImageContainer(false, getBMFAStorage()[category]) );
+	BMFA_TruckContainer.appendChild( prepareImageContainer(false, getBMFAStorage()[category], '') );
 	bindEvent('click', prepareTruckDetails, BMFA_TruckContainer.querySelectorAll('img'));
 }
 
@@ -229,7 +232,7 @@ var expandCategory = function(element) {
  */
 var displayCategories = function(truckTypeMap) {
 	clearContainerDom();
-	BMFA_TruckContainer.appendChild( prepareImageContainer(true, truckTypeMap) );
+	BMFA_TruckContainer.appendChild( prepareImageContainer(true, truckTypeMap, 'category') );
 	bindEvent('click', expandCategory, BMFA_TruckContainer.querySelectorAll('img'));
 }
 
@@ -274,11 +277,11 @@ var doBack = function(button) {
  *						  all category image fill or extended category image fill.
  * @Param truckDataList	: A Map/List of truckes for display images on DOM
  */
-var prepareImageContainer = function(isForCategory, truckDataList) {
+var prepareImageContainer = function(isForCategory, truckDataList, UICclass) {
 	TruckImageContainer = document.createElement('div');
 	TruckImageContainer.className += 'container';
 	var ul = document.createElement('ul');
-	ul.className = 'FT_listStyle';
+	ul.className = 'FT_listStyle ' + UICclass;
 	for(var truck in truckDataList) {
 		if(truckDataList[truck] || isForCategory) {
 			var imgSrc = truckTypeImageUrl[truck];
@@ -289,26 +292,42 @@ var prepareImageContainer = function(isForCategory, truckDataList) {
 			if(isForCategory) {
 				var catDetailDiv = document.createElement('div');
 				catDetailDiv.innerHTML = truck+ ' (' +truckDataList[truck].length+ ')';
+				catDetailDiv.className = 'redTxt';
+				
+				var imgContDiv = document.createElement('div');
+				imgContDiv.className = 'imgDiv';
 				img.setAttribute('category', truck);
 				if(!imgSrc) {		
 					console.log(truck);
 				}
-				div.appendChild(img);
+				imgContDiv.appendChild(img);
+				div.appendChild(imgContDiv);
 				div.appendChild(catDetailDiv);
 			} else {
 				truck = truckDataList[truck];
+				var imgContDiv = document.createElement('div');
+				imgContDiv.className = 'imgDiv';
 				img.setAttribute('truckid', truck.Id); // Attribute to find truck(for Dev)
 				if(truck.Cloud_Documents__r && truck.Cloud_Documents__r.records.length) {
 					imgSrc = truck.Cloud_Documents__r.records[0].Amazon_S3_Image_URL__c;//Amazon_S3_Main_Thumbnail_URL__c
 				}
-				div.appendChild(img);
+				imgContDiv.appendChild(img);
+				div.appendChild(imgContDiv);
 				var miniDetailDiv = document.createElement('div');
 				var miniDetailHtml = '';
 				for(var field in MiniDetailFieldToStrHTML) {
-					miniDetailHtml += MiniDetailFieldToStrHTML[field].format([truck[field]]);
+					if(truck[field]) {
+						miniDetailHtml += MiniDetailFieldToStrHTML[field].format([truck[field]]);
+					}					
 				}
+				miniDetailHtml += '<div class="btmDiv">'
+				for(var field in MiniDetailBottomFieldsToStrHTML) {
+					if(truck[field]) {
+						miniDetailHtml += MiniDetailBottomFieldsToStrHTML[field].format([truck[field]]);
+					}					
+				}
+				miniDetailHtml += '<a class="redBtn">View Details</a></div>';
 				miniDetailDiv.innerHTML = miniDetailHtml;
-				miniDetailDiv.innerHTML += '<div>View Details</div>';
 				div.appendChild(miniDetailDiv);
 			}
 			img.src = ((imgSrc) ? imgSrc : truckTypeImageUrl[defaultTruckImageKey]);					
@@ -413,6 +432,7 @@ var displayTabs = function(parentNode, selectedTruck) {
 	
 	var tab1Div = document.createElement('div');	
 	tab1Div.id = tab1Id;
+	tab1Div.className = 'gryTxt';
 	
 	var truckDetailsHtml = '';
 	for(var field in DetailFieldToStrHTML) {
@@ -467,6 +487,7 @@ var addInetrestFrom = function() {
 	var tab2Div = document.createElement('div');
 	tab2Div.id = tab2Id;
 	tab2Div.style.display = 'none';
+	tab2Div.className = 'gryTxt';
 	var messageContainerDiv = document.createElement('div');
 	messageContainerDiv.id = 'messageContainerId';
 	tab2Div.appendChild(messageContainerDiv);
