@@ -655,7 +655,7 @@ var FT_validateData = function() {
 			}
 			if(isProcced) {
 				inquirJSON[element.name] = elementValue;
-				element.style.borderColor = 'FT_darkgrey';
+				element.style.borderColor = 'darkgrey';
 			} else {
 				element.style.borderColor = 'red';
 			}
