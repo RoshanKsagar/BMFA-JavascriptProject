@@ -1,6 +1,6 @@
 var FT_truckTypeImageUrl = {
 	'Default' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000003exvn&oid=00Do0000000JLLE&lastMod=1497451382000',
-	'All' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Wht1&oid=00Do0000000JLLE&lastMod=1495568542000',
+	'All Used Trucks' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Wht1&oid=00Do0000000JLLE&lastMod=1495568542000',
 	'Rescue Pumpers and Engines' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whtz&oid=00Do0000000JLLE&lastMod=1495568876000',
 	'Used Rescue Trucksand Squads' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002WhuY&oid=00Do0000000JLLE&lastMod=1495568998000',
 	'Used Aerials, Ladder Trucks and Quints' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whu9&oid=00Do0000000JLLE&lastMod=1495568916000',
@@ -35,7 +35,7 @@ var FT_MiniDetailBottomFieldsToStrHTML = {
 }
 
 var FT_DetailFieldToStrHTML = {
-	'Stock_Number__c' : 'Stock # {0}<br/>',
+	'Stock_Number__c' : '<div class="FT_redTxt FT_bigTxt">Stock # {0}</div>',
 	'Description' : '{0}<br/>',
 	'VF_Main_Title__c' : '<div>{0}</div>',
 	'VF_Chassis__c' : '{0}<br/>',
@@ -195,9 +195,9 @@ var FT_processTruckData = function(xhttp) {
  * @Param trucks	: holding instance of list for all trucks(irrespective of categories).
  */
 var FT_prepareTruckTypeMap = function(trucks) {
-	var truckTypeMap = { All: [] };
+	var truckTypeMap = { 'All Used Trucks': [] };
 	trucks.forEach(function(truck) {
-		truckTypeMap.All.push(truck);
+		truckTypeMap['All Used Trucks'].push(truck);
 		if(truck.apparatusType__c) {
 			truck.apparatusType__c.split(';').forEach(function(apparatusType) {
 				//var trimedKey = apparatusType.replace(/[^\w]/gi, '');
@@ -225,6 +225,10 @@ var FT_expandCategory = function(element) {
 	FT_lastCategorySelected = element;
 	FT_clearContainerDom();
 	FT_constructBackButton('To Catagories');
+	var titleDiv = document.createElement('div');
+	titleDiv.className = 'FT_PageTitle';
+	titleDiv.innerHTML = 'Shop Our '+ ((category === 'All Used Trucks' ) ? 'Used Fire Trucks' : category);
+	FT_BMFA_TruckContainer.appendChild(titleDiv);
 	FT_BMFA_TruckContainer.appendChild( FT_prepareImageContainer(false, FT_getBMFAStorage()[category], '') );
 	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('img'));
 	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('a.FT_redBtn'));
@@ -235,6 +239,10 @@ var FT_expandCategory = function(element) {
  */
 var FT_displayCategories = function(truckTypeMap) {
 	FT_clearContainerDom();
+	var titleDiv = document.createElement('div');
+	titleDiv.className = 'FT_PageTitle';
+	titleDiv.innerHTML = 'Shop Our Used Fire Trucks';
+	FT_BMFA_TruckContainer.appendChild(titleDiv);
 	FT_BMFA_TruckContainer.appendChild( FT_prepareImageContainer(true, truckTypeMap, 'FT_category') );
 	FT_bindEvent('click', FT_expandCategory, FT_BMFA_TruckContainer.querySelectorAll('img'));
 }
@@ -250,7 +258,6 @@ var FT_bindEvent = function(eventToBind, callback, elements) {
 		});
 	}
 }
-
 
 /* A function add back button to DOM. 
  * @Param toword	: holding string value that indicate where to go after back button clicked. 
@@ -345,6 +352,7 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 var FT_addTruckImages = function(ParentNode, ImageList) {
 	ImageList.forEach( function(doc) {
 		var img = document.createElement('img');
+		var img1 = document.createElement('img');
 		var imgSrc = FT_truckTypeImageUrl[FT_defaultTruckImageKey];
 		if(doc['Main_Image__c']) {
 			imgSrc = (doc['Amazon_S3_Main_Thumbnail_URL__c'] ? doc['Amazon_S3_Main_Thumbnail_URL__c'] : '');
@@ -352,7 +360,9 @@ var FT_addTruckImages = function(ParentNode, ImageList) {
 			imgSrc = (doc['Amazon_S3_Image_URL__c'] ? doc['Amazon_S3_Image_URL__c'] : '');
 		}
 		img.src = imgSrc;
+		img1.src = imgSrc;
 		ParentNode.appendChild(img);
+		ParentNode.appendChild(img1);
 	});
 }
 
@@ -363,7 +373,7 @@ var FT_prepareTruckDetails = function(element) {
 	FT_TruckId = element.getAttribute('truckid');
 	var selectedTruck;
 	var isFound = false;
-	FT_getBMFAStorage()['All'].some( function(truck) {
+	FT_getBMFAStorage()['All Used Trucks'].some( function(truck) {
 		selectedTruck = truck;
 		return (isFound = (truck.Id === FT_TruckId));
 	});
@@ -426,7 +436,7 @@ String.prototype.FT_format.regex = new RegExp("{-?[0-9]+}", "g");
 var FT_displayTabs = function(parentNode, selectedTruck) {
 	
 	TruckDetailsContainer = document.createElement('div');
-	TruckImageContainer.className += 'FT_tabs';	
+	TruckDetailsContainer.className += 'FT_tabs';	
 	var tabs = FT_createTabs();
 	TruckDetailsContainer.appendChild( tabs );
 	
@@ -481,7 +491,7 @@ var FT_addInetrestFrom = function() {
 		'Make An Offer':'FT_input FT_required',
 		'City':'FT_input FT_required',
 		'State':'FT_input FT_required',
-		'Inquiry Message':'FT_input FT_required'
+		'Inquiry Message':'FT_input FT_required ftextArea'
 	}
 	
 	var PurchaseTimeframeOpt = ['', 'Less than 1 month', '1 month - 3 months', '6 months - 12 months', '12 months+'];
@@ -491,15 +501,26 @@ var FT_addInetrestFrom = function() {
 	tab2Div.id = FT_tab2Id;
 	tab2Div.style.display = 'none';
 	tab2Div.className = 'FT_gryTxt';
+	
+	var formTitleDiv = document.createElement('div');
+	formTitleDiv.innerHTML = 'Contact us to learn more about this truck.';
+	formTitleDiv.className = 'FT_formTitle';
+	tab2Div.appendChild(formTitleDiv);
+	
 	var messageContainerDiv = document.createElement('div');
 	messageContainerDiv.id = 'messageContainerId';
+	messageContainerDiv.classClass = 'FT_closeBtn';
 	tab2Div.appendChild(messageContainerDiv);
+	var index = 0;
 	for(var fieldName in fieldAndType) {
+		var inputContainer = document.createElement('div');
+		inputContainer.className += ((index%2) ? 'FT_fL' : 'FT_fR');
 		var dynamicDom = document.createElement(fieldAndType[fieldName]);
 		dynamicDom.name = fieldName.replace(/\s/g,'');
 		dynamicDom.className = fieldToClasses[fieldName];
 		if(fieldName === 'Purchase Timeframe') {
 			PurchaseTimeframeOpt.forEach(function(opt) {
+				dynamicDom.className += 'FT_gryTxt';
 				var option = document.createElement('option');
 				option.value = (opt) ? opt: '';
 				option.innerHTML = (opt) ? opt: 'Timeframe';
@@ -510,6 +531,7 @@ var FT_addInetrestFrom = function() {
 				dynamicDom.appendChild(option);
 			});
 		} else if(fieldName === 'State') {
+			dynamicDom.className += 'FT_gryTxt';
 			StateOpt.forEach(function(opt) {
 				var option = document.createElement('option');
 				option.value = (opt) ? opt: '';
@@ -526,10 +548,13 @@ var FT_addInetrestFrom = function() {
 				FT_bindEvent('keyup', FT_processNumberEntry, [dynamicDom]);
 			}
 		}
-		tab2Div.appendChild(dynamicDom);
+		inputContainer.appendChild(dynamicDom);
+		tab2Div.appendChild(inputContainer);
+		index++;
 	}
 	var submitButton = document.createElement('button');
 	submitButton.type = 'button';
+	submitButton.className = 'FT_submitBtn';
 	submitButton.innerHTML = 'Submit Fire Truck Inquiry';
 	tab2Div.appendChild(submitButton);
 	FT_bindEvent('click', FT_submitEnquiry, [submitButton]);
@@ -559,6 +584,12 @@ var FT_processNumberEntry = function(element) {
 	}
 }
 
+var FT_clearFormMessage = function(element) {
+	cosole.log('called');
+	var messageContainer = document.getElementById('messageContainerId');
+	messageContainer.innerHTML = '';
+}
+
 /* A function to add page message.
  * @Param isSuccess	: set message for Error or Success.
  * @Param errorMessage	: Message to display.
@@ -570,8 +601,16 @@ var FT_setMessage = function(isSuccess, errorMessage) {
 		messageDiv = document.createElement('div');
 		messageDiv.className = 'FT_message';
 		//messageDiv.className += ((isSuccess) ? 'error' : 'success');
-		messageDiv.innerHTML  = errorMessage;
+		
+		var closeButton = document.createElement('a');
+		closeButton.className = 'FT_closeBtn';
+		var tempParent = document.createElement('div');
+		tempParent.appendChild(closeButton);
+		
+		messageDiv.innerHTML  = errorMessage + tempParent.innerHTML;
+		
 		messageContainer.appendChild(messageDiv);
+		FT_bindEvent('click', FT_clearFormMessage, [closeButton]);
 	} else if(messages.length) {
 		messages[0].innerHTML = errorMessage;
 	}
