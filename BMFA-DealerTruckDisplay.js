@@ -349,21 +349,72 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 	return TruckImageContainer.appendChild(ul);;
 }
 
-var FT_addTruckImages = function(ParentNode, ImageList) {
-	ImageList.forEach( function(doc) {
-		var img = document.createElement('img');
-		var img1 = document.createElement('img');
-		var imgSrc = FT_truckTypeImageUrl[FT_defaultTruckImageKey];
-		if(doc['Main_Image__c']) {
-			imgSrc = (doc['Amazon_S3_Main_Thumbnail_URL__c'] ? doc['Amazon_S3_Main_Thumbnail_URL__c'] : '');
+var FT_swiperClickHandler = function(element) {
+	var parentElement = element.parentNode;
+	var currentImg = parentElement.getElementsByTagName('img')[0].className.split(' ')[0];
+	if(currentImg) {
+		var index = parseInt(currentImg.split('_')[1]);
+		var newImg = '';
+		if(FT_hasClass(element, 'FT_prevBtn')){
+			newImg = 'img_'+ (index -= 1);
 		} else {
-			imgSrc = (doc['Amazon_S3_Image_URL__c'] ? doc['Amazon_S3_Image_URL__c'] : '');
+			newImg = 'img_'+ (index += 1);
+		}
+		if(index) {
+			var nextImg = parentElement.parentNode.getElementsByClassName(newImg);
+			var nextOfNextImg = parentElement.parentNode.getElementsByClassName('img_'+ (index+1));
+			if(nextImg.length) {
+				parentElement.getElementsByClassName('FT_nextBtn')[0].style.display = ((nextOfNextImg.length) ? 'block': 'none');
+				parentElement.getElementsByTagName('img')[0].src = nextImg[0].src;
+				parentElement.getElementsByTagName('img')[0].className = nextImg[0].className;
+			} else {
+				index -= 1;
+				parentElement.getElementsByClassName('FT_nextBtn')[0].style.display = 'none';
+			}
+			parentElement.getElementsByClassName('FT_prevBtn')[0].style.display = 'block';
+		} else {
+			var nextImg = parentElement.parentNode.getElementsByClassName(newImg);
+			parentElement.getElementsByTagName('img')[0].src = nextImg[0].src;
+			parentElement.getElementsByTagName('img')[0].className = nextImg[0].className;
+			parentElement.getElementsByClassName('FT_prevBtn')[0].style.display = 'none';
+			parentElement.getElementsByClassName('FT_nextBtn')[0].style.display = 'block';
+		}
+	}
+}
+
+var FT_addTruckImages = function(ParentNode, ImageList) {
+	var swiperContainer = document.createElement('div');
+	swiperContainer.className = 'FT_swiperContainer FT_fR';
+	var mainImg = document.createElement('img');
+	mainImg.className = 'img_0';
+	var prevBtn = document.createElement('a');
+	prevBtn.innerHTML = '&lt;'
+	prevBtn.className = 'FT_swiperBtn FT_prevBtn';
+	var nextBtn = document.createElement('a');
+	nextBtn.innerHTML = '&gt;'
+	nextBtn.className = 'FT_swiperBtn FT_nextBtn';
+	swiperContainer.appendChild(mainImg);
+	swiperContainer.appendChild(prevBtn);
+	swiperContainer.appendChild(nextBtn);
+	ParentNode.appendChild(swiperContainer);
+	
+	var truckImageContainer = document.createElement('div');
+	truckImageContainer.className = 'FT_fL FT_thumbnail';
+	console.log(ImageList);
+	ImageList.forEach( function(doc, index) {
+		var img = document.createElement('img');
+		img.className = 'img_'+ index;
+		var imgSrc = (doc['Amazon_S3_Image_URL__c'] ? doc['Amazon_S3_Image_URL__c'] : '');
+		if(doc['Main_Image__c']) {
+			mainImg.src = imgSrc;
+		}
+		if(!imgSrc) {
+			imgSrc = FT_truckTypeImageUrl[FT_defaultTruckImageKey];
 		}
 		img.src = imgSrc;
-		img1.src = imgSrc;
-		ParentNode.appendChild(img);
-		ParentNode.appendChild(img1);
+		truckImageContainer.appendChild(img);
 	});
+	ParentNode.appendChild(truckImageContainer);
 }
 
 /* A function handles click event on indivisual truck. 
@@ -387,7 +438,8 @@ var FT_prepareTruckDetails = function(element) {
 		for(var field in FT_GlobalFieldToStrHTML) {					
 			var fieldVal = ((selectedTruck[field]) ? selectedTruck[field] : '');
 			if(field === 'Cloud_Documents__r') {
-				truckImageContainer = document.createElement('div');
+				var tempImageContainer = document.createElement('div');
+				truckImageContainer = document.createElement('div');				
 				console.log('cloude docs : ', selectedTruck[field]);
 				if(selectedTruck[field]) {
 					var cloudDocs = selectedTruck[field].records;
@@ -395,7 +447,11 @@ var FT_prepareTruckDetails = function(element) {
 				} else {
 					FT_addTruckImages(truckImageContainer, [{Main_Image__c:true, Amazon_S3_Main_Thumbnail_URL__c:FT_truckTypeImageUrl[FT_defaultTruckImageKey]}]);
 				}
-				TruckDetailsHtml += truckImageContainer.innerHTML;
+				tempImageContainer.appendChild(truckImageContainer);
+				var clearFloatDiv = document.createElement('div');
+				clearFloatDiv.className = 'FT_clr';
+				tempImageContainer.appendChild(clearFloatDiv);
+				TruckDetailsHtml += tempImageContainer.innerHTML;
 			} else if(field === 'VF_Website_Price__c') {
 				//var linkUrl = ((selectedTruck['Truck_Public_URL__c']) ? selectedTruck['Truck_Public_URL__c'] : '');
 				TruckDetailsHtml += FT_GlobalFieldToStrHTML[field].FT_format([fieldVal, 'document.getElementsByName(\''+FT_tab2Id+'\')[0].click()']);
@@ -406,6 +462,7 @@ var FT_prepareTruckDetails = function(element) {
 		truckPart1Container.innerHTML = TruckDetailsHtml;		
 		truckContainer.appendChild(truckPart1Container);
 		FT_BMFA_TruckContainer.appendChild(truckContainer);
+		FT_bindEvent('click', FT_swiperClickHandler, FT_BMFA_TruckContainer.getElementsByClassName('FT_swiperBtn'));
 		FT_displayTabs(truckContainer, selectedTruck);		
 	}	
 }
@@ -491,7 +548,7 @@ var FT_addInetrestFrom = function() {
 		'Make An Offer':'FT_input FT_required',
 		'City':'FT_input FT_required',
 		'State':'FT_input FT_required',
-		'Inquiry Message':'FT_input FT_required ftextArea'
+		'Inquiry Message':'FT_input FT_required'
 	}
 	
 	var PurchaseTimeframeOpt = ['', 'Less than 1 month', '1 month - 3 months', '6 months - 12 months', '12 months+'];
@@ -519,10 +576,10 @@ var FT_addInetrestFrom = function() {
 		dynamicDom.name = fieldName.replace(/\s/g,'');
 		dynamicDom.className = fieldToClasses[fieldName];
 		if(fieldName === 'Purchase Timeframe') {
-			PurchaseTimeframeOpt.forEach(function(opt) {
-				dynamicDom.className += 'FT_gryTxt';
+			dynamicDom.className += ' FT_gryTxt';
+			PurchaseTimeframeOpt.forEach(function(opt) {				
 				var option = document.createElement('option');
-				option.value = (opt) ? opt: '';
+				option.value = (opt) ? opt: ' ';
 				option.innerHTML = (opt) ? opt: 'Timeframe';
 				if(!opt) {
 					option.disabled = true;
@@ -531,10 +588,10 @@ var FT_addInetrestFrom = function() {
 				dynamicDom.appendChild(option);
 			});
 		} else if(fieldName === 'State') {
-			dynamicDom.className += 'FT_gryTxt';
+			dynamicDom.className += ' FT_gryTxt';
 			StateOpt.forEach(function(opt) {
 				var option = document.createElement('option');
-				option.value = (opt) ? opt: '';
+				option.value = (opt) ? opt: ' ';
 				option.innerHTML = (opt) ? opt : 'State';
 				if(!opt) {
 					option.disabled = true;
@@ -546,6 +603,8 @@ var FT_addInetrestFrom = function() {
 			dynamicDom.placeholder = fieldName;			
 			if(fieldName === 'Phone') {
 				FT_bindEvent('keyup', FT_processNumberEntry, [dynamicDom]);
+			} else if(fieldName === 'Inquiry Message') {
+				inputContainer.className += 'FT_TextArea';
 			}
 		}
 		inputContainer.appendChild(dynamicDom);
@@ -585,7 +644,6 @@ var FT_processNumberEntry = function(element) {
 }
 
 var FT_clearFormMessage = function(element) {
-	cosole.log('called');
 	var messageContainer = document.getElementById('messageContainerId');
 	messageContainer.innerHTML = '';
 }
@@ -599,18 +657,10 @@ var FT_setMessage = function(isSuccess, errorMessage) {
 	var messages = messageContainer.getElementsByClassName('FT_message');
 	if(!messages.length && errorMessage) {
 		messageDiv = document.createElement('div');
-		messageDiv.className = 'FT_message';
-		//messageDiv.className += ((isSuccess) ? 'error' : 'success');
-		
-		var closeButton = document.createElement('a');
-		closeButton.className = 'FT_closeBtn';
-		var tempParent = document.createElement('div');
-		tempParent.appendChild(closeButton);
-		
-		messageDiv.innerHTML  = errorMessage + tempParent.innerHTML;
-		
+		messageDiv.className += ((isSuccess) ? 'FT_errorMsg' : 'FT_successMsg');				
+		messageDiv.innerHTML  = errorMessage + '<a class="FT_closeBtn"/>';		
 		messageContainer.appendChild(messageDiv);
-		FT_bindEvent('click', FT_clearFormMessage, [closeButton]);
+		FT_bindEvent('click', FT_clearFormMessage, messageContainer.getElementsByTagName('a'));
 	} else if(messages.length) {
 		messages[0].innerHTML = errorMessage;
 	}
@@ -641,8 +691,8 @@ var FT_validateData = function() {
 		var element = fieldElementList[index];
 		var elementValue = element.value;
 		var errorMessage;
-		if(elementValue) {
-			if(FT_hasClass(element, 'FT_required')) {
+		if(elementValue && elementValue.trim()) {
+			if(FT_hasClass(element, 'FT_required')) {				
 				if(FT_hasClass(element, 'FT_email')) {
 					isProcced = FT_emailRegex.test(elementValue);
 					errorMessage = 'Invalid Email!';
@@ -653,6 +703,7 @@ var FT_validateData = function() {
 					isProcced = true;
 				}			
 			}
+			
 			if(isProcced) {
 				inquirJSON[element.name] = elementValue;
 				element.style.borderColor = 'darkgrey';
@@ -666,7 +717,7 @@ var FT_validateData = function() {
 		}
 		if(!isProcced && isFirstError) {
 			element.focus();
-			FT_setMessage(isProcced, errorMessage);
+			FT_setMessage(!isProcced, errorMessage);
 			isFirstError = false;
 		}		
 	}
