@@ -117,7 +117,9 @@ var FT_tab2Id = 'inquiryTab';
 var FT_emailRegex =  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 var FT_phoneRegex =  /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
 
-var FT_DealerAccointId = 'DFTF-00001'; // this value changes as per Dealer.
+var FT_DealerAccointId = ''; // this value changes as per Dealer.
+var FT_TheamBackground = '';
+var FT_TheamTextColor = '';
 var FT_TruckId;
 
 /* A javascript Class Module for API requests. */
@@ -167,6 +169,12 @@ var FT_WebRequestHandler = {
  */
 var FT_loadTruckData = function() {
 	FT_BMFA_TruckContainer = document.getElementById('dealerTruckContainerId');
+	FT_DealerAccointId = FT_BMFA_TruckContainer.getAttribute('accountId');
+	console.log(FT_BMFA_TruckContainer.style);
+	FT_TheamBackground = FT_BMFA_TruckContainer.style.backgroundColor;
+	FT_TheamTextColor = FT_BMFA_TruckContainer.style.color;
+	console.log(FT_TheamBackground, ':', FT_TheamTextColor);
+	FT_BMFA_TruckContainer.className = FT_BMFA_TruckContainer.className.replace('FT_TheamContainer', '');
 	FT_WebRequestHandler.getRequest(FT_processTruckData);
 }
 
@@ -351,7 +359,8 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 
 var FT_swiperClickHandler = function(element) {
 	var parentElement = element.parentNode;
-	var currentImg = parentElement.getElementsByTagName('img')[0].className.split(' ')[0];
+	var currentImg = parentElement.getElementsByTagName('img')[0].className.split(' ')[1];
+	console.log(parentElement.getElementsByTagName('img')[0].className);
 	if(currentImg) {
 		var index = parseInt(currentImg.split('_')[1]);
 		var newImg = '';
@@ -359,10 +368,10 @@ var FT_swiperClickHandler = function(element) {
 			newImg = 'img_'+ (index -= 1);
 		} else {
 			newImg = 'img_'+ (index += 1);
-		}
+		}		
 		if(index) {
 			var nextImg = parentElement.parentNode.getElementsByClassName(newImg);
-			var nextOfNextImg = parentElement.parentNode.getElementsByClassName('img_'+ (index+1));
+			var nextOfNextImg = parentElement.parentNode.getElementsByClassName('img_'+ (index+1));			
 			if(nextImg.length) {
 				parentElement.getElementsByClassName('FT_nextBtn')[0].style.display = ((nextOfNextImg.length) ? 'block': 'none');
 				parentElement.getElementsByTagName('img')[0].src = nextImg[0].src;
@@ -382,16 +391,33 @@ var FT_swiperClickHandler = function(element) {
 	}
 }
 
+var FT_ImgClickHandler = function(element) {
+	var mainImgParent = element.parentNode.previousSibling;
+	var mainImgContainer = mainImgParent.getElementsByTagName('img')[0];
+	if(mainImgContainer) {
+		mainImgContainer.src = element.src;
+		mainImgContainer.className = element.className;
+	}
+	var imgIndexClass = element.className.split(' ');
+	var imgIndex = ((imgIndexClass[1]) ? parseInt(imgIndexClass[1].split('_')[1]) : 0);
+	if(imgIndex) {
+		mainImgParent.getElementsByClassName('FT_prevBtn')[0].style.display = 'block';
+		var nextOfNextImg = element.parentNode.getElementsByClassName('img_'+ (imgIndex+1));
+		mainImgParent.getElementsByClassName('FT_nextBtn')[0].style.display = ((nextOfNextImg.length) ? 'block': 'none');;
+	} else {
+		mainImgParent.getElementsByClassName('FT_prevBtn')[0].style.display = 'none';
+		mainImgParent.getElementsByClassName('FT_nextBtn')[0].style.display = 'block';
+	}
+}
+
 var FT_addTruckImages = function(ParentNode, ImageList) {
 	var swiperContainer = document.createElement('div');
 	swiperContainer.className = 'FT_swiperContainer FT_fR';
 	var mainImg = document.createElement('img');
-	mainImg.className = 'img_0';
+	mainImg.className = 'FT_TruckImg img_0';
 	var prevBtn = document.createElement('a');
-	prevBtn.innerHTML = '&lt;'
 	prevBtn.className = 'FT_swiperBtn FT_prevBtn';
 	var nextBtn = document.createElement('a');
-	nextBtn.innerHTML = '&gt;'
 	nextBtn.className = 'FT_swiperBtn FT_nextBtn';
 	swiperContainer.appendChild(mainImg);
 	swiperContainer.appendChild(prevBtn);
@@ -403,7 +429,7 @@ var FT_addTruckImages = function(ParentNode, ImageList) {
 	console.log(ImageList);
 	ImageList.forEach( function(doc, index) {
 		var img = document.createElement('img');
-		img.className = 'img_'+ index;
+		img.className = 'FT_TruckImg img_'+ index;
 		var imgSrc = (doc['Amazon_S3_Image_URL__c'] ? doc['Amazon_S3_Image_URL__c'] : '');
 		if(doc['Main_Image__c']) {
 			mainImg.src = imgSrc;
@@ -414,6 +440,10 @@ var FT_addTruckImages = function(ParentNode, ImageList) {
 		img.src = imgSrc;
 		truckImageContainer.appendChild(img);
 	});
+	if(!mainImg.src && ImageList.length) {
+		mainImg.src = ImageList[0]['Amazon_S3_Image_URL__c'];
+		nextBtn.style.display = ((ImageList.length > 1) ? 'block': 'none');
+	}
 	ParentNode.appendChild(truckImageContainer);
 }
 
@@ -463,6 +493,7 @@ var FT_prepareTruckDetails = function(element) {
 		truckContainer.appendChild(truckPart1Container);
 		FT_BMFA_TruckContainer.appendChild(truckContainer);
 		FT_bindEvent('click', FT_swiperClickHandler, FT_BMFA_TruckContainer.getElementsByClassName('FT_swiperBtn'));
+		FT_bindEvent('click', FT_ImgClickHandler, FT_BMFA_TruckContainer.getElementsByClassName('FT_TruckImg'));
 		FT_displayTabs(truckContainer, selectedTruck);		
 	}	
 }
