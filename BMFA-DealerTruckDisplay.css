@@ -1,5 +1,5 @@
-@media all{
-	* { margin:0; padding: 0; box-sizing: border-box; }
+@media all {
+	* { margin:0; padding: 0; box-sizing: border-box; font-family: 'Open Sans', sans-serif;}
 	ul.FT_listStyle > li { width: 25%; display: inline-block; padding: 15px; min-height: 150px; list-style: none; vertical-align: top; text-align: center; }
 	body, html{ font-family: 'Open Sans', sans-serif; font-size: 14px; }
 	#dealerTruckContainerId{ max-width:1000px; width: 90%; margin: 15px auto; }
@@ -25,7 +25,7 @@
 	FT_blackCost { color:#000; padding: 0 0 10px; }
 	.FT_btmDiv { position: absolute; bottom: 10px; box-sizing: content-box; right: 10px; left: 10px; }
 
-	ul.FT_category > li > div { background: none; min-height: 220px; padding: 10px; border: 0 none; position: relative; }
+	ul.FT_category > li > div { background: none; min-height: 220px; padding: 0; border: 0 none; position: relative; }
 	.FT_imgDiv { cursor: pointer; width:100%; height:150px; box-shadow:1px 1px 3px rgba(0, 0, 0, 0.25); }
 	.FT_btmDiv > div {  font-weight: 600;}
 	.FT_title { color: #333333; background: none; font-size: 35px; padding: 0; margin: 0 0 15px; }
@@ -37,7 +37,7 @@
 	.FT_fR { float: left; width: 50%; padding-right: 15px; }
 	.FT_input { border: 1px solid #cdcdcd; border-radius: 3px; padding: 10px; width: 100%; margin: 0 0 20px; height: 37px; }
 	.FT_fR.FT_TextArea { width: 100%; padding: 0; }
-	.FT_submitBtn { width: 100%; background: #999999; color: #fff; border: 1px solid #999; border-radius: 3px; padding: 10px; font-weight: 600; }	
+	.FT_submitBtn { cursor:pointer; width: 100%; background: #999999; color: #fff; border: 1px solid #999; border-radius: 3px; padding: 10px; font-weight: 600; }	
 	.FT_errorMsg { border: 1px solid #fff; display: inline-block; width: 100%; max-width: 300px; padding: 10px; border-left: 3px solid red; background: #fff; border-radius: 3px; margin: 0 auto 15px; box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.09); position: relative; }
 	.FT_successMsg { border: 1px solid #fff; display: inline-block; width: 100%; max-width: 300px; padding: 10px; border-left: 3px solid green; background: #fff; border-radius: 3px; margin: 0 auto 15px; box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.09); position: relative; }
 	.FT_closeBtn:before { content: '+'; position: absolute; right: 10px; transform: rotate(45deg); color: #333333; font-size: 18px; line-height: 15px; cursor: pointer; text-decoration:none; }
@@ -51,18 +51,36 @@
 	.FT_prevBtn { cursor: pointer; text-decoration:none; display : none; }
 	.FT_nextBtn { cursor: pointer; text-decoration:none; }
 	.FT_swiperContainer img {width: 100%;}
-	a.FT_swiperBtn { background: rgba(255, 255, 255, 0.91); position: absolute; top: 50%; width: 30px; height: 30px; border-radius: 100px; box-shadow: 0px 0px 0 2px rgba(255, 255, 255, 0.5); font-size: 0; text-align: center; line-height: 30px;    margin-top: -15px; }
+	a.FT_swiperBtn { background: rgba(255, 255, 255, 0.91); position: absolute; top: 50%; width: 30px; height: 30px; border-radius: 100px; box-shadow: 0px 0px 0 3px rgba(0, 0, 0, 0.31); font-size: 0; text-align: center; line-height: 30px;    margin-top: -15px; }
 
-	a.FT_swiperBtn.FT_prevBtn { left: 15px;}
-	a.FT_swiperBtn.FT_nextBtn { right: 30px;}
-	a.FT_swiperBtn.FT_prevBtn:before { content: ''; border: solid #7a0303; border-width: 0 3px 3px 0; position: absolute; border-radius: 3px; left: 10px; top: 10px; padding: 3px; transform: rotate(135deg); }
-	a.FT_swiperBtn.FT_nextBtn:before { content: ''; border: solid #7a0303; border-width: 0 3px 3px 0; position: absolute; border-radius: 3px; left: 10px; top: 10px; padding: 3px; transform: rotate(-45deg); }
+	a.FT_swiperBtn.FT_prevBtn { left: 7px;}
+	a.FT_swiperBtn.FT_nextBtn { right: 7px;}
+	a.FT_swiperBtn.FT_prevBtn:before { content: ''; border: solid #7a0303; border-width: 0 3px 3px 0; position: absolute; border-radius: 3px; left: 10px; top: 10px; padding: 3px; transform: rotate(135deg);box-shadow: 1px 1px 0px 0px rgba(150, 146, 146, 0.41); transition: all 0.4s ease;}
+    a.FT_swiperBtn.FT_nextBtn:before { content: ''; border: solid #7a0303; border-width: 0 3px 3px 0; position: absolute; border-radius: 3px; left: 10px; top: 10px; padding: 3px; transform: rotate(-45deg); box-shadow: 1px 1px 0px 0px rgba(150, 146, 146, 0.41); transition: all 0.4s ease;}
+    a.FT_swiperBtn.FT_nextBtn:hover:before { margin-left: 1px; }
+    a.FT_swiperBtn.FT_prevBtn:hover:before { margin-left: -1px; }
+    
+                
 	.FT_thumbnail.FT_fL img { cursor: pointer; }
 	
 	.FT_TheamContainer { background-color: #7a0303; color: #fff;}
-	//.FT_TheamContainer { background-color: blue; color: red;}
+	/*.FT_TheamContainer { background-color: blue; color: red;}*/
 }
-
-@media screen size (max-width:768px){
+@media screen and  (max-width:768px){
 	.FT_swiperContainer.FT_fR { width: 100%; position: relative; padding: 0; }	
+	ul.FT_listStyle > li{width:33.33%;}
+	ul.FT_listStyle li img{height: auto;}
+	ul.FT_category > li > div{min-height: auto;}
+	.FT_btmDiv{position: static;}
+	.FT_swiperContainer.FT_fR {  width: 100%; padding: 0;}
+	.FT_fL.FT_thumbnail{display:flex; width: 100%; overflow-y: auto;}
+	.FT_thumbnail img { width: 100%;  border: 1px solid #fff; max-height: 175px;}
+}
+            
+@media screen and  (max-width:750px){   
+	ul.FT_listStyle > li{width:100%;}
+	.FT_tab-links a{height: 100%;}
+	.FT_tab-links li{ min-width: auto;  display: table-cell;  height: 100%; float: none;}
+	ul.FT_tab-links { width: 100%;  display: table;}
+	.FT_fL, .FT_fR { width: 100%; padding: 0; }
 }

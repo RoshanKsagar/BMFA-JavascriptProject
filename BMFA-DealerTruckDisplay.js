@@ -1,3 +1,4 @@
+/* Javascript Map for Bind Truck Apparatus Type to respective public image path. */
 var FT_truckTypeImageUrl = {
 	'Default' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000003exvn&oid=00Do0000000JLLE&lastMod=1497451382000',
 	'All Used Trucks' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Wht1&oid=00Do0000000JLLE&lastMod=1495568542000',
@@ -18,22 +19,26 @@ var FT_truckTypeImageUrl = {
 	'Demoand Refurb Units' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whta&oid=00Do0000000JLLE&lastMod=1495568791000',
 };
 
+/* Javascript Map for Bind Truck Details(HTML) Abstract content dynamically with respective field data of truck. */
 var FT_GlobalFieldToStrHTML = {
 	VF_Main_Title__c : '<h1 class="FT_title">{0}</h1>',
 	VF_Website_Price__c : '<h2 class="FT_heading" style="color:{0}">{1} - click <a href="#" onclick="{2}">here</a> to inquire about this truck</h2>',
 	Cloud_Documents__r : ''
 }
 
+/* Javascript Map for Bind Truck Mini-Details(HTML) Top content dynamically with respective field data of truck. */
 var FT_MiniDetailFieldToStrHTML = {
 	VF_Main_Title__c : '<div class="FT_redTxt" style="color:{0}">{1}</div>',
 	Description : '<div class="FT_gryTxt">{0}</div>'	
 }
 
+/* Javascript Map for Bind Truck Mini-Details(HTML) bottom content dynamically with respective field data of truck. */
 var FT_MiniDetailBottomFieldsToStrHTML = {
 	VF_Additional_Pricing_Text__c : '<div>{0}</div>',
 	VF_Website_Price__c : '<div class="FT_blackCost">{0}</div>'
 }
 
+/* Javascript Map for Bind Truck Details(HTML) Tab content dynamically with respective field data of truck. */
 var FT_DetailFieldToStrHTML = {
 	'Stock_Number__c' : '<div class="FT_redTxt FT_bigTxt" style="color:{0}">Stock # {1}</div>',
 	'Description' : '{0}<br/>',
@@ -118,8 +123,8 @@ var FT_emailRegex =  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+
 var FT_phoneRegex =  /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
 
 var FT_DealerAccointId = ''; // this value changes as per Dealer.
-var FT_TheamBackground = '';
-var FT_TheamTextColor = '';
+var FT_TheamBackground = ''; // this value changes as per Dealer website theam.
+var FT_TheamTextColor = ''; // this value changes as per Dealer website theam.
 var FT_TruckId;
 
 /* A javascript Class Module for API requests. */
@@ -173,7 +178,6 @@ var FT_loadTruckData = function() {
 	var style = getComputedStyle(FT_BMFA_TruckContainer);
 	FT_TheamBackground = style.backgroundColor;
 	FT_TheamTextColor = style.color;
-	console.log(FT_TheamBackground, ':', FT_TheamTextColor);
 	FT_BMFA_TruckContainer.className = FT_BMFA_TruckContainer.className.replace('FT_TheamContainer', '');
 	FT_WebRequestHandler.getRequest(FT_processTruckData);
 }
