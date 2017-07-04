@@ -58,14 +58,12 @@
 	a.FT_swiperBtn.FT_prevBtn:before { content: ''; border: solid #7a0303; border-width: 0 3px 3px 0; position: absolute; border-radius: 3px; left: 10px; top: 10px; padding: 3px; transform: rotate(135deg);box-shadow: 1px 1px 0px 0px rgba(150, 146, 146, 0.41); transition: all 0.4s ease;}
     a.FT_swiperBtn.FT_nextBtn:before { content: ''; border: solid #7a0303; border-width: 0 3px 3px 0; position: absolute; border-radius: 3px; left: 10px; top: 10px; padding: 3px; transform: rotate(-45deg); box-shadow: 1px 1px 0px 0px rgba(150, 146, 146, 0.41); transition: all 0.4s ease;}
     a.FT_swiperBtn.FT_nextBtn:hover:before { margin-left: 1px; }
-    a.FT_swiperBtn.FT_prevBtn:hover:before { margin-left: -1px; }
-    
-                
+    a.FT_swiperBtn.FT_prevBtn:hover:before { margin-left: -1px; }                
 	.FT_thumbnail.FT_fL img { cursor: pointer; }
 	
-	.FT_TheamContainer { background-color: #7a0303; color: #fff;}
-	/*.FT_TheamContainer { background-color: blue; color: red;}*/
+	.FT_ThemeContainer { background-color: #7a0303; color: #fff; }
 }
+
 @media screen and  (max-width:768px){
 	.FT_swiperContainer.FT_fR { width: 100%; position: relative; padding: 0; }	
 	ul.FT_listStyle > li{width:33.33%;}

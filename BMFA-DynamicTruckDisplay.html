@@ -1,10 +1,25 @@
+<!DOCTYPE html>
 <html>
 	<head>
 		<script src="https://rawgit.com/RoshanKsagar/BMFA-JavascriptProject/master/BMFA-DealerTruckDisplay.js"></script>
 		<link rel = "stylesheet" type = "text/css" href = "https://rawgit.com/RoshanKsagar/BMFA-JavascriptProject/master/BMFA-DealerTruckDisplay.css" ></link>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<style>
+			/* A CSS class for provide general theme for truck advertise.
+			 * NOTE: more properties may get added as per requirement.
+			 * Default :
+			 * 		.FT_ThemeContainer { background-color: #7a0303; color: #fff; }
+			 * Following CSS properties take in to consideration.
+			 * 1. background-color : 
+			 * 		Used in title or heading text, also as background color for "View Details" button.
+			 * 2. color:
+			 *		Used as text color for "View Details" button.
+			 */
+			.FT_ThemeContainer { background-color: blue; color: red; }
+		</style>
 	</head>
 	<body>
-		<div id="dealerTruckContainerId" accountId="DFTF-00001" class="FT_TheamContainer"></div>
+		<div id="dealerTruckContainerId" accountId="DFTF-00002" class="FT_ThemeContainer"></div>
 		<script>
 		window.onload = function() {
 			FT_loadTruckData();

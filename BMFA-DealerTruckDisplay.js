@@ -22,7 +22,7 @@ var FT_truckTypeImageUrl = {
 /* Javascript Map for Bind Truck Details(HTML) Abstract content dynamically with respective field data of truck. */
 var FT_GlobalFieldToStrHTML = {
 	VF_Main_Title__c : '<h1 class="FT_title">{0}</h1>',
-	VF_Website_Price__c : '<h2 class="FT_heading" style="color:{0}">{1} - click <a href="#" onclick="{2}">here</a> to inquire about this truck</h2>',
+	VF_Website_Price__c : '<h2 class="FT_heading" style="color:{0}">{1} - click <a href="javascript:void(0)" onclick="{2}">here</a> to inquire about this truck</h2>',
 	Cloud_Documents__r : ''
 }
 
@@ -146,8 +146,8 @@ var FT_WebRequestHandler = {
 	getRequest : function(callback) {
 		xhttp = this.getWebRequestInstance();
 		if(xhttp) {
-			xhttp.open("GET", "http://34.208.168.193/api/services?accountId=" + FT_DealerAccointId, true);
-			//xhttp.open("GET", "https://www.firetruckapi.com/api/services?accountId=" + DealerAccointId, true);
+			//xhttp.open("GET", "http://34.208.168.193/api/services?accountId=" + FT_DealerAccointId, true);
+			xhttp.open("GET", "https://www.firetruckapi.com/api/services?accountId=" + FT_DealerAccointId, true);
 			xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
 			xhttp.send();
 			xhttp.onreadystatechange = function() {
@@ -158,8 +158,8 @@ var FT_WebRequestHandler = {
 	postRequest : function(payload, callback) {
 		xhttp = this.getWebRequestInstance();
 		if(xhttp) {
-			xhttp.open("POST", "http://34.208.168.193/api/services", true);
-			//xhttp.open("POST", "https://www.firetruckapi.com/api/services", true);
+			//xhttp.open("POST", "http://34.208.168.193/api/services", true);
+			xhttp.open("POST", "https://www.firetruckapi.com/api/services", true);
 			xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
 			xhttp.send(payload);
 			xhttp.onreadystatechange = function() {
@@ -187,19 +187,24 @@ var FT_loadTruckData = function() {
  */
 var FT_processTruckData = function(xhttp) {
 	if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
-		var serverResponse = JSON.parse(xhttp.responseText);
-		if(serverResponse.Success) {
-			var truckData = JSON.parse(serverResponse.Data);
-			var trucks = JSON.parse(serverResponse.Data);
-			if(trucks.length) {
-				FT_prepareTruckTypeMap(trucks);
-				FT_displayCategories( FT_getBMFAStorage() );
+		try {
+			var serverResponse = JSON.parse(xhttp.responseText);
+			if(serverResponse.Success) {
+				var truckData = JSON.parse(serverResponse.Data);
+				var trucks = JSON.parse(serverResponse.Data);
+				if(trucks.length) {
+					FT_prepareTruckTypeMap(trucks);
+					FT_displayCategories( FT_getBMFAStorage() );
+				} else {
+					
+				}						
 			} else {
-				
-			}						
-		} else {
-			console.log(serverResponse.Message);
+				console.log('Server Error Message : ', serverResponse.Message);
+			}
+		} catch(exp) {
+			console.log('Parsing Error Message : ', exp.message);
 		}
+		
 	}
 }
 
@@ -777,7 +782,7 @@ var FT_submitEnquiry = function() {
 
 	var JSON_Buffer = FT_validateData();
 	if(!JSON_Buffer) {
-		console.log('please fill all required values');
+		console.log('Please fill all required values');
 	} else {
 		JSON_Buffer['AccountId'] = FT_DealerAccointId;
 		JSON_Buffer['TruckId'] = FT_TruckId;
@@ -789,10 +794,10 @@ var FT_submitEnquiry = function() {
 			if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
 				var serverResponse = JSON.parse(xhttp.responseText);
 				if(serverResponse.Success) {
-					FT_setMessage(true, 'Inquire Successfull!');
+					FT_setMessage(true, 'Your Request Has Been Submited Successfully!');
 				} else {
 					console.log(serverResponse.Message);
-					FT_setMessage(false, 'Something Wrong. Please Contact Admin!');
+					FT_setMessage(false, 'Something Went Wrong. Please Contact Admin!');
 				}
 			}
 		});
@@ -813,6 +818,7 @@ var FT_tabClickHandling = function(selectedTab) {
 	if(selectedTab.name === FT_tab2Id) {
 		currentTabToDisplay.getElementsByClassName('FT_input')[0].focus();
 	}
+	window.scrollTo(0, document.body.scrollHeight);
 }
 
 /* A function to add tabs to DOM. */
@@ -824,7 +830,7 @@ var FT_createTabs = function() {
 	li1.className = 'FT_active';
 	var a1 = document.createElement('a');
 	a1.innerHTML = 'DESCRIPTION';
-	a1.href = '#';
+	a1.href = 'javascript:void(0)';
 	a1.name = FT_tab1Id;
 	li1.appendChild(a1);
 	ul.appendChild(li1);
@@ -832,7 +838,7 @@ var FT_createTabs = function() {
 	var li2 = document.createElement('li');
 	var a2 = document.createElement('a');
 	a2.innerHTML = 'YES I&#39;M INTERESTED';
-	a2.href = '#';
+	a2.href = 'javascript:void(0)';
 	a2.name = FT_tab2Id;
 	li2.appendChild(a2);
 	ul.appendChild(li2);
