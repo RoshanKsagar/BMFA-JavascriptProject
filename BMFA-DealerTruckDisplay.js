@@ -710,7 +710,7 @@ var FT_setMessage = function(isSuccess, errorMessage) {
 	var messages = messageContainer.getElementsByClassName('FT_message');
 	if(!messages.length && errorMessage) {
 		messageDiv = document.createElement('div');
-		messageDiv.className += ((isSuccess) ? 'FT_errorMsg' : 'FT_successMsg');				
+		messageDiv.className += ((isSuccess) ? 'FT_successMsg' : 'FT_errorMsg');				
 		messageDiv.innerHTML  = errorMessage + '<a class="FT_closeBtn"/>';		
 		messageContainer.appendChild(messageDiv);
 		FT_bindEvent('click', FT_clearFormMessage, messageContainer.getElementsByTagName('a'));
@@ -770,7 +770,7 @@ var FT_validateData = function() {
 		}
 		if(!isProcced && isFirstError) {
 			element.focus();
-			FT_setMessage(!isProcced, errorMessage);
+			FT_setMessage(isProcced, errorMessage);
 			isFirstError = false;
 		}		
 	}
