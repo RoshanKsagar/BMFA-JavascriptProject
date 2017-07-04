@@ -178,7 +178,7 @@ var FT_loadTruckData = function() {
 	var style = getComputedStyle(FT_BMFA_TruckContainer);
 	FT_TheamBackground = style.backgroundColor;
 	FT_TheamTextColor = style.color;
-	FT_BMFA_TruckContainer.className = FT_BMFA_TruckContainer.className.replace('FT_TheamContainer', '');
+	FT_BMFA_TruckContainer.className = FT_BMFA_TruckContainer.className.replace('FT_ThemeContainer', '');
 	FT_WebRequestHandler.getRequest(FT_processTruckData);
 }
 
