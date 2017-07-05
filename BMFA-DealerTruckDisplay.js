@@ -160,7 +160,6 @@ var FT_WebRequestHandler = {
 	getRequest : function(callback) {
 		xhttp = this.getWebRequestInstance();
 		if(xhttp) {
-			//xhttp.open("GET", "http://34.208.168.193/api/services?accountId=" + FT_DealerAccointId, true);
 			xhttp.open("GET", "https://www.firetruckapi.com/api/services?accountId=" + FT_DealerAccointId, true);
 			xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
 			xhttp.send();
@@ -172,7 +171,6 @@ var FT_WebRequestHandler = {
 	postRequest : function(payload, callback) {
 		xhttp = this.getWebRequestInstance();
 		if(xhttp) {
-			//xhttp.open("POST", "http://34.208.168.193/api/services", true);
 			xhttp.open("POST", "https://www.firetruckapi.com/api/services", true);
 			xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
 			xhttp.send(payload);
@@ -246,7 +244,10 @@ var FT_processTruckData = function(xhttp) {
 }
 
 var FT_addPageFooter = function(parent) {
-	parent.innerHTML += FT_PageFooterStrHTML.FT_format([FT_ThemeProperties.background, FT_ThemeProperties.color, FT_ThemeProperties.color]);;
+	var FooterStrHtml = FT_PageFooterStrHTML.FT_format([FT_ThemeProperties.background, FT_ThemeProperties.color, FT_ThemeProperties.color]);
+	var div = document.createElement('div');
+	div.innerHTML = FooterStrHtml;
+	parent.appendChild(div);
 }
 
 /* A function store's and manipulate data. 
@@ -291,7 +292,7 @@ var FT_expandCategory = function(element) {
 	FT_addPageFooter(FT_BMFA_TruckContainer);
 	
 	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('img'));
-	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('a.FT_redBtn'));
+	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('a.FT_redBtn'));	
 }
 
 /* A function for display all possible categories. 
@@ -550,7 +551,8 @@ var FT_prepareTruckDetails = function(element) {
 		FT_bindEvent('click', FT_swiperClickHandler, FT_BMFA_TruckContainer.getElementsByClassName('FT_swiperBtn'));
 		FT_bindEvent('click', FT_ImgClickHandler, FT_BMFA_TruckContainer.getElementsByClassName('FT_TruckImg'));
 		FT_displayTabs(truckContainer, selectedTruck);		
-	}	
+	}
+	FT_addPageFooter(FT_BMFA_TruckContainer);
 }
 
 /* This is the String format function. */
