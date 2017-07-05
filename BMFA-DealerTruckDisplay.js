@@ -256,10 +256,10 @@ var FT_expandCategory = function(element) {
 	titleDiv.innerHTML = 'Shop Our '+ ((category === 'All Used Trucks' ) ? 'Used Fire Trucks' : category);
 	FT_BMFA_TruckContainer.appendChild(titleDiv);
 	FT_BMFA_TruckContainer.appendChild( FT_prepareImageContainer(false, FT_getBMFAStorage()[category], '') );
+	FT_addPageFooter(FT_BMFA_TruckContainer);
+	
 	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('img'));
 	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('a.FT_redBtn'));
-	
-	FT_addPageFooter(FT_BMFA_TruckContainer);
 }
 
 /* A function for display all possible categories. 
@@ -272,9 +272,9 @@ var FT_displayCategories = function(truckTypeMap) {
 	titleDiv.innerHTML = 'Shop Our Used Fire Trucks';
 	FT_BMFA_TruckContainer.appendChild(titleDiv);
 	FT_BMFA_TruckContainer.appendChild( FT_prepareImageContainer(true, truckTypeMap, 'FT_category') );
-	FT_bindEvent('click', FT_expandCategory, FT_BMFA_TruckContainer.querySelectorAll('img'));
-	
 	FT_addPageFooter(FT_BMFA_TruckContainer);
+	
+	FT_bindEvent('click', FT_expandCategory, FT_BMFA_TruckContainer.querySelectorAll('img'));
 }
 
 /* A function bind click events on DOM elements. 
