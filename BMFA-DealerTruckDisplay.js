@@ -579,8 +579,10 @@ String.prototype.FT_format.regex = new RegExp("{-?[0-9]+}", "g");
 var FT_displayTabs = function(parentNode, selectedTruck) {
 	
 	TruckDetailsContainer = document.createElement('div');
-	TruckDetailsContainer.className += 'FT_tabs';	
-	var tabs = FT_createTabs();
+	TruckDetailsContainer.id = 'detailsTabId';
+	TruckDetailsContainer.className += 'FT_tabs';
+	
+	var tabs = FT_createTabs(selectedTruck.Id);
 	TruckDetailsContainer.appendChild( tabs );
 	
 	var contentDiv = document.createElement('div');
@@ -853,11 +855,12 @@ var FT_tabClickHandling = function(selectedTab) {
 		activeTabs[index].classList.remove('FT_active');
 	}
 	currentTabToDisplay.style.display = 'block';
-	liTab.className += 'FT_active';
+	liTab.className += 'FT_active';	
 	if(selectedTab.name === FT_tab2Id) {
-		currentTabToDisplay.getElementsByClassName('FT_input')[0].focus();
+		var id = setTimeout(function(){
+			currentTabToDisplay.getElementsByClassName('FT_input')[0].focus();
+		}, 500);
 	}
-	window.scrollTo(0, document.body.scrollHeight);
 }
 
 /* A function to add tabs to DOM. */
@@ -869,7 +872,7 @@ var FT_createTabs = function() {
 	li1.className = 'FT_active';
 	var a1 = document.createElement('a');
 	a1.innerHTML = 'DESCRIPTION';
-	a1.href = 'javascript:void(0)';
+	a1.href = '#detailsTabId';	
 	a1.name = FT_tab1Id;
 	li1.appendChild(a1);
 	ul.appendChild(li1);
@@ -877,7 +880,7 @@ var FT_createTabs = function() {
 	var li2 = document.createElement('li');
 	var a2 = document.createElement('a');
 	a2.innerHTML = 'YES I&#39;M INTERESTED';
-	a2.href = 'javascript:void(0)';
+	a2.href = '#detailsTabId';
 	a2.name = FT_tab2Id;
 	li2.appendChild(a2);
 	ul.appendChild(li2);
