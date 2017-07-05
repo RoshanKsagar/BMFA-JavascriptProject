@@ -68,8 +68,7 @@
     .FT_footer:after, .FT_footer:before { content: ''; background: #fff; width: 20px; height: 20px; position: absolute; top: 20px; }
     .FT_footer:before { left: 20px; }
     .FT_footer:after { right: 20px; }
-    .FT_bldTxt { height: 35px; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 19px; }
-    
+    .FT_bldTxt { height: 35px; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 19px; }    
 }
 
 @media screen and  (max-width:768px){

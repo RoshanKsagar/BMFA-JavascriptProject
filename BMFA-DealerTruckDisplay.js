@@ -37,12 +37,22 @@ var FT_MiniDetailBottomFieldsToStrHTML = {
 	VF_Additional_Pricing_Text__c : '<div>{0}</div>',
 	VF_Website_Price__c : '<div class="FT_blackCost">{0}</div>'
 }
+// this value changes as per Dealer website theam.
+var FT_ThemeProperties = {
+	background : '',
+	color : ''
+}
 
 /* Javascript global variable for Bind footer element on page. */
 var FT_PageFooterStrHTML = '<div class="FT_footer" style="background:{0}">' +
 						   '	<h5 style="color:{1}">Selling A Used Fire Truck?</h5>' +
 						   '	<a href="https://www.firetruckmall.com" style="color:{2}" target="_blank">Click Here For More Information </a>' +
 						   '</div>';
+
+/* Javascript variables contains CSS class in string format to for add to page. */
+var FT_DynamicTabCSS = 'li.FT_active a, li.FT_active a:hover { background: {0}; color: {1}; }'
+var FT_DynamicNxtBtnCSS = 'a.FT_swiperBtn.FT_nextBtn:before { content: ""; border: solid {0}; border-width: 0 3px 3px 0; position: absolute; border-radius: 3px; left: 10px;';
+var FT_DynamicPrvBtnCSS = 'a.FT_swiperBtn.FT_prevBtn:before { content: ""; border: solid {0}; border-width: 0 3px 3px 0; position: absolute; border-radius: 3px; left: 10px;';
 
 /* Javascript Map for Bind Truck Details(HTML) Tab content dynamically with respective field data of truck. */
 var FT_DetailFieldToStrHTML = {
@@ -129,8 +139,6 @@ var FT_emailRegex =  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+
 var FT_phoneRegex =  /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
 
 var FT_DealerAccointId = ''; // this value changes as per Dealer.
-var FT_TheamBackground = ''; // this value changes as per Dealer website theam.
-var FT_TheamTextColor = ''; // this value changes as per Dealer website theam.
 var FT_TruckId;
 
 /* A javascript Class Module for API requests. */
@@ -175,6 +183,29 @@ var FT_WebRequestHandler = {
 	}
 }
 
+var FT_AddDynamicCSS = function() { 
+	var DynamicCSSRow = [];
+	DynamicCSSRow.push(FT_DynamicTabCSS.FT_format([FT_ThemeProperties.background, FT_ThemeProperties.color]));
+	DynamicCSSRow.push(FT_DynamicNxtBtnCSS.FT_format([FT_ThemeProperties.background]));
+	DynamicCSSRow.push(FT_DynamicPrvBtnCSS.FT_format([FT_ThemeProperties.background]));
+	var isStylePresent = true;
+	var style = document.getElementsByTagName('style')[0];
+	if(!style) {
+		isStylePresent = false;
+		style = document.createElement('style');
+	}
+	DynamicCSSRow.forEach(function(dynamicCSS) {
+		if (style.styleSheet) {
+			style.styleSheet.cssText += dynamicCSS;
+		} else {
+			style.appendChild(document.createTextNode(dynamicCSS));
+		}
+	});
+	if(!isStylePresent) {
+		document.getElementsByTagName('head')[0].appendChild(style);		
+	}
+}
+
 /* A function as entry point for all functionality. 
  * - A div having id 'dealerTruckContainerId', must be present on DOM.
  */
@@ -182,9 +213,10 @@ var FT_loadTruckData = function() {
 	FT_BMFA_TruckContainer = document.getElementById('dealerTruckContainerId');
 	FT_DealerAccointId = FT_BMFA_TruckContainer.getAttribute('accountId');
 	var style = getComputedStyle(FT_BMFA_TruckContainer);
-	FT_TheamBackground = style.backgroundColor;
-	FT_TheamTextColor = style.color;
+	FT_ThemeProperties.background = style.backgroundColor;
+	FT_ThemeProperties.color = style.color;
 	FT_BMFA_TruckContainer.className = FT_BMFA_TruckContainer.className.replace('FT_ThemeContainer', '');
+	FT_AddDynamicCSS();
 	FT_WebRequestHandler.getRequest(FT_processTruckData);
 }
 
@@ -214,7 +246,7 @@ var FT_processTruckData = function(xhttp) {
 }
 
 var FT_addPageFooter = function(parent) {
-	parent.innerHTML += FT_PageFooterStrHTML.FT_format([FT_TheamBackground, FT_TheamTextColor, FT_TheamTextColor]);;
+	parent.innerHTML += FT_PageFooterStrHTML.FT_format([FT_ThemeProperties.background, FT_ThemeProperties.color, FT_ThemeProperties.color]);;
 }
 
 /* A function store's and manipulate data. 
@@ -334,7 +366,7 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 				var catDetailDiv = document.createElement('div');
 				catDetailDiv.innerHTML = truck+ ' (' +truckDataList[truck].length+ ')';
 				catDetailDiv.className = 'FT_redTxt';
-				catDetailDiv.style.color = FT_TheamBackground;
+				catDetailDiv.style.color = FT_ThemeProperties.background;
 				
 				img.setAttribute('category', truck);
 				if(!imgSrc) {		
@@ -354,7 +386,7 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 				for(var field in FT_MiniDetailFieldToStrHTML) {
 					if(truck[field]) {
 						if('VF_Main_Title__c' === field) {
-							miniDetailHtml += FT_MiniDetailFieldToStrHTML[field].FT_format([FT_TheamBackground, truck[field]]);
+							miniDetailHtml += FT_MiniDetailFieldToStrHTML[field].FT_format([FT_ThemeProperties.background, truck[field]]);
 						} else {
 							miniDetailHtml += FT_MiniDetailFieldToStrHTML[field].FT_format([truck[field]]);
 						}
@@ -367,7 +399,7 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 					}					
 				}
 				miniDetailHtml += '<a class="FT_redBtn" '+
-								  '	  style="color:'+FT_TheamTextColor+'; background:'+FT_TheamBackground+'; border:1px solid '+FT_TheamBackground+'" truckid="'+truck.Id+'">'+
+								  '	  style="color:'+FT_ThemeProperties.color+'; background:'+FT_ThemeProperties.background+'; border:1px solid '+FT_ThemeProperties.background+'" truckid="'+truck.Id+'">'+
 								  'View Details</a></div>';
 				miniDetailDiv.innerHTML = miniDetailHtml;
 				div.appendChild(miniDetailDiv);
@@ -507,7 +539,7 @@ var FT_prepareTruckDetails = function(element) {
 				TruckDetailsHtml += tempImageContainer.innerHTML;
 			} else if(field === 'VF_Website_Price__c') {
 				//var linkUrl = ((selectedTruck['Truck_Public_URL__c']) ? selectedTruck['Truck_Public_URL__c'] : '');
-				TruckDetailsHtml += FT_GlobalFieldToStrHTML[field].FT_format([FT_TheamBackground, fieldVal, 'document.getElementsByName(\''+FT_tab2Id+'\')[0].click()']);
+				TruckDetailsHtml += FT_GlobalFieldToStrHTML[field].FT_format([FT_ThemeProperties.background, fieldVal, 'document.getElementsByName(\''+FT_tab2Id+'\')[0].click()']);
 			} else {
 				TruckDetailsHtml += FT_GlobalFieldToStrHTML[field].FT_format([fieldVal]);
 			}
@@ -570,7 +602,7 @@ var FT_displayTabs = function(parentNode, selectedTruck) {
 		});
 		if(innerFieldVal) {
 			if(innerMostField === 'Stock_Number__c') {
-				truckDetailsHtml += FT_DetailFieldToStrHTML[field].FT_format([FT_TheamBackground, innerFieldVal]);
+				truckDetailsHtml += FT_DetailFieldToStrHTML[field].FT_format([FT_ThemeProperties.background, innerFieldVal]);
 			} else {
 				truckDetailsHtml += FT_DetailFieldToStrHTML[field].FT_format([innerFieldVal]);
 			}
