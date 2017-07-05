@@ -15,7 +15,7 @@
 	.FT_tab { display: none; }
 	.FT_tab.FT_active { display: block; }
 
-	ul.FT_listStyle li img { width: 100%; min-height: 135px; cursor: pointer; }
+	ul.FT_listStyle li img { width: 100%; height: 150px; cursor: pointer; }
 	.FT_redTxt { padding:5px 0 7px; font-weight: 600; }
 	.FT_gryTxtbox { min-height:150px; }
 	ul.FT_listStyle > li > div { background: #f4f4f4; min-height: 365px; padding: 10px; border: 1px solid #eaeaea; position: relative; }
