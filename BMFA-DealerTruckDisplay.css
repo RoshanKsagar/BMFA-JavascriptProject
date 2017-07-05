@@ -62,12 +62,12 @@
 	
 	.FT_ThemeContainer { background-color: #7a0303; color: #fff; }
     li .FT_gryTxt { color: #666; padding: 0 0 7px; display: -webkit-box; max-width: 400px; height: 60px; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 19px;     margin-bottom: 80px; }
-    .FT_footer > h5 { font-size: 25px; font-weight: 500;color:#fff; }
-    .FT_footer { background: rgb(122, 3, 3); padding: 15px; text-align: center; }
-    .FT_footer a{color: #fff; font-size: 19px; display: block; padding: 10px 0 0;}
+    .FT_footer > h5 { font-size: 25px; font-weight: 500; }
+    .FT_footer { padding: 15px; text-align: center; }
+    .FT_footer a { font-size: 19px; display: block; padding: 10px 0 0; }
     .FT_footer:after, .FT_footer:before { content: ''; background: #fff; width: 20px; height: 20px; position: absolute; top: 20px; }
-    .FT_footer:before {left: 20px; }
-    .FT_footer:after{right: 20px; }
+    .FT_footer:before { left: 20px; }
+    .FT_footer:after { right: 20px; }
     .FT_bldTxt { height: 35px; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 19px; }
     
 }

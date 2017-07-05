@@ -38,6 +38,12 @@ var FT_MiniDetailBottomFieldsToStrHTML = {
 	VF_Website_Price__c : '<div class="FT_blackCost">{0}</div>'
 }
 
+/* Javascript global variable for Bind footer element on page. */
+var FT_PageFooterStrHTML = '<div class="FT_footer" style="background:{0}">' +
+						   '	<h5 style="color:{1}">Selling A Used Fire Truck?</h5>' +
+						   '	<a href="https://www.firetruckmall.com" style="color:{2}" target="_blank">Click Here For More Information </a>' +
+						   '</div>';
+
 /* Javascript Map for Bind Truck Details(HTML) Tab content dynamically with respective field data of truck. */
 var FT_DetailFieldToStrHTML = {
 	'Stock_Number__c' : '<div class="FT_redTxt FT_bigTxt" style="color:{0}">Stock # {1}</div>',
@@ -203,9 +209,12 @@ var FT_processTruckData = function(xhttp) {
 			}
 		} catch(exp) {
 			console.log('Parsing Error Message : ', exp.message);
-		}
-		
+		}		
 	}
+}
+
+var FT_addPageFooter = function(parent) {
+	parent.innerHTML += FT_PageFooterStrHTML.FT_format([FT_TheamBackground, FT_TheamTextColor, FT_TheamTextColor]);;
 }
 
 /* A function store's and manipulate data. 
@@ -249,6 +258,8 @@ var FT_expandCategory = function(element) {
 	FT_BMFA_TruckContainer.appendChild( FT_prepareImageContainer(false, FT_getBMFAStorage()[category], '') );
 	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('img'));
 	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('a.FT_redBtn'));
+	
+	FT_addPageFooter(FT_BMFA_TruckContainer);
 }
 
 /* A function for display all possible categories. 
@@ -262,6 +273,8 @@ var FT_displayCategories = function(truckTypeMap) {
 	FT_BMFA_TruckContainer.appendChild(titleDiv);
 	FT_BMFA_TruckContainer.appendChild( FT_prepareImageContainer(true, truckTypeMap, 'FT_category') );
 	FT_bindEvent('click', FT_expandCategory, FT_BMFA_TruckContainer.querySelectorAll('img'));
+	
+	FT_addPageFooter(FT_BMFA_TruckContainer);
 }
 
 /* A function bind click events on DOM elements. 
@@ -323,24 +336,18 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 				catDetailDiv.className = 'FT_redTxt';
 				catDetailDiv.style.color = FT_TheamBackground;
 				
-				//var imgContDiv = document.createElement('div');
-				//imgContDiv.className = 'FT_imgDiv';
 				img.setAttribute('category', truck);
 				if(!imgSrc) {		
 					console.log(truck);
 				}
-				//imgContDiv.appendChild(img);
 				div.appendChild(img);
 				div.appendChild(catDetailDiv);
 			} else {
 				truck = truckDataList[truck];
-				//var imgContDiv = document.createElement('div');
-				//imgContDiv.className = 'FT_imgDiv';
 				img.setAttribute('truckid', truck.Id); // Attribute to find truck(for Dev)
 				if(truck.Cloud_Documents__r && truck.Cloud_Documents__r.records.length) {
-					imgSrc = truck.Cloud_Documents__r.records[0].Amazon_S3_Image_URL__c;//Amazon_S3_Main_Thumbnail_URL__c
+					imgSrc = truck.Cloud_Documents__r.records[0].Amazon_S3_Image_URL__c; //Amazon_S3_Main_Thumbnail_URL__c
 				}
-				//imgContDiv.appendChild(img);
 				div.appendChild(img);
 				var miniDetailDiv = document.createElement('div');
 				var miniDetailHtml = '';
