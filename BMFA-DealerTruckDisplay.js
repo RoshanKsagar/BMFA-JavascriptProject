@@ -21,7 +21,7 @@ var FT_truckTypeImageUrl = {
 
 /* Javascript Map for Bind Truck Details(HTML) Abstract content dynamically with respective field data of truck. */
 var FT_GlobalFieldToStrHTML = {
-	VF_Main_Title__c : '<h1 class="FT_title">{0}</h1>',
+	VF_Main_Title__c : '<h1 class="FT_title">{0}</h1><br/>',
 	VF_Website_Price__c : '<h2 class="FT_heading" style="color:{0}">{1} - click <a href="javascript:void(0)" onclick="{2}">here</a> to inquire about this truck</h2>',
 	Cloud_Documents__r : ''
 }
@@ -46,7 +46,7 @@ var FT_ThemeProperties = {
 /* Javascript global variable for Bind footer element on page. */
 var FT_PageFooterStrHTML = '<div class="FT_footer" style="background:{0}">' +
 						   '	<h5 style="color:{1}">Selling A Used Fire Truck?</h5>' +
-						   '	<a href="https://www.firetruckmall.com" style="color:{2}" target="_blank">Click Here For More Information </a>' +
+						   '	<a href="https://www.firetruckmall.com/Selling-your-Used-Fire-Truck" style="color:{2}" target="_blank">Click Here For More Information </a>' +
 						   '</div>';
 
 /* Javascript variables contains CSS class in string format to for add to page. */
@@ -327,6 +327,7 @@ var FT_bindEvent = function(eventToBind, callback, elements) {
  */
 var FT_constructBackButton = function(toword) {
 	var button = document.createElement('a');
+	button.style.textAlign = "left";
 	button.innerText = '« Return ' + toword;
 	button.className='FT_backLink';
 	button.setAttribute('jData', toword);
@@ -519,6 +520,7 @@ var FT_prepareTruckDetails = function(element) {
 		FT_constructBackButton('To Truck List');
 		var truckContainer = document.createElement('div');
 		truckContainer.setAttribute('truckId', FT_TruckId);
+		truckContainer.align = "left";
 		var truckPart1Container = document.createElement('div');
 		var TruckDetailsHtml = '';
 		for(var field in FT_GlobalFieldToStrHTML) {					

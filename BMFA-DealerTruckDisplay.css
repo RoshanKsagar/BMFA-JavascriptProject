@@ -73,21 +73,21 @@
 
 @media screen and  (max-width:768px){
 	.FT_swiperContainer.FT_fR { width: 100%; position: relative; padding: 0; }	
-	ul.FT_listStyle > li{width:33.33%;}
-	ul.FT_listStyle li img{height: auto;}
-	ul.FT_category > li > div{min-height: auto;}
-	.FT_btmDiv{position: static;}
-	.FT_swiperContainer.FT_fR {  width: 100%; padding: 0;}
-	.FT_fL.FT_thumbnail{display:flex; width: 100%; overflow-y: auto;}
-	.FT_thumbnail img { width: 100%;  border: 1px solid #fff; max-height: 175px;}
-    a.FT_swiperBtn.FT_prevBtn { left: 15px;}
-	a.FT_swiperBtn.FT_nextBtn { right: 30px;}
+	ul.FT_listStyle > li { width:33.33%;}
+	ul.FT_listStyle li img { height: auto;}
+	ul.FT_category > li > div { min-height: auto;}
+	.FT_btmDiv { position: static; }
+	.FT_swiperContainer.FT_fR { width: 100%; padding: 0;}
+	.FT_fL.FT_thumbnail { display:flex; width: 100%; overflow-y: auto; }
+	.FT_thumbnail img { width: 100%;  border: 1px solid #fff; max-height: 175px; }
+    a.FT_swiperBtn.FT_prevBtn { left: 15px; }
+	a.FT_swiperBtn.FT_nextBtn { right: 30px; }
 }
             
 @media screen and  (max-width:750px){   
-	ul.FT_listStyle > li{width:100%;}
-	.FT_tab-links a{height: 100%;}
-	.FT_tab-links li{ min-width: auto;  display: table-cell;  height: 100%; float: none;}
+	ul.FT_listStyle > li { width:100%; }
+	.FT_tab-links a { height: 100%; }
+	.FT_tab-links li { min-width: auto;  display: table-cell;  height: 100%; float: none; }
 	ul.FT_tab-links { width: 100%;  display: table;}
 	.FT_fL, .FT_fR { width: 100%; padding: 0; }
 }
