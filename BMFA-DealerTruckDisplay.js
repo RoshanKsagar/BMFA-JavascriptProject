@@ -38,12 +38,13 @@ var FT_MiniDetailBottomFieldsToStrHTML = {
 	VF_Website_Price__c : '<div class="FT_blackCost">{0}</div>'
 }
 
-// this value changes as per Dealer website theam.
+// this Map values changes as per Dealer website theam.
 var FT_ThemeProperties = {
 	background : '',
 	color : ''
 }
 
+// this Map value will set as per URL parametrs value.
 var FT_URLParam = {
 	stockno : '',
 	category : ''
@@ -189,15 +190,33 @@ var FT_WebRequestHandler = {
 	}
 }
 
-
-var FT_GetURLParams = function() {
-	var url = new URL(window.location.href);
+/* A function for initialize FT_URLParam Map. */
+var FT_GetURLParams = function() {window.location.search
 	for( var param in FT_URLParam) {
-		var urlParam = url.searchParams.get(param);
-		FT_URLParam[param] = decodeURI( ((urlParam) ? urlParam : '') );
+		var urlParam = FT_GetParam(window.location.search, param);
+		FT_URLParam[param] = decodeURI( urlParam );
 	}
 }
 
+/* A function for get url parameter's value by there name.
+ * @Param urlSearch	: string url contains seach string only.
+ * @Param param		: name of url parameter.
+ */
+var FT_GetParam = function( urlSearch, param) {
+	var query = urlSearch.substring(1);
+	var value = '';
+	var vars = query.split("&");	
+	for (var i=0; i<vars.length; i++) {
+		var pair = vars[i].split("=");
+		if (pair[0] == param) {
+			value = pair[1];
+			break;
+		}
+	}
+	return value;
+}
+
+/* A function for add dynamic CSS application for variaous website themes. */
 var FT_AddDynamicCSS = function() { 
 	var DynamicCSSRow = [];
 	DynamicCSSRow.push(FT_DynamicTabCSS.FT_format([FT_ThemeProperties.background, FT_ThemeProperties.color]));
@@ -267,6 +286,9 @@ var FT_processTruckData = function(xhttp) {
 	}
 }
 
+/* A function for add Footer element. 
+ * @Param parent	: hold parent element where footer will be added.
+ */
 var FT_addPageFooter = function(parent) {
 	var FooterStrHtml = FT_PageFooterStrHTML.FT_format([FT_ThemeProperties.background, FT_ThemeProperties.color, FT_ThemeProperties.color]);
 	var div = document.createElement('div');
@@ -328,6 +350,9 @@ var FT_expandCategory = function(element) {
 	}	
 }
 
+/* A function for get truck id by it's stockno. 
+ * @Param stockno	: holding truck stockno as a string.
+ */
 var FT_GetTruckIdByStockNo = function(stockno) {
 	var trucjId = '';
 	FT_getBMFAStorage()['All Used Trucks'].forEach(function(truck) {
@@ -457,6 +482,9 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 	return TruckImageContainer.appendChild(ul);;
 }
 
+/* A function handles click event of other imgaes of same truck. 
+ * @Param element	: DOM-element holding button which is clicked(next or previous).
+ */	
 var FT_swiperClickHandler = function(element) {
 	var parentElement = element.parentNode;
 	var currentImg = parentElement.getElementsByTagName('img')[0].className.split(' ')[1];
@@ -491,6 +519,9 @@ var FT_swiperClickHandler = function(element) {
 	}
 }
 
+/* A function handles click event of other imgaes of same truck.
+ * @Param element	: DOM-element holding image of same truck.
+ */
 var FT_ImgClickHandler = function(element) {
 	var mainImgParent = element.parentNode.previousSibling;
 	var mainImgContainer = mainImgParent.getElementsByTagName('img')[0];
@@ -510,6 +541,10 @@ var FT_ImgClickHandler = function(element) {
 	}
 }
 
+/* A function for add images for selected truck.
+ * @Param ParentNode	: DOM-element inside which all truck images will be added.
+ * @Param ImageList		: list of object holding images/image-paths.
+ */
 var FT_addTruckImages = function(ParentNode, ImageList) {
 	var swiperContainer = document.createElement('div');
 	swiperContainer.className = 'FT_swiperContainer FT_fR';
@@ -773,7 +808,7 @@ var FT_addInetrestFrom = function() {
 	return tab2Div;
 }
 
-/* A function to add ------- to DOM. */
+/* A function to add share link tab to DOM. */
 var FT_addShareLinkTab = function() {
 	var tab3Div = document.createElement('div');
 	tab3Div.id = FT_tab3Id;
@@ -791,15 +826,22 @@ var FT_addShareLinkTab = function() {
 	//a.href = a.innerHTML;
 	tab3Div.appendChild(a);
 	
+	var br = document.createElement('br');
+	tab3Div.appendChild(br);
+	
 	var copyBtn = document.createElement('a');
 	copyBtn.className += 'copyBtn';
 	copyBtn.innerHTML = 'Copy';
+	copyBtn.style.cursor = 'pointer';
 	copyBtn.setAttribute('containerId', a.id);
 	tab3Div.appendChild(copyBtn);
 	
 	return tab3Div;
 }
 
+/* A function for copy link text to clipboard.
+ * @Param element	: DOM-element which's inner html will be copied.
+ */
 var FT_CopyInnerText = function(element) {
 	var sel, range;
 	var id = element.getAttribute('containerId');
@@ -820,6 +862,11 @@ var FT_CopyInnerText = function(element) {
 	}
 }
 
+/* A function for set URL parameter for being copied.
+ * @Param url			: URL in string format which going to updated.
+ * @Param paramName		: Holding URL Parameter Name which we want to set.
+ * @Param paramValue	: Holding URL Parameter value which we want to set.
+ */
 var FT_SetURLParam = function(url, paramName, paramValue) {
     var hash = location.hash;
     url = url.replace(hash, '');
@@ -864,6 +911,9 @@ var FT_processNumberEntry = function(element) {
 	}
 }
 
+/* A function for reset page message.
+ * @Param element	: DOM element under which page messages are displayed.
+ */
 var FT_clearFormMessage = function(element) {
 	var messageContainer = document.getElementById('messageContainerId');
 	messageContainer.innerHTML = '';
@@ -1022,7 +1072,7 @@ var FT_createTabs = function() {
 	
 	return ul;
 }
-
+/* Method for clear DOM. */
 var FT_clearContainerDom = function() {
 	while (FT_BMFA_TruckContainer.hasChildNodes()) {
 		FT_BMFA_TruckContainer.removeChild(FT_BMFA_TruckContainer.lastChild);
