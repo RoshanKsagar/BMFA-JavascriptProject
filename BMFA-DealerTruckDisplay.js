@@ -37,22 +37,17 @@ var FT_MiniDetailBottomFieldsToStrHTML = {
 	VF_Additional_Pricing_Text__c : '<div>{0}</div>',
 	VF_Website_Price__c : '<div class="FT_blackCost">{0}</div>'
 }
+
 // this value changes as per Dealer website theam.
 var FT_ThemeProperties = {
 	background : '',
 	color : ''
 }
 
-/* Javascript global variable for Bind footer element on page. */
-var FT_PageFooterStrHTML = '<div class="FT_footer" style="background:{0}">' +
-						   '	<h5 style="color:{1}">Selling A Used Fire Truck?</h5>' +
-						   '	<a href="https://www.firetruckmall.com/Selling-your-Used-Fire-Truck" style="color:{2}" target="_blank">Click Here For More Information </a>' +
-						   '</div>';
-
-/* Javascript variables contains CSS class in string format to for add to page. */
-var FT_DynamicTabCSS = 'li.FT_active a, li.FT_active a:hover { background: {0}; color: {1}; }'
-var FT_DynamicNxtBtnCSS = 'a.FT_swiperBtn.FT_nextBtn:before { content: ""; border: solid {0}; border-width: 0 3px 3px 0; position: absolute; border-radius: 3px; left: 10px;';
-var FT_DynamicPrvBtnCSS = 'a.FT_swiperBtn.FT_prevBtn:before { content: ""; border: solid {0}; border-width: 0 3px 3px 0; position: absolute; border-radius: 3px; left: 10px;';
+var FT_URLParam = {
+	stockno : '',
+	category : ''
+}
 
 /* Javascript Map for Bind Truck Details(HTML) Tab content dynamically with respective field data of truck. */
 var FT_DetailFieldToStrHTML = {
@@ -129,12 +124,25 @@ var FT_DetailFieldToStrHTML = {
 	'Additional_Dimension_Info__c' : '{0}<br/>'
 };
 
+/* Javascript global variable for Bind footer element on page. */
+var FT_PageFooterStrHTML = '<div class="FT_footer" style="background:{0}">' +
+						   '	<h5 style="color:{1}">Selling A Used Fire Truck?</h5>' +
+						   '	<a href="https://www.firetruckmall.com/Selling-your-Used-Fire-Truck" style="color:{2}" target="_blank">Click Here For More Information </a>' +
+						   '</div>';
+
+/* Javascript variables contains CSS class in string format to for add to page. */
+var FT_DynamicTabCSS = 'li.FT_active a, li.FT_active a:hover { background: {0}; color: {1}; }'
+var FT_DynamicNxtBtnCSS = 'a.FT_swiperBtn.FT_nextBtn:before { content: ""; border: solid {0}; border-width: 0 3px 3px 0; position: absolute; border-radius: 3px; left: 10px;';
+var FT_DynamicPrvBtnCSS = 'a.FT_swiperBtn.FT_prevBtn:before { content: ""; border: solid {0}; border-width: 0 3px 3px 0; position: absolute; border-radius: 3px; left: 10px;';
+
 var FT_BMFA_TruckContainer;
 var FT_lastCategorySelected;
+var FT_lastTruckSelected;
 var FT_isLocalStorageSupport = (typeof(Storage) !== "undefined");
 var FT_defaultTruckImageKey = 'Default';
 var FT_tab1Id = 'descriptionTab';
 var FT_tab2Id = 'inquiryTab';
+var FT_tab3Id = 'shareLinkTab';
 var FT_emailRegex =  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 var FT_phoneRegex =  /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
 
@@ -181,6 +189,15 @@ var FT_WebRequestHandler = {
 	}
 }
 
+
+var FT_GetURLParams = function() {
+	var url = new URL(window.location.href);
+	for( var param in FT_URLParam) {
+		var urlParam = url.searchParams.get(param);
+		FT_URLParam[param] = decodeURI( ((urlParam) ? urlParam : '') );
+	}
+}
+
 var FT_AddDynamicCSS = function() { 
 	var DynamicCSSRow = [];
 	DynamicCSSRow.push(FT_DynamicTabCSS.FT_format([FT_ThemeProperties.background, FT_ThemeProperties.color]));
@@ -208,6 +225,7 @@ var FT_AddDynamicCSS = function() {
  * - A div having id 'dealerTruckContainerId', must be present on DOM.
  */
 var FT_loadTruckData = function() {
+	FT_GetURLParams();
 	FT_BMFA_TruckContainer = document.getElementById('dealerTruckContainerId');
 	FT_DealerAccointId = FT_BMFA_TruckContainer.getAttribute('accountId');
 	var style = getComputedStyle(FT_BMFA_TruckContainer);
@@ -230,7 +248,13 @@ var FT_processTruckData = function(xhttp) {
 				var trucks = JSON.parse(serverResponse.Data);
 				if(trucks.length) {
 					FT_prepareTruckTypeMap(trucks);
-					FT_displayCategories( FT_getBMFAStorage() );
+					if(FT_URLParam.category) {
+						var div = document.createElement('div');
+						div.setAttribute('category', (( FT_URLParam.category in FT_getBMFAStorage() ) ? FT_URLParam.category : 'All Used Trucks' ));
+						FT_expandCategory( div );
+					} else {
+						FT_displayCategories( FT_getBMFAStorage() );
+					}
 				} else {
 					
 				}						
@@ -277,7 +301,7 @@ var FT_getBMFAStorage = function() {
 }
 
 /* A function for expand purticuler category. 
- * @Param element	: holding instance of catagory DOM-element that is currently selected by User.
+ * @Param element	: holding instance of category DOM-element that is currently selected by User.
  */
 var FT_expandCategory = function(element) {
 	var category = element.getAttribute('category');
@@ -293,6 +317,25 @@ var FT_expandCategory = function(element) {
 	
 	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('img'));
 	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('a.FT_redBtn'));	
+	
+	if(FT_URLParam.stockno && !FT_lastTruckSelected) {
+		var div = document.createElement('div');
+		var truckId = FT_GetTruckIdByStockNo(FT_URLParam.stockno);
+		div.setAttribute('truckId', truckId);
+		if(truckId) {
+			FT_prepareTruckDetails( div );
+		}		
+	}	
+}
+
+var FT_GetTruckIdByStockNo = function(stockno) {
+	var trucjId = '';
+	FT_getBMFAStorage()['All Used Trucks'].forEach(function(truck) {
+		if(truck['Stock_Number__c'] === stockno) {
+			truckId = truck.Id;
+		}
+	});
+	return truckId;
 }
 
 /* A function for display all possible categories. 
@@ -307,7 +350,7 @@ var FT_displayCategories = function(truckTypeMap) {
 	FT_BMFA_TruckContainer.appendChild( FT_prepareImageContainer(true, truckTypeMap, 'FT_category') );
 	FT_addPageFooter(FT_BMFA_TruckContainer);
 	
-	FT_bindEvent('click', FT_expandCategory, FT_BMFA_TruckContainer.querySelectorAll('img'));
+	FT_bindEvent('click', FT_expandCategory, FT_BMFA_TruckContainer.querySelectorAll('img'));	
 }
 
 /* A function bind click events on DOM elements. 
@@ -516,6 +559,12 @@ var FT_prepareTruckDetails = function(element) {
 		return (isFound = (truck.Id === FT_TruckId));
 	});
 	if(isFound) {
+		
+		FT_URLParam.stockno = selectedTruck['Stock_Number__c'];
+		var isValidCategory = ( FT_URLParam.category && (selectedTruck['apparatusType__c'].indexOf(FT_URLParam.category) > -1) );
+		FT_URLParam.category = (isValidCategory ? FT_URLParam.category : FT_lastCategorySelected.getAttribute('category'));
+		
+		FT_lastTruckSelected = selectedTruck;
 		FT_clearContainerDom();
 		FT_constructBackButton('To Truck List');
 		var truckContainer = document.createElement('div');
@@ -617,10 +666,16 @@ var FT_displayTabs = function(parentNode, selectedTruck) {
 	tab1Div.innerHTML = truckDetailsHtml;
 	contentDiv.appendChild( tab1Div );	
 	// Adding From for user interest(tab2).
-	contentDiv.appendChild( FT_addInetrestFrom() );
+	var tab2 = FT_addInetrestFrom();
+	contentDiv.appendChild( tab2 );
+	// Adding Share Link Tab(tab3).
+	var tab3 = FT_addShareLinkTab();
+	contentDiv.appendChild( tab3 );
+	
 	TruckDetailsContainer.appendChild( contentDiv );
 	parentNode.appendChild( TruckDetailsContainer )
 	FT_bindEvent('click', FT_tabClickHandling, tabs.getElementsByTagName('a'));
+	FT_bindEvent('click', FT_CopyInnerText, tab3.getElementsByClassName('copyBtn'));
 }
 
 /* A function to add Intrest form to DOM. */
@@ -716,6 +771,74 @@ var FT_addInetrestFrom = function() {
 	tab2Div.appendChild(submitButton);
 	FT_bindEvent('click', FT_submitEnquiry, [submitButton]);
 	return tab2Div;
+}
+
+/* A function to add ------- to DOM. */
+var FT_addShareLinkTab = function() {
+	var tab3Div = document.createElement('div');
+	tab3Div.id = FT_tab3Id;
+	tab3Div.style.display = 'none';
+	tab3Div.className = 'FT_gryTxt';
+	
+	var a = document.createElement('a');
+	a.id = 'linkContainerId';
+	var url = new URL(window.location.href);
+	a.innerHTML = window.location.href;
+	for(var param in FT_URLParam) {
+		a.innerHTML = FT_SetURLParam(a.innerHTML, param, FT_URLParam[param] );
+	}
+	a.innerHTML = decodeURI(a.innerHTML);
+	//a.href = a.innerHTML;
+	tab3Div.appendChild(a);
+	
+	var copyBtn = document.createElement('a');
+	copyBtn.className += 'copyBtn';
+	copyBtn.innerHTML = 'Copy';
+	copyBtn.setAttribute('containerId', a.id);
+	tab3Div.appendChild(copyBtn);
+	
+	return tab3Div;
+}
+
+var FT_CopyInnerText = function(element) {
+	var sel, range;
+	var id = element.getAttribute('containerId');
+	var el = document.getElementById(id); //get element id
+	if (window.getSelection && document.createRange) { //Browser compatibility
+		sel = window.getSelection();
+		range = document.createRange(); //range object
+		range.selectNodeContents(el); //sets Range
+		sel.removeAllRanges(); //remove all ranges from selection
+		sel.addRange(range);//add Range to a Selection.
+		document.execCommand('copy');
+	} else if (document.selection) { //older ie
+		sel = document.selection.createRange();
+		range = document.body.createTextRange();//Creates TextRange object
+		range.moveToElementText(el);//sets Range
+		range.select(); //make selection.
+		document.execCommand('copy');
+	}
+}
+
+var FT_SetURLParam = function(url, paramName, paramValue) {
+    var hash = location.hash;
+    url = url.replace(hash, '');
+    if (url.indexOf(paramName + "=") >= 0)
+    {
+        var prefix = url.substring(0, url.indexOf(paramName));
+        var suffix = url.substring(url.indexOf(paramName));
+        suffix = suffix.substring(suffix.indexOf("=") + 1);
+        suffix = (suffix.indexOf("&") >= 0) ? suffix.substring(suffix.indexOf("&")) : "";
+        url = prefix + paramName + "=" + paramValue + suffix;
+    }
+    else
+    {
+    if (url.indexOf("?") < 0)
+        url += "?" + paramName + "=" + paramValue;
+    else
+        url += "&" + paramName + "=" + paramValue;
+    }
+    return  (url + hash);
 }
 
 /* A function to validate and mask the phone number.
@@ -888,6 +1011,14 @@ var FT_createTabs = function() {
 	a2.name = FT_tab2Id;
 	li2.appendChild(a2);
 	ul.appendChild(li2);
+	
+	var li3 = document.createElement('li');
+	var a3 = document.createElement('a');
+	a3.innerHTML = 'LINK TO SHARE';
+	a3.href = '#detailsTabId';
+	a3.name = FT_tab3Id;
+	li3.appendChild(a3);
+	ul.appendChild(li3);
 	
 	return ul;
 }
