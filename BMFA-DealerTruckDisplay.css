@@ -18,7 +18,7 @@
 	ul.FT_listStyle li img { width: 100%; height: 150px; cursor: pointer; }
 	.FT_redTxt { padding:5px 0 7px; font-weight: 600; }
 	.FT_gryTxtbox { min-height:150px; }
-	ul.FT_listStyle > li > div { background: #f4f4f4; min-height: 365px; padding: 10px; border: 1px solid #eaeaea; position: relative; }
+	ul.FT_listStyle > li > div { background: #f4f4f4; height: 365px; padding: 10px; border: 1px solid #eaeaea; position: relative; }
 	a.FT_redBtn { width: 100%; text-decoration: none; cursor: pointer; display: block; padding: 8px; border-radius: 3px; margin: 5px 0 0;}
 	a.FT_redBtn:hover { text-decoration:none; background:rgba(122, 3, 3, 0.82); }
 	FT_blackCost { color:#000; padding: 0 0 10px; }
@@ -41,7 +41,7 @@
 	.FT_successMsg { border: 1px solid #fff; display: inline-block; width: 100%; max-width: 300px; padding: 10px; border-left: 3px solid green; background: #fff; border-radius: 3px; margin: 0 auto 15px; box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.09); position: relative; }
 	.FT_closeBtn:before { content: '+'; position: absolute; right: 10px; transform: rotate(45deg); color: #333333; font-size: 18px; line-height: 15px; cursor: pointer; text-decoration:none; }
 	a.FT_closeBtn { width: 15px;  height: 15px;}
-	.FT_PageTitle { font-size: 30px; font-weight: 600; text-align: center; }
+	.FT_PageTitle { font-size: 30px; font-weight: 600; text-align: center;     padding: 15px 10px 10px; }
 	.FT_formTitle { font-size: 20px; color: black; font-weight: 600; padding: 9px 0px; }
 	.FT_clr { clear: both;}
 	.FT_thumbnail img { width: 33.33%; border: 1px solid #fff; vertical-align: top; max-height: 120px; height: 100%;}
@@ -68,7 +68,12 @@
     .FT_footer:after, .FT_footer:before { content: ''; background: #fff; width: 20px; height: 20px; position: absolute; top: 20px; }
     .FT_footer:before { left: 20px; }
     .FT_footer:after { right: 20px; }
-    .FT_bldTxt { height: 35px; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 19px; }    
+    .FT_bldTxt { height: 35px; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 19px; } 
+	
+	/*****************COPY LINK *******************/
+	.FT_copyLinkDiv:before { content: ''; border: 8px solid transparent; border-left: 8px solid rgb(122, 3, 3); position: absolute; right: -16px; top: 5px;}
+	.FT_copyLinkDiv { position: fixed; background: rgb(122, 3, 3); width: 150px; height: 50px; border: 1px solid rgb(122, 3, 3); z-index: 99; right: 10px; top: 50%; border-radius: 3px; }
+	a.copyBtn { color: #000; text-decoration: underline; }
 }
 
 @media screen and  (max-width:768px){

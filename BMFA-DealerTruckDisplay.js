@@ -636,6 +636,10 @@ var FT_prepareTruckDetails = function(element) {
 		FT_BMFA_TruckContainer.appendChild(truckContainer);
 		FT_bindEvent('click', FT_swiperClickHandler, FT_BMFA_TruckContainer.getElementsByClassName('FT_swiperBtn'));
 		FT_bindEvent('click', FT_ImgClickHandler, FT_BMFA_TruckContainer.getElementsByClassName('FT_TruckImg'));
+		
+		var shareLinkDiv = document.createElement('div');
+		shareLinkDiv.className += 'FT_copyLinkDiv';
+		FT_BMFA_TruckContainer.appendChild(shareLinkDiv);
 		FT_displayTabs(truckContainer, selectedTruck);		
 	}
 	FT_addPageFooter(FT_BMFA_TruckContainer);
