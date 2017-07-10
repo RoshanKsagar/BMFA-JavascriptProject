@@ -26,7 +26,7 @@
 
 	ul.FT_category > li > div { background: none; min-height: 220px; padding: 0; border: 0 none; position: relative; }
 	.FT_imgDiv { cursor: pointer; width:100%; height:150px; box-shadow:1px 1px 3px rgba(0, 0, 0, 0.25); }
-	.FT_btmDiv > div {  font-weight: 600;}
+	.FT_btmDiv > div {  font-weight: 600; height: 38px; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 19px;}
 	.FT_title { color: #333333; background: none; font-size: 35px; padding: 0; margin: 0 0 15px; }
 	.FT_heading { font-size:25px; font-weight:600; padding:0 0 25px; }
 	.FT_backLink { color:#333333; display:block; padding:7px; background:#f4f4f4; margin: 0 0 25px; cursor: pointer; } 
@@ -51,7 +51,7 @@
 	.FT_nextBtn { cursor: pointer; text-decoration:none; }
 	.FT_swiperContainer img {width: 100%; height: 450px;}
 	a.FT_swiperBtn { background: rgba(255, 255, 255, 0.91); position: absolute; top: 50%; width: 30px; height: 30px; border-radius: 100px; box-shadow: 0px 0px 0 3px rgba(0, 0, 0, 0.31); font-size: 0; text-align: center; line-height: 30px;    margin-top: -15px; }
-
+	.FT_btmDiv > div { font-weight: 600; height: 37px; overflow: hidden; text-overflow: ellipsis; -webkit-line-clamp: 1; -webkit-box-orient: vertical; line-height: 19px; }
 	a.FT_swiperBtn.FT_prevBtn { left: 15px;}
 	a.FT_swiperBtn.FT_nextBtn { right: 30px;}
 	a.FT_swiperBtn.FT_prevBtn:before { content: ''; border: solid #7a0303; border-width: 0 3px 3px 0; position: absolute; border-radius: 3px; left: 10px; top: 10px; padding: 3px; transform: rotate(135deg);box-shadow: 1px 1px 0px 0px rgba(150, 146, 146, 0.41); transition: all 0.4s ease;}
@@ -71,9 +71,13 @@
     .FT_bldTxt { height: 35px; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 19px; } 
 	
 	/*****************COPY LINK *******************/
-	.FT_copyLinkDiv:before { content: ''; border: 8px solid transparent; border-left: 8px solid rgb(122, 3, 3); position: absolute; right: -16px; top: 5px;}
+	/*.FT_copyLinkDiv:before { content: ''; border: 8px solid transparent; border-left: 8px solid rgb(122, 3, 3); position: absolute; right: -16px; top: 5px;}
 	.FT_copyLinkDiv { position: fixed; background: rgb(122, 3, 3); width: 150px; height: 50px; border: 1px solid rgb(122, 3, 3); z-index: 99; right: 10px; top: 50%; border-radius: 3px; }
 	a.copyBtn { color: #000; text-decoration: underline; }
+	*/
+	/****************Common Css****************/
+	ul li, ol li{margin-left: 0;}
+	ol, ul{margin:0;}
 }
 
 @media screen and  (max-width:768px){

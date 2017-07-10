@@ -1082,3 +1082,4 @@ var FT_clearContainerDom = function() {
 		FT_BMFA_TruckContainer.removeChild(FT_BMFA_TruckContainer.lastChild);
 	}
 }
+}
