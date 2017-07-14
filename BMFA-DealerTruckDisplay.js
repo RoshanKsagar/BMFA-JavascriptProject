@@ -1,5 +1,6 @@
 /* Javascript Map for Bind Truck Apparatus Type to respective public image path. */
 var FT_truckTypeImageUrl = {
+	'FooterBellImg':'https://brindlee--c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000003fIoK&oid=00Do0000000JLLE&lastMod=1499264854000',
 	'Default' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000003exvn&oid=00Do0000000JLLE&lastMod=1497451382000',
 	'All Used Trucks' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Wht1&oid=00Do0000000JLLE&lastMod=1495568542000',
 	'Rescue Pumpers and Engines' : 'https://c.na78.content.force.com/servlet/servlet.ImageServer?id=0151N000002Whtz&oid=00Do0000000JLLE&lastMod=1495568876000',
@@ -127,6 +128,8 @@ var FT_DetailFieldToStrHTML = {
 
 /* Javascript global variable for Bind footer element on page. */
 var FT_PageFooterStrHTML = '<div class="FT_footer" style="background:{0}">' +
+						   '	<img src="'+FT_truckTypeImageUrl['FooterBellImg']+'" class="FT_imgfL"/>'+
+						   '	<img src="'+FT_truckTypeImageUrl['FooterBellImg']+'" class="FT_imgfR"/>'+
 						   '	<h5 style="color:{1}">Selling A Used Fire Truck?</h5>' +
 						   '	<a href="https://www.firetruckmall.com/Selling-your-Used-Fire-Truck" style="color:{2}" target="_blank">Click Here For More Information </a>' +
 						   '</div>';
@@ -725,7 +728,7 @@ var FT_addInetrestFrom = function() {
 		'Phone':'input',
 		'Email':'input',
 		'Purchase Timeframe':'select',
-		'Make An Offer':'input',
+		//'Make An Offer':'div',
 		'City':'input',
 		'State':'select',
 		'Inquiry Message':'textarea'
@@ -737,7 +740,7 @@ var FT_addInetrestFrom = function() {
 		'Phone':'FT_input FT_required FT_phone',
 		'Email':'FT_input FT_required FT_email',
 		'Purchase Timeframe':'FT_input FT_required',
-		'Make An Offer':'FT_input FT_required',
+		//'Make An Offer':'',
 		'City':'FT_input FT_required',
 		'State':'FT_input FT_required',
 		'Inquiry Message':'FT_input FT_required'

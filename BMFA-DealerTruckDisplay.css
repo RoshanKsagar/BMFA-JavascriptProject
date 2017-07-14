@@ -19,6 +19,7 @@
 	.FT_redTxt { padding:5px 0 7px; font-weight: 600; }
 	.FT_gryTxtbox { min-height:150px; }
 	ul.FT_listStyle > li > div { background: #f4f4f4; height: 365px; padding: 10px; border: 1px solid #eaeaea; position: relative; }
+	ul.FT_listStyle.FT_category > li > div { height: auto; }
 	a.FT_redBtn { width: 100%; text-decoration: none; cursor: pointer; display: block; padding: 8px; border-radius: 3px; margin: 5px 0 0;}
 	a.FT_redBtn:hover { text-decoration:none; background:rgba(122, 3, 3, 0.82); }
 	FT_blackCost { color:#000; padding: 0 0 10px; }
@@ -63,11 +64,9 @@
 	.FT_ThemeContainer { background-color: #7a0303; color: #fff; }
     li .FT_gryTxt { color: #666; padding: 0 0 7px; display: -webkit-box; max-width: 400px; height: 60px; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 19px;     margin-bottom: 80px; }
     .FT_footer > h5 { font-size: 25px; font-weight: 500; }
-    .FT_footer { padding: 15px; text-align: center; }
+    .FT_footer { padding: 15px 25px; text-align: center; }
     .FT_footer a { font-size: 19px; display: block; padding: 10px 0 0; }
-    .FT_footer:after, .FT_footer:before { content: ''; background: #fff; width: 20px; height: 20px; position: absolute; top: 20px; }
-    .FT_footer:before { left: 20px; }
-    .FT_footer:after { right: 20px; }
+    
     .FT_bldTxt { height: 35px; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 19px; } 
 	
 	/*****************COPY LINK *******************/
@@ -78,6 +77,9 @@
 	/****************Common Css****************/
 	ul li, ol li{margin-left: 0;}
 	ol, ul{margin:0;}
+	.FT_imgfR{float:right; max-width:35px;}
+	.FT_imgfL{float:left; max-width:35px;}
+	
 }
 
 @media screen and  (max-width:768px){
