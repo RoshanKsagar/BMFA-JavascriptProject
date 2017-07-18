@@ -130,7 +130,7 @@ var FT_DetailFieldToStrHTML = {
 var FT_PageFooterStrHTML = '<div class="FT_footer" style="background:{0}">' +
 						   '	<img src="'+FT_truckTypeImageUrl['FooterBellImg']+'" class="FT_imgfL"/>'+
 						   '	<img src="'+FT_truckTypeImageUrl['FooterBellImg']+'" class="FT_imgfR"/>'+
-						   '	<h5 style="color:{1}">Selling A Used Fire Truck?</h5>' +
+						   '	<h5 style="color:{1}" class="FT_footerHead">Selling A Used Fire Truck?</h5>' +
 						   '	<a href="https://www.firetruckmall.com/Selling-your-Used-Fire-Truck" style="color:{2}" target="_blank">Click Here For More Information </a>' +
 						   '</div>';
 
@@ -482,7 +482,7 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 			ul.appendChild(li);
 		}
 	}	
-	return TruckImageContainer.appendChild(ul);
+	return TruckImageContainer.appendChild(ul);;
 }
 
 /* A function handles click event of other imgaes of same truck. 
@@ -824,6 +824,7 @@ var FT_addShareLinkTab = function() {
 	
 	var a = document.createElement('a');
 	a.id = 'linkContainerId';
+	var url = new URL(window.location.href);
 	a.innerHTML = window.location.href;
 	for(var param in FT_URLParam) {
 		a.innerHTML = FT_SetURLParam(a.innerHTML, param, FT_URLParam[param] );
