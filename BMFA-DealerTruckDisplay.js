@@ -249,6 +249,7 @@ var FT_AddDynamicCSS = function() {
 var FT_loadTruckData = function() {
 	FT_GetURLParams();
 	FT_BMFA_TruckContainer = document.getElementById('dealerTruckContainerId');
+	FT_BMFA_TruckContainer.innerHTML = '<div class="bgBlack" id="FT_loader"><div class="whtieBg"><div class="loader"></div></div></div>';
 	FT_DealerAccointId = FT_BMFA_TruckContainer.getAttribute('accountId');
 	var style = getComputedStyle(FT_BMFA_TruckContainer);
 	FT_ThemeProperties.background = style.backgroundColor;
@@ -277,6 +278,7 @@ var FT_processTruckData = function(xhttp) {
 					} else {
 						FT_displayCategories( FT_getBMFAStorage() );
 					}
+
 				} else {
 					
 				}						
@@ -285,7 +287,7 @@ var FT_processTruckData = function(xhttp) {
 			}
 		} catch(exp) {
 			console.log('Parsing Error Message : ', exp.message);
-		}		
+		}
 	}
 }
 
@@ -1013,7 +1015,7 @@ var FT_submitEnquiry = function() {
 		JSON_Buffer['TruckId'] = FT_TruckId;
 		
 		console.log(JSON_Buffer);
-		
+		FT_BMFA_TruckContainer.innerHTML = '<div class="bgBlack FT_loader" id="FT_loader"><div class="whtieBg"><div class="loader"></div></div></div>';
 	    FT_WebRequestHandler.postRequest(JSON.stringify(JSON_Buffer), function(xhttp) {
 			console.log(xhttp);
 			if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
@@ -1024,6 +1026,7 @@ var FT_submitEnquiry = function() {
 					console.log(serverResponse.Message);
 					FT_setMessage(false, 'Something Went Wrong. Please Contact Admin!');
 				}
+				FT_BMFA_TruckContainer.getElementsByClassName('FT_loader')[0].style.display = 'none';
 			}
 		});
 	}
