@@ -482,7 +482,7 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 			ul.appendChild(li);
 		}
 	}	
-	return TruckImageContainer.appendChild(ul);;
+	return TruckImageContainer.appendChild(ul);
 }
 
 /* A function handles click event of other imgaes of same truck. 
@@ -824,7 +824,6 @@ var FT_addShareLinkTab = function() {
 	
 	var a = document.createElement('a');
 	a.id = 'linkContainerId';
-	var url = new URL(window.location.href);
 	a.innerHTML = window.location.href;
 	for(var param in FT_URLParam) {
 		a.innerHTML = FT_SetURLParam(a.innerHTML, param, FT_URLParam[param] );
