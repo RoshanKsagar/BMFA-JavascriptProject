@@ -133,6 +133,7 @@ var FT_PageFooterStrHTML = '<div class="FT_footer" style="background:{0}">' +
 						   '	<h5 style="color:{1}" class="FT_footerHead">Selling A Used Fire Truck?</h5>' +
 						   '	<a href="https://www.firetruckmall.com/Selling-your-Used-Fire-Truck" style="color:{2}" target="_blank">Click Here For More Information </a>' +
 						   '</div>';
+var FT_LoaderHtml = '<div class="FT_container"><div class="bgBlack FT_loader" id="FT_loader"><div class="whtieBg"><div class="loader"></div></div></div></div>';
 
 /* Javascript variables contains CSS class in string format to for add to page. */
 var FT_DynamicTabCSS = 'li.FT_active a, li.FT_active a:hover { background: {0}; color: {1}; }'
@@ -249,7 +250,7 @@ var FT_AddDynamicCSS = function() {
 var FT_loadTruckData = function() {
 	FT_GetURLParams();
 	FT_BMFA_TruckContainer = document.getElementById('dealerTruckContainerId');
-	FT_BMFA_TruckContainer.innerHTML = '<div class="bgBlack" id="FT_loader"><div class="whtieBg"><div class="loader"></div></div></div>';
+	FT_BMFA_TruckContainer.innerHTML = FT_LoaderHtml;
 	FT_DealerAccointId = FT_BMFA_TruckContainer.getAttribute('accountId');
 	var style = getComputedStyle(FT_BMFA_TruckContainer);
 	FT_ThemeProperties.background = style.backgroundColor;
@@ -1035,7 +1036,8 @@ var FT_submitEnquiry = function() {
 		JSON_Buffer['TruckId'] = FT_TruckId;
 		
 		console.log(JSON_Buffer);
-		FT_BMFA_TruckContainer.innerHTML = '<div class="bgBlack FT_loader" id="FT_loader"><div class="whtieBg"><div class="loader"></div></div></div>';
+
+		FT_BMFA_TruckContainer.innerHTML = FT_LoaderHtml;
 	    FT_WebRequestHandler.postRequest(JSON.stringify(JSON_Buffer), function(xhttp) {
 			console.log(xhttp);
 			if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
