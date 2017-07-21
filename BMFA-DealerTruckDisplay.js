@@ -133,7 +133,7 @@ var FT_PageFooterStrHTML = '<div class="FT_footer" style="background:{0}">' +
 						   '	<h5 style="color:{1}" class="FT_footerHead">Selling A Used Fire Truck?</h5>' +
 						   '	<a href="https://www.firetruckmall.com/Selling-your-Used-Fire-Truck" style="color:{2}" target="_blank">Click Here For More Information </a>' +
 						   '</div>';
-var FT_LoaderHtml = '<div class="FT_container"><div class="bgBlack FT_loader" id="FT_loader"><div class="whtieBg"><div class="loader"></div></div></div></div>';
+var FT_LoaderHtml = '<div class="FT_container FT_loaderContainer"><div class="bgBlack FT_loader" id="FT_loader"><div class="whtieBg"><div class="loader"></div></div></div></div>';
 
 /* Javascript variables contains CSS class in string format to for add to page. */
 var FT_DynamicTabCSS = 'li.FT_active a, li.FT_active a:hover { background: {0}; color: {1}; }'
