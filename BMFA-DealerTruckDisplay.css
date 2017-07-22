@@ -29,7 +29,7 @@
 	.FT_imgDiv { cursor: pointer; width:100%; height:150px; box-shadow:1px 1px 3px rgba(0, 0, 0, 0.25); }
 	/*.FT_btmDiv > div {  font-weight: 600; height: 38px; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 19px;}*/
 	.FT_title { color: #333333; background: none; font-size: 35px; padding: 0; margin: 0 0 15px; }
-	.FT_heading { font-size:25px; font-weight:600; padding:0 0 25px; }
+	.FT_heading { font-size:25px; font-weight:600; padding:0 0 25px; display:block; }
 	.FT_backLink { color:#333333; display:block; padding:7px;  margin: 0 0 25px; cursor: pointer; font: 700 1.3em/0 Georgia,"Times New Roman",Times,serif; color: #B40000;} 
 	.FT_bigTxt{font-size: 16px;}
 	.FT_spaceBtm{margin-bottom:20px;}
@@ -100,7 +100,7 @@
 	.FT_btmDiv { position: static; }
 	.FT_swiperContainer.FT_fR { width: 100%; padding: 0;}
 	.FT_fL.FT_thumbnail { display:flex; width: 100%; overflow-y: auto; }
-	.FT_thumbnail img { width: 100%;  border: 1px solid #fff; max-height: 175px; }
+	.FT_thumbnail img { max-width: 175px; border: 1px solid #fff; max-height: 175px; width: 100%; }
     a.FT_swiperBtn.FT_prevBtn { left: 15px; }
 	a.FT_swiperBtn.FT_nextBtn { right: 30px; }
 }
@@ -112,5 +112,6 @@
 	ul.FT_tab-links { width: 100%;  display: table;}
 	.FT_fL, .FT_fR { width: 100%; padding: 0; }
 	ul.FT_listStyle > li > div {   height: 100%;  } 
-	li .FT_gryTxt {   height: auto; -webkit-line-clamp: inherit; -webkit-box-orient: vertical; overflow: auto; text-overflow: inherit; line-height: normal; margin: 0; }
+	li .FT_gryTxt {   max-width: 100%;height: auto; -webkit-line-clamp: inherit; -webkit-box-orient: vertical; overflow: auto; text-overflow: inherit; line-height: normal; margin: 0; }
+	.FT_heading{padding: 10px 0 25px;}
 }
