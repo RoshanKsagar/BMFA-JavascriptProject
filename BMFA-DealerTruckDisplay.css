@@ -89,6 +89,7 @@
 	.bgBlack{position:fixed; top:0; bottom:0 ;left:0;right:0; background:rgba(0, 0, 0, 0.38); z-index: 9001;}
 	.FT_container .bgBlack { position: relative; /*top: 0; bottom: 0; left: 0; right: 0;*/ background: rgba(0, 0, 0, 0.08); z-index: 99; width: 100%; height: 100%;}
 	.FT_loaderContainer {height:100px;width: 100%;}
+	h2.FT_heading > a { font-size: 25px;}
 	
 }
 
