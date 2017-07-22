@@ -856,8 +856,8 @@ var FT_addShareLinkTab = function() {
 	//a.href = a.innerHTML;
 	tab3Div.appendChild(a);
 	
-	var br = document.createElement('br');
-	tab3Div.appendChild(br);
+	/*var br = document.createElement('br');
+	tab3Div.appendChild(br);*/
 	
 	var copyBtn = document.createElement('a');
 	copyBtn.className += 'copyBtn';

@@ -74,7 +74,7 @@
 	.FT_copyLinkDiv { position: fixed; background: rgb(122, 3, 3); width: 150px; height: 50px; border: 1px solid rgb(122, 3, 3); z-index: 99; right: 10px; top: 50%; border-radius: 3px; }
 	a.copyBtn { color: #000; text-decoration: underline; }
 	*/
-	a.copyBtn { color: rgb(255, 255, 255); background: rgb(122, 3, 3); border: 1px solid rgb(122, 3, 3); max-width: 150px; text-align: center; width: 100%; text-decoration: none; cursor: pointer; display: block; padding: 8px; border-radius: 3px; margin: 5px 0 0; }
+	a.copyBtn { color: rgb(255, 255, 255); background: rgb(122, 3, 3); border: 1px solid rgb(122, 3, 3); max-width: 150px; text-align: center; width: 100%; text-decoration: none; cursor: pointer; display: block; padding: 8px; border-radius: 3px; margin: 12px 0 0; }
 	a#linkContainerId { border: 1px solid #d6d6d6; width: 100%; display: block; padding: 10px; } a.copyBtn:hover { text-decoration: none; color: #fff; }
 	/****************Common Css****************/
 	  ul li, ol li{margin-left: 0;}
