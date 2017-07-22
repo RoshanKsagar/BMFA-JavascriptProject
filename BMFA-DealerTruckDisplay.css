@@ -1,7 +1,7 @@
 @media all {
-    * { margin:0; padding: 0; box-sizing: border-box; font-family: 'Open Sans', sans-serif;}
+    .FT_container * { margin:0; padding: 0; box-sizing: border-box; font-family: 'Open Sans', sans-serif; font-size:14px;}
 	ul.FT_listStyle > li { width: 25%; display: inline-block; padding: 15px; min-height: 150px; list-style: none; vertical-align: top; text-align: center; margin: 0;}
-	body, html{ font-family: 'Open Sans', sans-serif; font-size: 14px; }
+	/*body, html{ font-family: 'Open Sans', sans-serif; font-size: 14px; }*/
 	#dealerTruckContainerId{ max-width:1000px; width: 90%; margin: 15px auto; }
 	.FT_ThemeContainer h1 { font-size: 13px; background-color: #f2f2f2; padding: 6px 10px; font-weight: bold; margin-bottom: 15px; }
 	.FT_ThemeContainer p + p { line-height: 20px; padding-top: 10px; }
@@ -42,7 +42,7 @@
 	.FT_successMsg { border: 1px solid #fff; display: inline-block; width: 100%; max-width: 300px; padding: 10px; border-left: 3px solid green; background: #fff; border-radius: 3px; margin: 0 auto 15px; box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.09); position: relative; }
 	.FT_closeBtn:before { content: '+'; position: absolute; right: 10px; transform: rotate(45deg); color: #333333; font-size: 18px; line-height: 15px; cursor: pointer; text-decoration:none; }
 	a.FT_closeBtn { width: 15px;  height: 15px;}
-	.FT_PageTitle { font-size: 30px; font-weight: 600; text-align: center;     padding: 15px 10px 10px; }
+	.FT_PageTitle { font-size: 30px; font-weight: 600; text-align: center;     padding: 15px 10px 10px; line-height:normal; }
 	.FT_formTitle { font-size: 20px; color: black; font-weight: 600; padding: 9px 0px; }
 	.FT_clr { clear: both;}
 	.FT_thumbnail img { width: 33.33%; border: 1px solid #fff; vertical-align: top; max-height: 120px; height: 100%;}
@@ -74,6 +74,8 @@
 	.FT_copyLinkDiv { position: fixed; background: rgb(122, 3, 3); width: 150px; height: 50px; border: 1px solid rgb(122, 3, 3); z-index: 99; right: 10px; top: 50%; border-radius: 3px; }
 	a.copyBtn { color: #000; text-decoration: underline; }
 	*/
+	a.copyBtn { color: rgb(255, 255, 255); background: rgb(122, 3, 3); border: 1px solid rgb(122, 3, 3); max-width: 150px; text-align: center; width: 100%; text-decoration: none; cursor: pointer; display: block; padding: 8px; border-radius: 3px; margin: 5px 0 0; }
+	a#linkContainerId { border: 1px solid #d6d6d6; width: 100%; display: block; padding: 10px; } a.copyBtn:hover { text-decoration: none; color: #fff; }
 	/****************Common Css****************/
 	  ul li, ol li{margin-left: 0;}
 	 ul, ol{margin:0;}
@@ -109,4 +111,6 @@
 	.FT_tab-links li { min-width: auto;  display: table-cell;  height: 100%; float: none; }
 	ul.FT_tab-links { width: 100%;  display: table;}
 	.FT_fL, .FT_fR { width: 100%; padding: 0; }
+	ul.FT_listStyle > li > div {   height: 100%;  } 
+	li .FT_gryTxt {   height: auto; -webkit-line-clamp: inherit; -webkit-box-orient: vertical; overflow: auto; text-overflow: inherit; line-height: normal; margin: 0; }
 }
