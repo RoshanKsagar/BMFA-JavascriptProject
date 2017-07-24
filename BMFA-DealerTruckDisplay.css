@@ -63,9 +63,9 @@
 	
 	.FT_ThemeContainer { background-color: #7a0303; color: #fff; }
     li .FT_gryTxt { color: #666; padding: 0 0 7px; display: -webkit-box; max-width: 400px; height: 60px; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 19px;     margin-bottom: 80px; }
-    .FT_footer > h5 { font-size: 25px; font-weight: 500; }
-    .FT_footer { padding: 15px 25px; text-align: center; }
-    .FT_footer a { font-size: 19px; display: block; padding: 10px 0 0; }
+    .FT_footer > h5 { font-size: 25px; font-weight: 500; padding:0; }
+    .FT_footer { /*padding: 15px 25px;*/padding: 15px 9px; text-align: center; }
+    .FT_footer a { font-size: 19px; display: block; padding: 10px 0 0; line-height: normal; }
     
     .FT_bldTxt { height: 35px; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 19px; } 
 	
@@ -100,7 +100,7 @@
 	ul.FT_category > li > div { min-height: auto;}
 	.FT_btmDiv { position: static; }
 	.FT_swiperContainer.FT_fR { width: 100%; padding: 0;}
-	.FT_fL.FT_thumbnail { display:flex; width: 100%; overflow-y: auto; }
+	.FT_fL.FT_thumbnail { display:flex; width: 100%; overflow-y: auto;height:auto; }
 	.FT_thumbnail img { max-width: 175px; border: 1px solid #fff; max-height: 175px; width: 100%; }
     a.FT_swiperBtn.FT_prevBtn { left: 15px; }
 	a.FT_swiperBtn.FT_nextBtn { right: 30px; }

@@ -133,7 +133,7 @@ var FT_PageFooterStrHTML = '<div class="FT_footer" style="background:{0}">' +
 						   '	<h5 style="color:{1}" class="FT_footerHead">Selling A Used Fire Truck?</h5>' +
 						   '	<a href="https://www.firetruckmall.com/Selling-your-Used-Fire-Truck" style="color:{2}" target="_blank">Click Here For More Information </a>' +
 						   '</div>';
-var FT_LoaderHtml = '<div class="FT_container FT_loaderContainer"><div class="bgBlack FT_loader" id="FT_loader"><div class="whtieBg"><div class="loader"></div></div></div></div>';
+var FT_LoaderHtml = '<div class="FT_container FT_loaderContainer"><div class="bgBlack FT_loader" id="FT_loader"><div class="whtieBg"><div class="loader" style="border-top: 4px solid {0}"></div></div></div></div>';
 
 /* Javascript variables contains CSS class in string format to for add to page. */
 var FT_DynamicTabCSS = 'li.FT_active a, li.FT_active a:hover { background: {0}; color: {1}; }'
@@ -250,11 +250,11 @@ var FT_AddDynamicCSS = function() {
 var FT_loadTruckData = function() {
 	FT_GetURLParams();
 	FT_BMFA_TruckContainer = document.getElementById('dealerTruckContainerId');
-	FT_BMFA_TruckContainer.innerHTML = FT_LoaderHtml;
 	FT_DealerAccointId = FT_BMFA_TruckContainer.getAttribute('accountId');
 	var style = getComputedStyle(FT_BMFA_TruckContainer);
 	FT_ThemeProperties.background = style.backgroundColor;
 	FT_ThemeProperties.color = style.color;
+	FT_BMFA_TruckContainer.innerHTML = FT_LoaderHtml.FT_format([FT_ThemeProperties.background]);
 	FT_BMFA_TruckContainer.className = FT_BMFA_TruckContainer.className.replace('FT_ThemeContainer', '');
 	FT_AddDynamicCSS();
 	FT_WebRequestHandler.getRequest(FT_processTruckData);
@@ -347,6 +347,10 @@ var FT_expandCategory = function(element) {
 	containerDiv.appendChild(titleDiv);
 	containerDiv.appendChild( FT_prepareImageContainer(false, FT_getBMFAStorage()[category], '') );
 	
+	FT_BMFA_TruckContainer.appendChild(containerDiv);
+	FT_addPageFooter(FT_BMFA_TruckContainer);
+	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('img'));
+	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('a.FT_redBtn'));
 	
 	if(FT_URLParam.stockno && !FT_lastTruckSelected) {
 		var div = document.createElement('div');
@@ -356,10 +360,6 @@ var FT_expandCategory = function(element) {
 			FT_prepareTruckDetails( div );
 		}		
 	}
-	FT_BMFA_TruckContainer.appendChild(containerDiv);
-	FT_addPageFooter(FT_BMFA_TruckContainer);
-	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('img'));
-	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('a.FT_redBtn'));
 }
 
 /* A function for get truck id by it's stockno. 
@@ -574,7 +574,9 @@ var FT_addTruckImages = function(ParentNode, ImageList) {
 	nextBtn.className = 'FT_swiperBtn FT_nextBtn';
 	swiperContainer.appendChild(mainImg);
 	swiperContainer.appendChild(prevBtn);
-	swiperContainer.appendChild(nextBtn);
+	//swiperContainer.appendChild(nextBtn);
+	if( ImageList.length > 1 )
+		swiperContainer.appendChild(nextBtn);
 	ParentNode.appendChild(swiperContainer);
 	
 	var truckImageContainer = document.createElement('div');
@@ -1034,7 +1036,7 @@ var FT_submitEnquiry = function() {
 		
 		console.log(JSON_Buffer);
 
-		FT_BMFA_TruckContainer.innerHTML = FT_LoaderHtml;
+		FT_BMFA_TruckContainer.innerHTML = FT_LoaderHtml.FT_format([FT_ThemeProperties.background]);
 	    FT_WebRequestHandler.postRequest(JSON.stringify(JSON_Buffer), function(xhttp) {
 			console.log(xhttp);
 			if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
