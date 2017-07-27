@@ -154,6 +154,8 @@ var FT_phoneRegex =  /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
 var FT_DealerAccointId = ''; // this value changes as per Dealer.
 var FT_TruckId;
 
+var navigatedFromCategories = false;
+
 /* A javascript Class Module for API requests. */
 var FT_WebRequestHandler = {			
 	getWebRequestInstance : function() {
@@ -277,6 +279,8 @@ var FT_processTruckData = function(xhttp) {
 						div.setAttribute('category', (( FT_URLParam.category in FT_getBMFAStorage() ) ? FT_URLParam.category : 'All Used Trucks' ));
 						FT_expandCategory( div );
 					} else {
+						//added for history maintainance
+						navigatedFromCategories = true;
 						FT_displayCategories( FT_getBMFAStorage() );
 					}
 
@@ -333,6 +337,16 @@ var FT_getBMFAStorage = function() {
  */
 var FT_expandCategory = function(element) {
 	var category = element.getAttribute('category');
+	//add history
+	if(history.state === null || (history.state !== null && history.state.page !== undefined && history.state.page != 'categoryDetail' )) {
+		var currentUrl = window.location.href;
+		//if not truck detail page then add category detail page in history
+		if(FT_GetParam(currentUrl, 'stockno') == '') {
+			var historyUrl = FT_SetURLParam(currentUrl, 'category', element.getAttribute('category') );
+			history.pushState({page:'categoryDetail',category:element.getAttribute('category') }, null, historyUrl);
+		}
+	}
+
 	FT_lastCategorySelected = element;
 	FT_clearContainerDom();
 	
@@ -351,7 +365,6 @@ var FT_expandCategory = function(element) {
 	FT_addPageFooter(FT_BMFA_TruckContainer);
 	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('img'));
 	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('a.FT_redBtn'));
-	
 	if(FT_URLParam.stockno && !FT_lastTruckSelected) {
 		var div = document.createElement('div');
 		var truckId = FT_GetTruckIdByStockNo(FT_URLParam.stockno);
@@ -379,6 +392,11 @@ var FT_GetTruckIdByStockNo = function(stockno) {
  * @Param truckTypeMap	: holding instance of list for all trucks respective to categories.
  */
 var FT_displayCategories = function(truckTypeMap) {
+	//add history
+	if(history.state === null || (history.state !== null && history.state.page !== undefined && history.state.page != 'categoryListing' )) {
+		history.pushState({page:'categoryListing'}, null, null);
+	}
+
 	FT_clearContainerDom();
 
 	var containerDiv = document.createElement('div');
@@ -425,6 +443,8 @@ var FT_constructBackButton = function(toword) {
  * @Param button	: button DOM-element. 
  */		
 var FT_doBack = function(button) {
+	if(navigatedFromCategories)
+		history.back();
 	var toBackStr = button.getAttribute('jData');
 	if(toBackStr === 'To Catagories') {
 		FT_displayCategories( FT_getBMFAStorage() );
@@ -614,7 +634,19 @@ var FT_prepareTruckDetails = function(element) {
 		return (isFound = (truck.Id === FT_TruckId));
 	});
 	if(isFound) {
-		
+		//add history
+		if(history.state === null || (history.state !== null && history.state.page !== undefined && history.state.page != 'truckDetail' )) {
+			//add history only when navigated from categories page and not opened directly share link of truck
+			if(navigatedFromCategories) {
+				var historyUrl = window.location.href;
+				var urlParams = {stockno: selectedTruck['Stock_Number__c'], category: FT_lastCategorySelected.getAttribute('category') }
+				for(var param in urlParams) {
+					historyUrl = FT_SetURLParam(historyUrl, param, urlParams[param] );
+				}
+				history.pushState({page:'truckDetail',category:FT_lastCategorySelected.getAttribute('category'), truck: FT_TruckId }, null, historyUrl);
+			}
+		}
+
 		FT_URLParam.stockno = selectedTruck['Stock_Number__c'];
 		var isValidCategory = ( FT_URLParam.category && (selectedTruck['apparatusType__c'].indexOf(FT_URLParam.category) > -1) );
 		FT_URLParam.category = (isValidCategory ? FT_URLParam.category : FT_lastCategorySelected.getAttribute('category'));
@@ -1036,7 +1068,7 @@ var FT_submitEnquiry = function() {
 		
 		console.log(JSON_Buffer);
 
-		FT_BMFA_TruckContainer.innerHTML = FT_LoaderHtml.FT_format([FT_ThemeProperties.background]);
+		//FT_BMFA_TruckContainer.innerHTML = FT_LoaderHtml.FT_format([FT_ThemeProperties.background]);
 	    FT_WebRequestHandler.postRequest(JSON.stringify(JSON_Buffer), function(xhttp) {
 			console.log(xhttp);
 			if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
@@ -1047,7 +1079,7 @@ var FT_submitEnquiry = function() {
 					console.log(serverResponse.Message);
 					FT_setMessage(false, 'Something Went Wrong. Please Contact Admin!');
 				}
-				FT_BMFA_TruckContainer.getElementsByClassName('FT_loader')[0].style.display = 'none';
+				//FT_BMFA_TruckContainer.getElementsByClassName('FT_loader')[0].style.display = 'none';
 			}
 		});
 	}
@@ -1080,7 +1112,8 @@ var FT_createTabs = function() {
 	li1.className = 'FT_active';
 	var a1 = document.createElement('a');
 	a1.innerHTML = 'DESCRIPTION';
-	a1.href = '#detailsTabId';	
+	//a1.href = '#detailsTabId';	
+	a1.href = 'javascript:void(0)';	
 	a1.name = FT_tab1Id;
 	li1.appendChild(a1);
 	ul.appendChild(li1);
@@ -1088,7 +1121,8 @@ var FT_createTabs = function() {
 	var li2 = document.createElement('li');
 	var a2 = document.createElement('a');
 	a2.innerHTML = 'YES I&#39;M INTERESTED';
-	a2.href = '#detailsTabId';
+	//a2.href = '#detailsTabId';
+	a2.href = 'javascript:void(0)';
 	a2.name = FT_tab2Id;
 	li2.appendChild(a2);
 	ul.appendChild(li2);
@@ -1096,7 +1130,8 @@ var FT_createTabs = function() {
 	var li3 = document.createElement('li');
 	var a3 = document.createElement('a');
 	a3.innerHTML = 'LINK TO SHARE';
-	a3.href = '#detailsTabId';
+	//a3.href = '#detailsTabId';
+	a3.href = 'javascript:void(0)';
 	a3.name = FT_tab3Id;
 	li3.appendChild(a3);
 	ul.appendChild(li3);
@@ -1109,3 +1144,24 @@ var FT_clearContainerDom = function() {
 		FT_BMFA_TruckContainer.removeChild(FT_BMFA_TruckContainer.lastChild);
 	}
 }
+/*History popstate - for back button functionality*/		
+window.addEventListener("popstate", function(e) {
+	if(e.state !== null) { 
+	   if(e.state.page == 'categoryListing') {
+		   FT_displayCategories( FT_getBMFAStorage() );
+	   } else if(e.state.page == 'categoryDetail') {
+			var div = document.createElement('div');
+			div.setAttribute('category', e.state.category);
+			if(e.state.category)
+				FT_expandCategory( div );
+	   } else if(e.state.page == 'truckDetail') {
+			var div = document.createElement('div');
+			div.setAttribute('truckId', e.state.truck);
+			if(e.state.truck) {
+				FT_prepareTruckDetails( div );
+			}		
+	   }
+   } else {
+	   window.history.back();
+   }
+});
