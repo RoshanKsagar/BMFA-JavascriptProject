@@ -373,6 +373,8 @@ var FT_expandCategory = function(element) {
 			FT_prepareTruckDetails( div );
 		}		
 	}
+	//call lazy load
+	FT_setLazyLoad();
 }
 
 /* A function for get truck id by it's stockno. 
@@ -463,8 +465,10 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 	TruckImageContainer.className += 'FT_container';
 	var ul = document.createElement('ul');
 	ul.className = 'FT_listStyle ' + UICclass;
+	var cnt = 0;
 	for(var truck in truckDataList) {
 		if(truckDataList[truck] || isForCategory) {
+			cnt++;
 			var imgSrc = FT_truckTypeImageUrl[truck];
 			var li = document.createElement('li');
 			var div = document.createElement('div');
@@ -487,6 +491,13 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 				img.setAttribute('truckid', truck.Id); // Attribute to find truck(for Dev)
 				if(truck.Cloud_Documents__r && truck.Cloud_Documents__r.records.length) {
 					imgSrc = truck.Cloud_Documents__r.records[0].Amazon_S3_Image_URL__c; //Amazon_S3_Main_Thumbnail_URL__c
+				}
+				//Add loading text & skip first 8 images for lazy loading
+				if( cnt > 8 ) {
+					var loadingSpan = document.createElement('span');
+					loadingSpan.setAttribute('class','FT_loadingImage');
+					loadingSpan.textContent = "Loading...";
+					div.appendChild(loadingSpan);
 				}
 				div.appendChild(img);
 				var miniDetailDiv = document.createElement('div');
@@ -512,7 +523,20 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 				miniDetailDiv.innerHTML = miniDetailHtml;
 				div.appendChild(miniDetailDiv);
 			}
-			img.src = ((imgSrc) ? imgSrc : FT_truckTypeImageUrl[FT_defaultTruckImageKey]);					
+			/* Add lazy load class and data-src */
+			var originalImgSrc = ((imgSrc) ? imgSrc : FT_truckTypeImageUrl[FT_defaultTruckImageKey]);
+			if( !isForCategory ) {
+				//skip first 8 images from lazy loading
+				if( cnt > 8 ) {
+					img.setAttribute('class', 'FT_lazy');
+					img.setAttribute('data-src', originalImgSrc);
+					img.style.opacity = "0";
+				} else {
+					img.src = originalImgSrc;
+				}
+			} else {
+				img.src = originalImgSrc;
+			}
 			li.appendChild(div);
 			ul.appendChild(li);
 		}
@@ -526,7 +550,7 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 var FT_swiperClickHandler = function(element) {
 	var parentElement = element.parentNode;
 	var currentImg = parentElement.getElementsByTagName('img')[0].className.split(' ')[1];
-	console.log(parentElement.getElementsByTagName('img')[0].className);
+	//console.log(parentElement.getElementsByTagName('img')[0].className);
 	if(currentImg) {
 		var index = parseInt(currentImg.split('_')[1]);
 		var newImg = '';
@@ -601,7 +625,7 @@ var FT_addTruckImages = function(ParentNode, ImageList) {
 	
 	var truckImageContainer = document.createElement('div');
 	truckImageContainer.className = 'FT_fL FT_thumbnail';
-	console.log(ImageList);
+	//console.log(ImageList);
 	ImageList.forEach( function(doc, index) {
 		var img = document.createElement('img');
 		img.className = 'FT_TruckImg img_'+ index;
@@ -668,7 +692,7 @@ var FT_prepareTruckDetails = function(element) {
 			if(field === 'Cloud_Documents__r') {
 				var tempImageContainer = document.createElement('div');
 				truckImageContainer = document.createElement('div');				
-				console.log('cloude docs : ', selectedTruck[field]);
+				//console.log('cloude docs : ', selectedTruck[field]);
 				if(selectedTruck[field]) {
 					var cloudDocs = selectedTruck[field].records;
 					FT_addTruckImages(truckImageContainer, selectedTruck[field].records);
@@ -1165,3 +1189,62 @@ window.addEventListener("popstate", function(e) {
 	   window.history.back();
    }
 });
+/* Lazy loading for images */
+function FT_isImageInViewport(el){
+    var rect = el.getBoundingClientRect();
+	return (
+	    rect.bottom >= 0 && 
+	    rect.right >= 0 && 
+
+	    rect.top <= (
+	    window.innerHeight || 
+	    document.documentElement.clientHeight) && 
+
+	    rect.left <= (
+	    window.innerWidth || 
+	    document.documentElement.clientWidth)
+	);
+}
+function FT_registerListener(event, func) {
+    if (window.addEventListener) {
+        window.addEventListener(event, func)
+    } else {
+        window.attachEvent('on' + event, func)
+    }
+}
+var FT_lazyImages = [];
+function FT_setLazyLoad(){
+	FT_lazyImages = document.getElementsByClassName('FT_lazy');
+}
+function FT_loadImage() {
+	//fade effect
+	this.style.transition = "opacity 3s";
+	this.style.opacity = "1";
+	var loaderSpan = this.parentNode.querySelectorAll('span.FT_loadingImage');
+	loaderSpan[0].parentNode.removeChild(loaderSpan[0]);
+}
+function FT_lazyLoadImages(){
+	for(var i = 0; i < FT_lazyImages.length; i++){
+        if(FT_isImageInViewport(FT_lazyImages[i])){
+            if (FT_lazyImages[i].getAttribute('data-src')){
+                FT_lazyImages[i].src = 
+                FT_lazyImages[i].getAttribute('data-src');
+                var currentImage = FT_lazyImages[i];
+                currentImage.addEventListener("load",FT_loadImage);
+                // remove the attribute
+                FT_lazyImages[i].removeAttribute('data-src');
+            }
+        }
+    }
+    FT_cleanLazyLoadImages();
+}
+FT_registerListener('scroll', FT_lazyLoadImages);
+function FT_cleanLazyLoadImages(){
+    FT_lazyImages = 
+    Array.prototype.filter.call(
+        FT_lazyImages, 
+        function(l){ 
+            return l.getAttribute('data-src');
+         }
+    );
+}
