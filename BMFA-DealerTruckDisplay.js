@@ -155,7 +155,7 @@ var FT_DealerAccointId = ''; // this value changes as per Dealer.
 var FT_TruckId;
 
 var navigatedFromCategories = false;
-
+var swiperLargeImageList = [];
 /* A javascript Class Module for API requests. */
 var FT_WebRequestHandler = {			
 	getWebRequestInstance : function() {
@@ -272,6 +272,7 @@ var FT_processTruckData = function(xhttp) {
 			if(serverResponse.Success) {
 				var truckData = JSON.parse(serverResponse.Data);
 				var trucks = JSON.parse(serverResponse.Data);
+				//console.log('trucks',trucks);
 				if(trucks.length) {
 					FT_prepareTruckTypeMap(trucks);
 					if(FT_URLParam.category) {
@@ -353,7 +354,7 @@ var FT_expandCategory = function(element) {
 	var containerDiv = document.createElement('div');
 	containerDiv.className = 'FT_container';
 
-	FT_constructBackButton('To Catagories');
+	FT_constructBackButton('To Categories');
 	var titleDiv = document.createElement('div');
 	titleDiv.className = 'FT_PageTitle';
 	titleDiv.innerHTML = 'Shop Our '+ ((category === 'All Used Trucks' ) ? 'Used Fire Trucks' : category);
@@ -448,7 +449,7 @@ var FT_doBack = function(button) {
 	if(navigatedFromCategories)
 		history.back();
 	var toBackStr = button.getAttribute('jData');
-	if(toBackStr === 'To Catagories') {
+	if(toBackStr === 'To Categories') {
 		FT_displayCategories( FT_getBMFAStorage() );
 	} else if(toBackStr === 'To Truck List') {
 		FT_expandCategory(FT_lastCategorySelected);
@@ -491,6 +492,13 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 				img.setAttribute('truckid', truck.Id); // Attribute to find truck(for Dev)
 				if(truck.Cloud_Documents__r && truck.Cloud_Documents__r.records.length) {
 					imgSrc = truck.Cloud_Documents__r.records[0].Amazon_S3_Image_URL__c; //Amazon_S3_Main_Thumbnail_URL__c
+					//check if main image is set for truck and if set take minimized image to display on trucks listing page
+					for( var k=0; k < truck.Cloud_Documents__r.records.length; k++ ) {
+						if( truck.Cloud_Documents__r.records[k].Main_Image__c ) {
+							imgSrc = truck.Cloud_Documents__r.records[k].Amazon_S3_Main_Thumbnail_URL__c;
+							break;
+						}
+					}
 				}
 				//Add loading text & skip first 8 images for lazy loading
 				if( cnt > 8 ) {
@@ -553,18 +561,23 @@ var FT_swiperClickHandler = function(element) {
 	//console.log(parentElement.getElementsByTagName('img')[0].className);
 	if(currentImg) {
 		var index = parseInt(currentImg.split('_')[1]);
+		reqIdx = index;
 		var newImg = '';
+		var reqIdx = index;
 		if(FT_hasClass(element, 'FT_prevBtn')){
 			newImg = 'img_'+ (index -= 1);
+			reqIdx = index;
 		} else {
 			newImg = 'img_'+ (index += 1);
-		}		
+			reqIdx = index;
+		}	
 		if(index) {
 			var nextImg = parentElement.parentNode.getElementsByClassName(newImg);
 			var nextOfNextImg = parentElement.parentNode.getElementsByClassName('img_'+ (index+1));			
 			if(nextImg.length) {
 				parentElement.getElementsByClassName('FT_nextBtn')[0].style.display = ((nextOfNextImg.length) ? 'block': 'none');
-				parentElement.getElementsByTagName('img')[0].src = nextImg[0].src;
+				//parentElement.getElementsByTagName('img')[0].src = nextImg[0].src;
+				parentElement.getElementsByTagName('img')[0].src = swiperLargeImageList[reqIdx];
 				parentElement.getElementsByTagName('img')[0].className = nextImg[0].className;
 			} else {
 				index -= 1;
@@ -573,7 +586,8 @@ var FT_swiperClickHandler = function(element) {
 			parentElement.getElementsByClassName('FT_prevBtn')[0].style.display = 'block';
 		} else {
 			var nextImg = parentElement.parentNode.getElementsByClassName(newImg);
-			parentElement.getElementsByTagName('img')[0].src = nextImg[0].src;
+			//parentElement.getElementsByTagName('img')[0].src = nextImg[0].src;
+			parentElement.getElementsByTagName('img')[0].src = swiperLargeImageList[reqIdx];
 			parentElement.getElementsByTagName('img')[0].className = nextImg[0].className;
 			parentElement.getElementsByClassName('FT_prevBtn')[0].style.display = 'none';
 			parentElement.getElementsByClassName('FT_nextBtn')[0].style.display = 'block';
@@ -587,12 +601,13 @@ var FT_swiperClickHandler = function(element) {
 var FT_ImgClickHandler = function(element) {
 	var mainImgParent = element.parentNode.previousSibling;
 	var mainImgContainer = mainImgParent.getElementsByTagName('img')[0];
-	if(mainImgContainer) {
-		mainImgContainer.src = element.src;
-		mainImgContainer.className = element.className;
-	}
 	var imgIndexClass = element.className.split(' ');
 	var imgIndex = ((imgIndexClass[1]) ? parseInt(imgIndexClass[1].split('_')[1]) : 0);
+	if(mainImgContainer) {
+		//add src from large image list created in function FT_addTruckImages
+		mainImgContainer.src = swiperLargeImageList[imgIndex];
+		mainImgContainer.className = element.className;
+	}
 	if(imgIndex) {
 		mainImgParent.getElementsByClassName('FT_prevBtn')[0].style.display = 'block';
 		var nextOfNextImg = element.parentNode.getElementsByClassName('img_'+ (imgIndex+1));
@@ -626,19 +641,28 @@ var FT_addTruckImages = function(ParentNode, ImageList) {
 	var truckImageContainer = document.createElement('div');
 	truckImageContainer.className = 'FT_fL FT_thumbnail';
 	//console.log(ImageList);
+	swiperLargeImageList = [];
 	ImageList.forEach( function(doc, index) {
 		var img = document.createElement('img');
 		img.className = 'FT_TruckImg img_'+ index;
-		var imgSrc = (doc['Amazon_S3_Image_URL__c'] ? doc['Amazon_S3_Image_URL__c'] : '');
+		//in left side load large images and at right side load small thumbnails
+		var largeImage = (doc['Amazon_S3_Image_URL__c'] ? doc['Amazon_S3_Image_URL__c'] : '');
+		var imgSrc = (doc['Amazon_S3_Image_Thumbnail_URL__c'] ? doc['Amazon_S3_Image_Thumbnail_URL__c'] : '');
 		if(doc['Main_Image__c']) {
-			mainImg.src = imgSrc;
+			mainImg.src = largeImage;
 		}
 		if(!imgSrc) {
 			imgSrc = FT_truckTypeImageUrl[FT_defaultTruckImageKey];
 		}
 		img.src = imgSrc;
+		//add corrosponding large image in swiper large image array
+		if( !largeImage ) {
+			largeImage = FT_truckTypeImageUrl[FT_defaultTruckImageKey];
+		}
+		swiperLargeImageList[index] = largeImage;
 		truckImageContainer.appendChild(img);
 	});
+	//console.log('large image list :', swiperLargeImageList);
 	if(!mainImg.src && ImageList.length) {
 		mainImg.src = ImageList[0]['Amazon_S3_Image_URL__c'];
 		nextBtn.style.display = ((ImageList.length > 1) ? 'block': 'none');
@@ -660,7 +684,7 @@ var FT_prepareTruckDetails = function(element) {
 	if(isFound) {
 		//add history
 		if(history.state === null || (history.state !== null && history.state.page !== undefined && history.state.page != 'truckDetail' )) {
-			//add history only when navigated from categories page and not opened directly share link of truck
+			//add history only when navigated from categories page and not opened directly using share link of truck
 			if(navigatedFromCategories) {
 				var historyUrl = window.location.href;
 				var urlParams = {stockno: selectedTruck['Stock_Number__c'], category: FT_lastCategorySelected.getAttribute('category') }
