@@ -360,7 +360,7 @@ var FT_expandCategory = function(element) {
 	titleDiv.innerHTML = 'Shop Our '+ ((category === 'All Used Trucks' ) ? 'Used Fire Trucks' : category);
 	
 	containerDiv.appendChild(titleDiv);
-	containerDiv.appendChild( FT_prepareImageContainer(false, FT_getBMFAStorage()[category], '') );
+	containerDiv.appendChild( FT_prepareImageContainer(false, FT_getBMFAStorage()[category], 'FT_truckList') );
 	
 	FT_BMFA_TruckContainer.appendChild(containerDiv);
 	FT_addPageFooter(FT_BMFA_TruckContainer);
