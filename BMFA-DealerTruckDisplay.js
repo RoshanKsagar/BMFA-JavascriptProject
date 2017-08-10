@@ -422,6 +422,7 @@ var FT_displayCategories = function(truckTypeMap) {
  * @Param elements	: holding a list of elements that has to bind with click event.
  */
 var FT_bindEvent = function(eventToBind, callback, elements) {
+	//console.log(eventToBind, callback, elements);
 	for (var i = 0; i < elements.length; i++) {
 		elements[i].addEventListener(eventToBind, function(event) {
 			callback(event.target);
@@ -599,23 +600,39 @@ var FT_swiperClickHandler = function(element) {
  * @Param element	: DOM-element holding image of same truck.
  */
 var FT_ImgClickHandler = function(element) {
-	var mainImgParent = element.parentNode.previousSibling;
-	var mainImgContainer = mainImgParent.getElementsByTagName('img')[0];
 	var imgIndexClass = element.className.split(' ');
 	var imgIndex = ((imgIndexClass[1]) ? parseInt(imgIndexClass[1].split('_')[1]) : 0);
-	if(mainImgContainer) {
-		//add src from large image list created in function FT_addTruckImages
-		mainImgContainer.src = swiperLargeImageList[imgIndex];
-		mainImgContainer.className = element.className;
-	}
-	if(imgIndex) {
-		mainImgParent.getElementsByClassName('FT_prevBtn')[0].style.display = 'block';
-		var nextOfNextImg = element.parentNode.getElementsByClassName('img_'+ (imgIndex+1));
-		mainImgParent.getElementsByClassName('FT_nextBtn')[0].style.display = ((nextOfNextImg.length) ? 'block': 'none');;
-	} else {
-		mainImgParent.getElementsByClassName('FT_prevBtn')[0].style.display = 'none';
-		mainImgParent.getElementsByClassName('FT_nextBtn')[0].style.display = 'block';
-	}
+	FT_openModal();
+	FT_currentSlide(imgIndex+1);
+}
+
+/* Functions for modal slider at truck detail page */
+var FT_slideIndex = 1;
+var FT_plusSlides = function(element) {
+	FT_showSlide(FT_slideIndex += 1);
+}
+var FT_minusSlides = function(element) {
+	FT_showSlide(FT_slideIndex -= 1);
+}
+var FT_closeModal = function(element) {
+	document.getElementById('FT_modal').style.display = "none";
+}
+var FT_openModal = function() {
+  document.getElementById('FT_modal').style.display = "block";
+}
+var FT_currentSlide = function(n) {
+  FT_showSlide(FT_slideIndex = n);
+}
+var FT_showSlide = function(n) {
+  var i;
+  var FT_slides = document.getElementsByClassName("FT_slide");
+  if (n > FT_slides.length) {FT_slideIndex = 1} 
+  if (n < 1) {FT_slideIndex = FT_slides.length}
+  for (i = 0; i < FT_slides.length; i++) {
+      FT_slides[i].style.display = "none"; 
+  }
+  document.getElementsByClassName('FT_currentSlideTxt')[0].innerHTML = FT_slideIndex;
+  FT_slides[FT_slideIndex-1].style.display = "block"; 
 }
 
 /* A function for add images for selected truck.
@@ -627,20 +644,11 @@ var FT_addTruckImages = function(ParentNode, ImageList) {
 	swiperContainer.className = 'FT_swiperContainer FT_fR';
 	var mainImg = document.createElement('img');
 	mainImg.className = 'FT_TruckImg img_0';
-	var prevBtn = document.createElement('a');
-	prevBtn.className = 'FT_swiperBtn FT_prevBtn';
-	var nextBtn = document.createElement('a');
-	nextBtn.className = 'FT_swiperBtn FT_nextBtn';
 	swiperContainer.appendChild(mainImg);
-	swiperContainer.appendChild(prevBtn);
-	//swiperContainer.appendChild(nextBtn);
-	if( ImageList.length > 1 )
-		swiperContainer.appendChild(nextBtn);
 	ParentNode.appendChild(swiperContainer);
 	
 	var truckImageContainer = document.createElement('div');
 	truckImageContainer.className = 'FT_fL FT_thumbnail';
-	//console.log(ImageList);
 	swiperLargeImageList = [];
 	ImageList.forEach( function(doc, index) {
 		var img = document.createElement('img');
@@ -662,12 +670,49 @@ var FT_addTruckImages = function(ParentNode, ImageList) {
 		swiperLargeImageList[index] = largeImage;
 		truckImageContainer.appendChild(img);
 	});
-	//console.log('large image list :', swiperLargeImageList);
 	if(!mainImg.src && ImageList.length) {
 		mainImg.src = ImageList[0]['Amazon_S3_Image_URL__c'];
 		nextBtn.style.display = ((ImageList.length > 1) ? 'block': 'none');
 	}
 	ParentNode.appendChild(truckImageContainer);
+
+	/* Create a swipper for images to show in their original sizes : opens on click of any thumbnail */
+	var modalWrap = document.createElement('div');
+	modalWrap.className = 'FT_modal';
+	modalWrap.setAttribute('id','FT_modal');
+	var modalContainer = document.createElement('div');
+	modalContainer.className = 'FT_modalContent';
+	var closeBtn = document.createElement('span');
+	closeBtn.className = 'FT_modalClose cursor';
+	closeBtn.appendChild(document.createTextNode("x"));
+	var nextArrow = document.createElement('a');
+	nextArrow.className = 'FT_nextArrow';
+	var prevArrow = document.createElement('a');
+	prevArrow.className = 'FT_prevArrow';
+	var slideNumber = document.createElement('div');
+	slideNumber.className = 'FT_slideNumber';
+	var currentSlideText = document.createElement('span');
+	currentSlideText.className = 'FT_currentSlideTxt';
+	slideNumber.appendChild(currentSlideText);
+	var totalSlides = document.createElement('span');
+	totalSlides.appendChild(document.createTextNode(' / '+swiperLargeImageList.length));
+	slideNumber.appendChild(totalSlides);
+	swiperLargeImageList.forEach( function(imgSrc, index) {
+		var singleSlide = document.createElement('div');
+		singleSlide.className = 'FT_slide FT_fade';
+		var slideImage = document.createElement('img');
+		slideImage.src = imgSrc;
+		singleSlide.appendChild(slideImage);
+		modalContainer.appendChild(singleSlide);
+	});
+	modalWrap.appendChild(closeBtn);
+	modalWrap.appendChild(modalContainer);
+	if( swiperLargeImageList.length > 1 ) {
+		modalWrap.appendChild(prevArrow);
+		modalWrap.appendChild(nextArrow);
+	}
+	modalWrap.appendChild(slideNumber);
+	ParentNode.appendChild(modalWrap);
 }
 
 /* A function handles click event on indivisual truck. 
@@ -716,7 +761,6 @@ var FT_prepareTruckDetails = function(element) {
 			if(field === 'Cloud_Documents__r') {
 				var tempImageContainer = document.createElement('div');
 				truckImageContainer = document.createElement('div');				
-				//console.log('cloude docs : ', selectedTruck[field]);
 				if(selectedTruck[field]) {
 					var cloudDocs = selectedTruck[field].records;
 					FT_addTruckImages(truckImageContainer, selectedTruck[field].records);
@@ -747,6 +791,10 @@ var FT_prepareTruckDetails = function(element) {
 		FT_BMFA_TruckContainer.appendChild(containerDiv);
 		FT_bindEvent('click', FT_swiperClickHandler, FT_BMFA_TruckContainer.getElementsByClassName('FT_swiperBtn'));
 		FT_bindEvent('click', FT_ImgClickHandler, FT_BMFA_TruckContainer.getElementsByClassName('FT_TruckImg'));
+		/* modal slider events */
+		FT_bindEvent('click', FT_plusSlides, FT_BMFA_TruckContainer.getElementsByClassName('FT_nextArrow'));
+		FT_bindEvent('click', FT_minusSlides, FT_BMFA_TruckContainer.getElementsByClassName('FT_prevArrow'));
+		FT_bindEvent('click', FT_closeModal, FT_BMFA_TruckContainer.getElementsByClassName('FT_modalClose'));	
 		FT_displayTabs(truckContainer, selectedTruck);	
 	}
 	FT_addPageFooter(FT_BMFA_TruckContainer);

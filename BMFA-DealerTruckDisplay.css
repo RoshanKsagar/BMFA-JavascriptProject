@@ -52,7 +52,7 @@
 	.FT_prevBtn { cursor: pointer; text-decoration:none; display : none; }
 	.FT_nextBtn { cursor: pointer; text-decoration:none; }
 	.FT_swiperContainer img {width: 100%; height: 450px;}
-	a.FT_swiperBtn { background: rgba(255, 255, 255, 0.91); position: absolute; top: 50%; width: 30px; height: 30px; border-radius: 100px; box-shadow: 0px 0px 0 3px rgba(0, 0, 0, 0.31); font-size: 0; text-align: center; line-height: 30px;    margin-top: -15px; }
+	a.FT_swiperBtn { background: rgba(255, 255, 255, 0.91); position: absolute; top: 50%; width: 30px; height: 30px; border-radius: 100px; box-shadow: 0px 0px 0 3px rgba(0, 0, 0, 0.31); font-size: 0; text-align: center; line-height: 30px;margin-top: -15px; }
 	.FT_btmDiv > div { font-weight: 600; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;}
 	a.FT_swiperBtn.FT_prevBtn { left: 15px;}
 	a.FT_swiperBtn.FT_nextBtn { right: 30px;}
@@ -92,6 +92,24 @@
 	.FT_loaderContainer {height:100px;width: 100%;}
 	h2.FT_heading > a { font-size: 25px;}
 	p.imgDesc { white-space: nowrap; text-overflow: ellipsis; display: block; overflow: hidden; }
+	/* Truck detail page modal and slider css */
+	.FT_slide {display:none;text-align: center;} 
+	.FT_slide img {max-width: 100%; height: auto;} 
+	.FT_prevArrow, .FT_nextArrow { cursor: pointer; position: absolute; top: 50%; padding: 16px; font-weight: bold; font-size: 18px; transition: 0.6s ease;background: rgba(255, 255, 255, 0.91);width: 30px;height: 30px; border-radius: 100px;box-shadow: 0px 0px 0 3px rgba(0, 0, 0, 0.31); font-size: 0; text-align: center; line-height: 30px; margin-top: -15px; } 
+	.FT_prevArrow { left: 20px; }
+	.FT_nextArrow { right: 20px; } 
+	.FT_slideNumber { color: #f2f2f2; font-size: 12px; padding: 8px 12px; position: absolute; top: 10px; left: 20px; } 
+	.FT_fade { -webkit-animation-name: fade; -webkit-animation-duration: 1.5s; animation-name: fade; animation-duration: 1.5s; } 
+	@-webkit-keyframes fade { from {opacity: .4} to {opacity: 1} } 
+	@keyframes fade { from {opacity: .4} to {opacity: 1} } 
+	.FT_modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: black; } 
+	.FT_modalContent { position: relative; margin: 50px auto 20px auto; padding: 0; width: 90%; max-width: 1200px; } 
+	.FT_modalClose { color: white; position: absolute; top: 10px; right: 25px; font-size: 35px; font-weight: bold; } 
+	.FT_modalClose:hover, .FT_modalClose:focus { color: #999; text-decoration: none; cursor: pointer; }
+	a.FT_prevArrow:before { content: ''; border: solid #7a0303; border-width: 0 3px 3px 0; position: absolute; border-radius: 3px; left: 12px; top: 11px; padding: 3px; transform: rotate(135deg);box-shadow: 1px 1px 0px 0px rgba(150, 146, 146, 0.41); transition: all 0.4s ease;}
+    a.FT_nextArrow:before { content: ''; border: solid #7a0303; border-width: 0 3px 3px 0; position: absolute; border-radius: 3px;     left: 11px; top: 11px; padding: 3px; transform: rotate(-45deg); box-shadow: 1px 1px 0px 0px rgba(150, 146, 146, 0.41); transition: all 0.4s ease;}
+    a.FT_nextArrow:hover:before { margin-left: 1px; }
+    a.FT_prevArrow:hover:before { margin-left: -1px; }
 }
 @media screen and  (max-width:980px){
 	ul.FT_listStyle.FT_truckList { -moz-column-count: 3; -webkit-column-count: 3; column-count: 3;}
