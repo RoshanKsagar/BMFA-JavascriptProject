@@ -726,9 +726,13 @@ var FT_addTruckImages = function(ParentNode, ImageList) {
 
 /* Function to get height of main image of swipper and set it to thumbnails div */
 var FT_setSwiperHeight = function() {
-	var mainImgHeight = window.getComputedStyle(this, null).getPropertyValue("height");
-	document.getElementsByClassName('FT_fL FT_thumbnail')[0].style.maxHeight = mainImgHeight;
+	if(document.getElementsByClassName('FT_fL FT_thumbnail').length > 0 && document.getElementsByClassName('FT_TruckImg img_0').length > 0 ) {
+		var mainImage = document.getElementsByClassName('FT_TruckImg img_0')[0];
+		var mainImgHeight = window.getComputedStyle(mainImage, null).getPropertyValue("height");
+		document.getElementsByClassName('FT_fL FT_thumbnail')[0].style.maxHeight = mainImgHeight;
+	}
 }
+window.addEventListener("resize", FT_setSwiperHeight);
 
 /* A function handles click event on indivisual truck. 
  * @Param element	: DOM-element holding image of truck.
