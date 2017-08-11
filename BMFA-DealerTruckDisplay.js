@@ -333,6 +333,11 @@ var FT_getBMFAStorage = function() {
 	return ((FT_isLocalStorageSupport) ? JSON.parse(localStorage.getItem('truckTypeMap')) : window.truckTypeGlobalMap);
 }
 
+/* Function to scroll windoe at top */
+var FT_scrollTop = function() {
+	window.scrollTo(0, (FT_BMFA_TruckContainer.offsetTop-10));
+}
+
 /* A function for expand purticuler category. 
  * @Param element	: holding instance of category DOM-element that is currently selected by User.
  */
@@ -376,6 +381,8 @@ var FT_expandCategory = function(element) {
 	}
 	//call lazy load
 	FT_setLazyLoad();
+	/* Scroll to top at start of truck container div */
+	FT_scrollTop();	 
 }
 
 /* A function for get truck id by it's stockno. 
@@ -415,6 +422,8 @@ var FT_displayCategories = function(truckTypeMap) {
 	FT_addPageFooter(FT_BMFA_TruckContainer);
 
 	FT_bindEvent('click', FT_expandCategory, FT_BMFA_TruckContainer.querySelectorAll('img'));	
+	/* Scroll to top at start of truck container div */
+	FT_scrollTop();
 }
 
 /* A function bind click events on DOM elements. 
@@ -422,7 +431,6 @@ var FT_displayCategories = function(truckTypeMap) {
  * @Param elements	: holding a list of elements that has to bind with click event.
  */
 var FT_bindEvent = function(eventToBind, callback, elements) {
-	//console.log(eventToBind, callback, elements);
 	for (var i = 0; i < elements.length; i++) {
 		elements[i].addEventListener(eventToBind, function(event) {
 			callback(event.target);
@@ -559,7 +567,6 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 var FT_swiperClickHandler = function(element) {
 	var parentElement = element.parentNode;
 	var currentImg = parentElement.getElementsByTagName('img')[0].className.split(' ')[1];
-	//console.log(parentElement.getElementsByTagName('img')[0].className);
 	if(currentImg) {
 		var index = parseInt(currentImg.split('_')[1]);
 		reqIdx = index;
@@ -631,7 +638,8 @@ var FT_showSlide = function(n) {
   for (i = 0; i < FT_slides.length; i++) {
       FT_slides[i].style.display = "none"; 
   }
-  document.getElementsByClassName('FT_currentSlideTxt')[0].innerHTML = FT_slideIndex;
+  if( document.getElementsByClassName('FT_currentSlideTxt')[0] )
+  	document.getElementsByClassName('FT_currentSlideTxt')[0].innerHTML = FT_slideIndex;
   FT_slides[FT_slideIndex-1].style.display = "block"; 
 }
 
@@ -693,9 +701,10 @@ var FT_addTruckImages = function(ParentNode, ImageList) {
 	slideNumber.className = 'FT_slideNumber';
 	var currentSlideText = document.createElement('span');
 	currentSlideText.className = 'FT_currentSlideTxt';
+	slideNumber.appendChild(document.createTextNode('Image '));
 	slideNumber.appendChild(currentSlideText);
 	var totalSlides = document.createElement('span');
-	totalSlides.appendChild(document.createTextNode(' / '+swiperLargeImageList.length));
+	totalSlides.appendChild(document.createTextNode(' of '+swiperLargeImageList.length));
 	slideNumber.appendChild(totalSlides);
 	swiperLargeImageList.forEach( function(imgSrc, index) {
 		var singleSlide = document.createElement('div');
@@ -710,9 +719,15 @@ var FT_addTruckImages = function(ParentNode, ImageList) {
 	if( swiperLargeImageList.length > 1 ) {
 		modalWrap.appendChild(prevArrow);
 		modalWrap.appendChild(nextArrow);
-	}
-	modalWrap.appendChild(slideNumber);
+		modalWrap.appendChild(slideNumber);
+	}	
 	ParentNode.appendChild(modalWrap);
+}
+
+/* Function to get height of main image of swipper and set it to thumbnails div */
+var FT_setSwiperHeight = function() {
+	var mainImgHeight = window.getComputedStyle(this, null).getPropertyValue("height");
+	document.getElementsByClassName('FT_fL FT_thumbnail')[0].style.maxHeight = mainImgHeight;
 }
 
 /* A function handles click event on indivisual truck. 
@@ -796,8 +811,14 @@ var FT_prepareTruckDetails = function(element) {
 		FT_bindEvent('click', FT_minusSlides, FT_BMFA_TruckContainer.getElementsByClassName('FT_prevArrow'));
 		FT_bindEvent('click', FT_closeModal, FT_BMFA_TruckContainer.getElementsByClassName('FT_modalClose'));	
 		FT_displayTabs(truckContainer, selectedTruck);	
+		/*set max height to thumbnails div similar to calculated height of main image*/
+		var swiperMainImg = document.getElementsByClassName('FT_TruckImg img_0')[0];
+		if( swiperMainImg )
+			swiperMainImg.addEventListener("load",FT_setSwiperHeight);		
 	}
 	FT_addPageFooter(FT_BMFA_TruckContainer);
+	/* Scroll to top at start of truck container div */
+	FT_scrollTop();
 }
 
 /* This is the String format function. */
@@ -883,6 +904,7 @@ var FT_addInetrestFrom = function() {
 		//'Make An Offer':'div',
 		'City':'input',
 		'State':'select',
+		'FD or Company': 'input',
 		'Inquiry Message':'textarea'
 	}
 	
@@ -895,6 +917,7 @@ var FT_addInetrestFrom = function() {
 		//'Make An Offer':'',
 		'City':'FT_input FT_required',
 		'State':'FT_input FT_required',
+		'FD or Company': 'FT_input',
 		'Inquiry Message':'FT_input FT_required'
 	}
 	
@@ -1085,7 +1108,7 @@ var FT_setMessage = function(isSuccess, errorMessage) {
 	var messages = messageContainer.getElementsByClassName('FT_message');
 	if(!messages.length && errorMessage) {
 		messageDiv = document.createElement('div');
-		messageDiv.className += ((isSuccess) ? 'FT_errorMsg' : 'FT_successMsg');				
+		messageDiv.className += ((isSuccess) ? 'FT_successMsg' : 'FT_errorMsg');				
 		messageDiv.innerHTML  = errorMessage + '<a class="FT_closeBtn"/>';		
 		messageContainer.appendChild(messageDiv);
 		FT_bindEvent('click', FT_clearFormMessage, messageContainer.getElementsByTagName('a'));
@@ -1166,6 +1189,7 @@ var FT_submitEnquiry = function() {
 
 		//FT_BMFA_TruckContainer.innerHTML = FT_LoaderHtml.FT_format([FT_ThemeProperties.background]);
 	    FT_WebRequestHandler.postRequest(JSON.stringify(JSON_Buffer), function(xhttp) {
+	    	//console.log(JSON.stringify(JSON_Buffer));
 			console.log(xhttp);
 			if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
 				var serverResponse = JSON.parse(xhttp.responseText);
