@@ -197,9 +197,9 @@ var FT_WebRequestHandler = {
 }
 
 /* A function for initialize FT_URLParam Map. */
-var FT_GetURLParams = function() {window.location.search
+var FT_GetURLParams = function() {
 	for( var param in FT_URLParam) {
-		var urlParam = FT_GetParam(window.location.search, param);
+		var urlParam = FT_GetParam(window.top.location.search, param);
 		FT_URLParam[param] = decodeURI( urlParam );
 	}
 }
@@ -335,7 +335,10 @@ var FT_getBMFAStorage = function() {
 
 /* Function to scroll windoe at top */
 var FT_scrollTop = function() {
-	window.scrollTo(0, (FT_BMFA_TruckContainer.offsetTop-10));
+	window.scrollTo(0, (FT_BMFA_TruckContainer.offsetTop-10));	
+	//In case of iframe embeded HTML
+	if( document.body.scrollTo )
+		document.body.scrollTo(0, (FT_BMFA_TruckContainer.offsetTop-10));
 }
 
 /* A function for expand purticuler category. 
@@ -345,7 +348,7 @@ var FT_expandCategory = function(element) {
 	var category = element.getAttribute('category');
 	//add history
 	if(history.state === null || (history.state !== null && history.state.page !== undefined && history.state.page != 'categoryDetail' )) {
-		var currentUrl = window.location.href;
+		var currentUrl = window.top.location.href;
 		//if not truck detail page then add category detail page in history
 		if(FT_GetParam(currentUrl, 'stockno') == '') {
 			var historyUrl = FT_SetURLParam(currentUrl, 'category', element.getAttribute('category') );
@@ -475,10 +478,8 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 	TruckImageContainer.className += 'FT_container';
 	var ul = document.createElement('ul');
 	ul.className = 'FT_listStyle ' + UICclass;
-	var cnt = 0;
 	for(var truck in truckDataList) {
 		if(truckDataList[truck] || isForCategory) {
-			cnt++;
 			var imgSrc = FT_truckTypeImageUrl[truck];
 			var li = document.createElement('li');
 			var div = document.createElement('div');
@@ -509,13 +510,12 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 						}
 					}
 				}
-				//Add loading text & skip first 8 images for lazy loading
-				if( cnt > 8 ) {
-					var loadingSpan = document.createElement('span');
-					loadingSpan.setAttribute('class','FT_loadingImage');
-					loadingSpan.textContent = "Loading...";
-					div.appendChild(loadingSpan);
-				}
+				//Add loading text for lazy loading
+				var loadingSpan = document.createElement('span');
+				loadingSpan.setAttribute('class','FT_loadingImage');
+				loadingSpan.textContent = "Loading...";
+				div.appendChild(loadingSpan);
+	
 				div.appendChild(img);
 				var miniDetailDiv = document.createElement('div');
 				var miniDetailHtml = '';
@@ -543,14 +543,9 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 			/* Add lazy load class and data-src */
 			var originalImgSrc = ((imgSrc) ? imgSrc : FT_truckTypeImageUrl[FT_defaultTruckImageKey]);
 			if( !isForCategory ) {
-				//skip first 8 images from lazy loading
-				if( cnt > 8 ) {
-					img.setAttribute('class', 'FT_lazy');
-					img.setAttribute('data-src', originalImgSrc);
-					img.style.opacity = "0";
-				} else {
-					img.src = originalImgSrc;
-				}
+				img.setAttribute('class', 'FT_lazy');
+				img.setAttribute('data-src', originalImgSrc);
+				img.style.opacity = "0";
 			} else {
 				img.src = originalImgSrc;
 			}
@@ -750,7 +745,7 @@ var FT_prepareTruckDetails = function(element) {
 		if(history.state === null || (history.state !== null && history.state.page !== undefined && history.state.page != 'truckDetail' )) {
 			//add history only when navigated from categories page and not opened directly using share link of truck
 			if(navigatedFromCategories) {
-				var historyUrl = window.location.href;
+				var historyUrl = window.top.location.href;
 				var urlParams = {stockno: selectedTruck['Stock_Number__c'], category: FT_lastCategorySelected.getAttribute('category') }
 				for(var param in urlParams) {
 					historyUrl = FT_SetURLParam(historyUrl, param, urlParams[param] );
@@ -1004,8 +999,7 @@ var FT_addShareLinkTab = function() {
 	
 	var a = document.createElement('a');
 	a.id = 'linkContainerId';
-	var url = new URL(window.location.href);
-	a.innerHTML = window.location.href;
+	a.innerHTML = window.top.location.href;
 	for(var param in FT_URLParam) {
 		a.innerHTML = FT_SetURLParam(a.innerHTML, param, FT_URLParam[param] );
 	}
@@ -1108,6 +1102,7 @@ var FT_clearFormMessage = function(element) {
  * @Param errorMessage	: Message to display.
  */
 var FT_setMessage = function(isSuccess, errorMessage) {
+	console.log(isSuccess);
 	var messageContainer = document.getElementById('messageContainerId');
 	var messages = messageContainer.getElementsByClassName('FT_message');
 	if(!messages.length && errorMessage) {
@@ -1172,7 +1167,7 @@ var FT_validateData = function() {
 		}
 		if(!isProcced && isFirstError) {
 			element.focus();
-			FT_setMessage(!isProcced, errorMessage);
+			FT_setMessage(isProcced, errorMessage);
 			isFirstError = false;
 		}		
 	}
@@ -1188,12 +1183,10 @@ var FT_submitEnquiry = function() {
 	} else {
 		JSON_Buffer['AccountId'] = FT_DealerAccointId;
 		JSON_Buffer['TruckId'] = FT_TruckId;
-		
-		console.log(JSON_Buffer);
-
+		//console.log(JSON_Buffer);
 		//FT_BMFA_TruckContainer.innerHTML = FT_LoaderHtml.FT_format([FT_ThemeProperties.background]);
 	    FT_WebRequestHandler.postRequest(JSON.stringify(JSON_Buffer), function(xhttp) {
-	    	//console.log(JSON.stringify(JSON_Buffer));
+	    	console.log(JSON.stringify(JSON_Buffer));
 			console.log(xhttp);
 			if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
 				var serverResponse = JSON.parse(xhttp.responseText);
@@ -1290,31 +1283,10 @@ window.addEventListener("popstate", function(e) {
    }
 });
 /* Lazy loading for images */
-function FT_isImageInViewport(el){
-    var rect = el.getBoundingClientRect();
-	return (
-	    rect.bottom >= 0 && 
-	    rect.right >= 0 && 
-
-	    rect.top <= (
-	    window.innerHeight || 
-	    document.documentElement.clientHeight) && 
-
-	    rect.left <= (
-	    window.innerWidth || 
-	    document.documentElement.clientWidth)
-	);
-}
-function FT_registerListener(event, func) {
-    if (window.addEventListener) {
-        window.addEventListener(event, func)
-    } else {
-        window.attachEvent('on' + event, func)
-    }
-}
 var FT_lazyImages = [];
 function FT_setLazyLoad(){
 	FT_lazyImages = document.getElementsByClassName('FT_lazy');
+	FT_lazyLoadImages();
 }
 function FT_loadImage() {
 	//fade effect
@@ -1325,20 +1297,17 @@ function FT_loadImage() {
 }
 function FT_lazyLoadImages(){
 	for(var i = 0; i < FT_lazyImages.length; i++){
-        if(FT_isImageInViewport(FT_lazyImages[i])){
-            if (FT_lazyImages[i].getAttribute('data-src')){
-                FT_lazyImages[i].src = 
-                FT_lazyImages[i].getAttribute('data-src');
-                var currentImage = FT_lazyImages[i];
-                currentImage.addEventListener("load",FT_loadImage);
-                // remove the attribute
-                FT_lazyImages[i].removeAttribute('data-src');
-            }
+		if (FT_lazyImages[i].getAttribute('data-src')){
+            FT_lazyImages[i].src = 
+            FT_lazyImages[i].getAttribute('data-src');
+            var currentImage = FT_lazyImages[i];
+            currentImage.addEventListener("load",FT_loadImage);
+            // remove the attribute
+            FT_lazyImages[i].removeAttribute('data-src');
         }
-    }
+	}
     FT_cleanLazyLoadImages();
 }
-FT_registerListener('scroll', FT_lazyLoadImages);
 function FT_cleanLazyLoadImages(){
     FT_lazyImages = 
     Array.prototype.filter.call(
