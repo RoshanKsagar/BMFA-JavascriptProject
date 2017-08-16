@@ -199,7 +199,8 @@ var FT_WebRequestHandler = {
 /* A function for initialize FT_URLParam Map. */
 var FT_GetURLParams = function() {
 	for( var param in FT_URLParam) {
-		var urlParam = FT_GetParam(window.top.location.search, param);
+		//var urlParam = FT_GetParam(window.top.location.search, param);
+		var urlParam = FT_GetParam(parent.document.location.search, param);
 		FT_URLParam[param] = decodeURI( urlParam );
 	}
 }
@@ -335,6 +336,7 @@ var FT_getBMFAStorage = function() {
 
 /* Function to scroll windoe at top */
 var FT_scrollTop = function() {
+	console.log('test ', FT_BMFA_TruckContainer.offsetTop-10);
 	window.scrollTo(0, (FT_BMFA_TruckContainer.offsetTop-10));	
 	//In case of iframe embeded HTML
 	if( document.body.scrollTo )
@@ -348,7 +350,8 @@ var FT_expandCategory = function(element) {
 	var category = element.getAttribute('category');
 	//add history
 	if(history.state === null || (history.state !== null && history.state.page !== undefined && history.state.page != 'categoryDetail' )) {
-		var currentUrl = window.top.location.href;
+		//var currentUrl = window.top.location.href;
+		var currentUrl = parent.document.location.href;
 		//if not truck detail page then add category detail page in history
 		if(FT_GetParam(currentUrl, 'stockno') == '') {
 			var historyUrl = FT_SetURLParam(currentUrl, 'category', element.getAttribute('category') );
@@ -745,7 +748,8 @@ var FT_prepareTruckDetails = function(element) {
 		if(history.state === null || (history.state !== null && history.state.page !== undefined && history.state.page != 'truckDetail' )) {
 			//add history only when navigated from categories page and not opened directly using share link of truck
 			if(navigatedFromCategories) {
-				var historyUrl = window.top.location.href;
+				//var historyUrl = window.top.location.href;
+				var historyUrl = parent.document.location.href;
 				var urlParams = {stockno: selectedTruck['Stock_Number__c'], category: FT_lastCategorySelected.getAttribute('category') }
 				for(var param in urlParams) {
 					historyUrl = FT_SetURLParam(historyUrl, param, urlParams[param] );
@@ -999,7 +1003,8 @@ var FT_addShareLinkTab = function() {
 	
 	var a = document.createElement('a');
 	a.id = 'linkContainerId';
-	a.innerHTML = window.top.location.href;
+	//a.innerHTML = window.top.location.href;
+	a.innerHTML = parent.document.location.href;
 	for(var param in FT_URLParam) {
 		a.innerHTML = FT_SetURLParam(a.innerHTML, param, FT_URLParam[param] );
 	}
