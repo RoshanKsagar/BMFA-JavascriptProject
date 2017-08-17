@@ -340,6 +340,8 @@ var FT_getBMFAStorage = function() {
 var FT_scrollTop = function() {
 	setTimeout(function () {
         window.scrollTo(0, (FT_BMFA_TruckContainer.offsetTop-10));
+        if( document.body.scrollTo )
+			document.body.scrollTo(0, (FT_BMFA_TruckContainer.offsetTop-10));
     },2);	
 }
 
