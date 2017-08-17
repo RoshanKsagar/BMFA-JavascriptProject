@@ -40,7 +40,7 @@
 	.FT_fR.FT_TextArea { width: 100%; padding: 0; }
 	.FT_submitBtn { cursor:pointer; width: 100%; background: #999999; color: #fff; border: 1px solid #999; border-radius: 3px; padding: 10px; font-weight: 600; }	
 	.FT_errorMsg { border: 1px solid #fff; display: inline-block; width: 100%; max-width: 300px; padding: 10px; border-left: 3px solid red; background: #fff; border-radius: 3px; margin: 0 auto 15px; box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.09); position: relative; }
-	.FT_successMsg { border: 1px solid #fff; display: inline-block; width: 100%; max-width: 300px; padding: 10px; border-left: 3px solid green; background: #fff; border-radius: 3px; margin: 0 auto 15px; box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.09); position: relative; }
+	.FT_successMsg { border: 1px solid #fff; display: inline-block; width: 100%; max-width: 345px; padding: 10px; border-left: 3px solid green; background: #fff; border-radius: 3px; margin: 0 auto 15px; box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.09); position: relative; }
 	.FT_closeBtn:before { content: '+'; position: absolute; right: 10px; transform: rotate(45deg); color: #333333; font-size: 18px; line-height: 15px; cursor: pointer; text-decoration:none; }
 	a.FT_closeBtn { width: 15px;  height: 15px;}
 	.FT_PageTitle { font-size: 30px; font-weight: 600; text-align: center;     padding: 15px 10px 10px; line-height:normal; }
@@ -90,6 +90,7 @@
 	.bgBlack{position:fixed; top:0; bottom:0 ;left:0;right:0; background:rgba(0, 0, 0, 0.38); z-index: 9001;}
 	.FT_container .bgBlack { position: relative; /*top: 0; bottom: 0; left: 0; right: 0;*/ background: rgba(0, 0, 0, 0.08); z-index: 99; width: 100%; height: 100%;}
 	.FT_loaderContainer {height:100px;width: 100%;}
+	#inquiryTab .FT_loaderContainer {display: none;}
 	h2.FT_heading > a { font-size: 25px;}
 	p.imgDesc { white-space: nowrap; text-overflow: ellipsis; display: block; overflow: hidden; }
 	/* Truck detail page modal and slider css */
