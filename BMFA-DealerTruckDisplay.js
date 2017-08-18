@@ -376,7 +376,7 @@ var FT_expandCategory = function(element) {
 	containerDiv.appendChild( FT_prepareImageContainer(false, FT_getBMFAStorage()[category], 'FT_truckList') );
 	
 	FT_BMFA_TruckContainer.appendChild(containerDiv);
-	FT_addPageFooter(FT_BMFA_TruckContainer);
+	//FT_addPageFooter(FT_BMFA_TruckContainer);
 	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('img'));
 	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('a.FT_redBtn'));
 	if(FT_URLParam.stockno && !FT_lastTruckSelected) {
@@ -427,7 +427,7 @@ var FT_displayCategories = function(truckTypeMap) {
 	containerDiv.appendChild(titleDiv);
 	containerDiv.appendChild( FT_prepareImageContainer(true, truckTypeMap, 'FT_category') );
 	FT_BMFA_TruckContainer.appendChild(containerDiv);
-	FT_addPageFooter(FT_BMFA_TruckContainer);
+	//FT_addPageFooter(FT_BMFA_TruckContainer);
 
 	FT_bindEvent('click', FT_expandCategory, FT_BMFA_TruckContainer.querySelectorAll('img'));	
 	/* Scroll to top at start of truck container div */
@@ -821,7 +821,7 @@ var FT_prepareTruckDetails = function(element) {
 		if( swiperMainImg )
 			swiperMainImg.addEventListener("load",FT_setSwiperHeight);		
 	}
-	FT_addPageFooter(FT_BMFA_TruckContainer);
+	//FT_addPageFooter(FT_BMFA_TruckContainer);
 	/* Scroll to top at start of truck container div */
 	FT_scrollTop();
 }
