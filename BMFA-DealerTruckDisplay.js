@@ -274,19 +274,11 @@ var FT_processTruckData = function(xhttp) {
 		try {
 			var serverResponse = JSON.parse(xhttp.responseText);
 			if(serverResponse.Success) {
-				//var truckData = JSON.parse(serverResponse.Data);
 				var truckData = JSON.parse(JSON.parse(serverResponse.Data));
-				console.log('truckData',truckData);
-				//old one
-				//var trucks = JSON.parse(serverResponse.Data);
-				//new way
+				//console.log('truckData',truckData);
 				var trucks = truckData.recordList;
 				isDisplayTruckPricing = truckData.isDisplayTruckPricing;
-				/*var responseData = JSON.parse(staticData);
-				console.log('responseData: ',responseData);
-				var trucks = responseData.recordList;
-				isDisplayTruckPricing = responseData.isDisplayTruckPricing;*/
-				console.log('trucks',trucks);
+				//console.log('trucks',trucks);
 				if(trucks.length) {
 					FT_prepareTruckTypeMap(trucks);
 					if(FT_URLParam.category) {
@@ -552,7 +544,7 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 						}					
 					}
 				} else {
-					miniDetailHtml += 'Call For Custom Quote';
+					miniDetailHtml += '<span class="FT_PriceText">Call For Custom Quote</span>';
 				}
 				miniDetailHtml += '<a class="FT_redBtn" '+
 								  '	  style="color:'+FT_ThemeProperties.color+'; background:'+FT_ThemeProperties.background+'; border:1px solid '+FT_ThemeProperties.background+'" truckid="'+truck.Id+'">'+
