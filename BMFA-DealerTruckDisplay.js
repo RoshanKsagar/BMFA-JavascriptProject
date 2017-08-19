@@ -157,6 +157,7 @@ var isSandbox = false;
 
 var navigatedFromCategories = false;
 var swiperLargeImageList = [];
+var isDisplayTruckPricing = true;
 /* A javascript Class Module for API requests. */
 var FT_WebRequestHandler = {			
 	getWebRequestInstance : function() {
@@ -274,8 +275,17 @@ var FT_processTruckData = function(xhttp) {
 			var serverResponse = JSON.parse(xhttp.responseText);
 			if(serverResponse.Success) {
 				var truckData = JSON.parse(serverResponse.Data);
-				var trucks = JSON.parse(serverResponse.Data);
-				//console.log('trucks',trucks);
+				console.log('truckData',truckData);
+				//old one
+				//var trucks = JSON.parse(serverResponse.Data);
+				//new way
+				var trucks = truckData.recordList;
+				isDisplayTruckPricing = truckData.isDisplayTruckPricing;
+				/*var responseData = JSON.parse(staticData);
+				console.log('responseData: ',responseData);
+				var trucks = responseData.recordList;
+				isDisplayTruckPricing = responseData.isDisplayTruckPricing;*/
+				console.log('trucks',trucks);
 				if(trucks.length) {
 					FT_prepareTruckTypeMap(trucks);
 					if(FT_URLParam.category) {
@@ -533,11 +543,15 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 						}
 					}					
 				}
-				miniDetailHtml += '<div class="FT_btmDiv">'
-				for(var field in FT_MiniDetailBottomFieldsToStrHTML) {
-					if(truck[field]) {
-						miniDetailHtml += FT_MiniDetailBottomFieldsToStrHTML[field].FT_format([truck[field]]);
-					}					
+				miniDetailHtml += '<div class="FT_btmDiv">';
+				if( isDisplayTruckPricing ) {
+					for(var field in FT_MiniDetailBottomFieldsToStrHTML) {
+						if(truck[field]) {
+							miniDetailHtml += FT_MiniDetailBottomFieldsToStrHTML[field].FT_format([truck[field]]);
+						}					
+					}
+				} else {
+					miniDetailHtml += 'Call For Custom Quote';
 				}
 				miniDetailHtml += '<a class="FT_redBtn" '+
 								  '	  style="color:'+FT_ThemeProperties.color+'; background:'+FT_ThemeProperties.background+'; border:1px solid '+FT_ThemeProperties.background+'" truckid="'+truck.Id+'">'+
@@ -794,7 +808,9 @@ var FT_prepareTruckDetails = function(element) {
 				TruckDetailsHtml += tempImageContainer.innerHTML;
 			} else if(field === 'VF_Website_Price__c') {
 				//var linkUrl = ((selectedTruck['Truck_Public_URL__c']) ? selectedTruck['Truck_Public_URL__c'] : '');
-				TruckDetailsHtml += FT_GlobalFieldToStrHTML[field].FT_format([FT_ThemeProperties.background, fieldVal, 'document.getElementsByName(\''+FT_tab2Id+'\')[0].click()']);
+				var pricingText = fieldVal;
+				if( !isDisplayTruckPricing ) pricingText = 'Call For Custom Quote';
+				TruckDetailsHtml += FT_GlobalFieldToStrHTML[field].FT_format([FT_ThemeProperties.background, pricingText, 'document.getElementsByName(\''+FT_tab2Id+'\')[0].click()']);
 			} else {
 				TruckDetailsHtml += FT_GlobalFieldToStrHTML[field].FT_format([fieldVal]);
 			}
