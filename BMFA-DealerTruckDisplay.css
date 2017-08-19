@@ -51,7 +51,7 @@
 	.FT_swiperContainer.FT_fR { width: 60%; position: relative;}
 	.FT_prevBtn { cursor: pointer; text-decoration:none; display : none; }
 	.FT_nextBtn { cursor: pointer; text-decoration:none; }
-	.FT_swiperContainer img {width: 100%; height: auto; max-height: 450px;}
+	.FT_swiperContainer img {width: 100%; height: auto; /*max-height: 450px;*/}
 	a.FT_swiperBtn { background: rgba(255, 255, 255, 0.91); position: absolute; top: 50%; width: 30px; height: 30px; border-radius: 100px; box-shadow: 0px 0px 0 3px rgba(0, 0, 0, 0.31); font-size: 0; text-align: center; line-height: 30px;margin-top: -15px; }
 	.FT_btmDiv > div { font-weight: 600; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;}
 	a.FT_swiperBtn.FT_prevBtn { left: 15px;}

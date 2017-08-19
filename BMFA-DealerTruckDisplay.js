@@ -274,7 +274,8 @@ var FT_processTruckData = function(xhttp) {
 		try {
 			var serverResponse = JSON.parse(xhttp.responseText);
 			if(serverResponse.Success) {
-				var truckData = JSON.parse(serverResponse.Data);
+				//var truckData = JSON.parse(serverResponse.Data);
+				var truckData = JSON.parse(JSON.parse(serverResponse.Data));
 				console.log('truckData',truckData);
 				//old one
 				//var trucks = JSON.parse(serverResponse.Data);
@@ -578,7 +579,7 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 /* A function handles click event of other imgaes of same truck. 
  * @Param element	: DOM-element holding button which is clicked(next or previous).
  */	
-var FT_swiperClickHandler = function(element) {
+/*var FT_swiperClickHandler = function(element) {
 	var parentElement = element.parentNode;
 	var currentImg = parentElement.getElementsByTagName('img')[0].className.split(' ')[1];
 	if(currentImg) {
@@ -615,7 +616,7 @@ var FT_swiperClickHandler = function(element) {
 			parentElement.getElementsByClassName('FT_nextBtn')[0].style.display = 'block';
 		}
 	}
-}
+}*/
 
 /* A function handles click event of other imgaes of same truck.
  * @Param element	: DOM-element holding image of same truck.
@@ -693,8 +694,7 @@ var FT_addTruckImages = function(ParentNode, ImageList) {
 		truckImageContainer.appendChild(img);
 	});
 	if(!mainImg.src && ImageList.length) {
-		mainImg.src = ImageList[0]['Amazon_S3_Image_URL__c'];
-		nextBtn.style.display = ((ImageList.length > 1) ? 'block': 'none');
+		mainImg.src = ImageList[0]['Amazon_S3_Image_URL__c'];		
 	}
 	ParentNode.appendChild(truckImageContainer);
 
@@ -825,7 +825,7 @@ var FT_prepareTruckDetails = function(element) {
 		//FT_BMFA_TruckContainer.appendChild(shareLinkDiv);
 		
 		FT_BMFA_TruckContainer.appendChild(containerDiv);
-		FT_bindEvent('click', FT_swiperClickHandler, FT_BMFA_TruckContainer.getElementsByClassName('FT_swiperBtn'));
+		//FT_bindEvent('click', FT_swiperClickHandler, FT_BMFA_TruckContainer.getElementsByClassName('FT_swiperBtn'));
 		FT_bindEvent('click', FT_ImgClickHandler, FT_BMFA_TruckContainer.getElementsByClassName('FT_TruckImg'));
 		/* modal slider events */
 		FT_bindEvent('click', FT_plusSlides, FT_BMFA_TruckContainer.getElementsByClassName('FT_nextArrow'));
