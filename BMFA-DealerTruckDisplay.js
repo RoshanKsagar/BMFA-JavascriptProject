@@ -1193,11 +1193,11 @@ var FT_submitEnquiry = function() {
 		document.getElementsByClassName('FT_loaderContainer')[0].style.display = 'block';
 		//FT_BMFA_TruckContainer.innerHTML = FT_LoaderHtml.FT_format([FT_ThemeProperties.background]);
 	    FT_WebRequestHandler.postRequest(JSON.stringify(JSON_Buffer), function(xhttp) {
-	    	console.log(JSON.stringify(JSON_Buffer));
+	    	//console.log(JSON.stringify(JSON_Buffer));
 			//console.log(xhttp);
 			if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
 				var serverResponse = JSON.parse(xhttp.responseText);
-				console.log('serverResponse: ',serverResponse);
+				//console.log('serverResponse: ',serverResponse);
 				var serverData = JSON.parse(JSON.parse(serverResponse.Data));
 				if( serverData.strMessage == 'Success' ) {
 					FT_setMessage(true, 'Your Request Has Been Submited Successfully!');
