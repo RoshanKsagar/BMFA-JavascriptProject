@@ -133,7 +133,7 @@ var FT_PageFooterStrHTML = '<div class="FT_footer" style="background:{0}">' +
 						   '	<h5 style="color:{1}" class="FT_footerHead">Selling A Used Fire Truck?</h5>' +
 						   '	<a href="https://www.firetruckmall.com/Selling-your-Used-Fire-Truck" style="color:{2}" target="_blank">Click Here For More Information </a>' +
 						   '</div>';
-var FT_LoaderHtml = '<div class="FT_container FT_loaderContainer"><div class="bgBlack FT_loader" id="FT_loader"><div class="whtieBg"><div class="loader" style="border-top: 4px solid {0}"></div></div></div></div>';
+var FT_LoaderHtml = '<div class="FT_container FT_loaderContainer"><div class="bgBlack FT_loader" id="FT_loader"><div class="whtieBg"><div class="loader" style="border-top: 4px solid {0}"></div></div><p class="FT_loaderText">We are finding your fire truck</p></div></div>';
 
 /* Javascript variables contains CSS class in string format to for add to page. */
 var FT_DynamicTabCSS = 'li.FT_active a, li.FT_active a:hover { background: {0}; color: {1}; }'
@@ -331,12 +331,14 @@ var FT_prepareTruckTypeMap = function(trucks) {
 			});
 		}
 	});
-	((FT_isLocalStorageSupport) ? localStorage.setItem('truckTypeMap', JSON.stringify(truckTypeMap)) : (window.truckTypeGlobalMap = truckTypeMap));
+	window.truckTypeGlobalMap = truckTypeMap;
+	//((FT_isLocalStorageSupport) ? localStorage.setItem('truckTypeMap', JSON.stringify(truckTypeMap)) : (window.truckTypeGlobalMap = truckTypeMap));
 }
 
 /* A function returns manipulated data either from localsorage or global variable. */
 var FT_getBMFAStorage = function() {
-	return ((FT_isLocalStorageSupport) ? JSON.parse(localStorage.getItem('truckTypeMap')) : window.truckTypeGlobalMap);
+	return window.truckTypeGlobalMap;
+	//return ((FT_isLocalStorageSupport) ? JSON.parse(localStorage.getItem('truckTypeMap')) : window.truckTypeGlobalMap);
 }
 
 /* Function to scroll windoe at top */
@@ -875,7 +877,7 @@ var FT_createLoaderNode = function() {
 	loaderDiv.className = 'loader';
 	loaderDiv.setAttribute('style', 'border-top: 4px solid '+FT_ThemeProperties.background);
 	innerDiv.appendChild(loaderDiv);
-	loaderBg.appendChild(innerDiv);
+	loaderBg.appendChild(innerDiv);	
 	loaderWrap.appendChild(loaderBg);
 	return loaderWrap;
 }
@@ -905,6 +907,34 @@ var FT_addInetrestFrom = function() {
 		'State':'FT_input FT_required',
 		'FD or Company': 'FT_input FT_required',
 		'Inquiry Message':'FT_input FT_required'
+	}
+	/* set initial values of form fields */
+	var fieldToValues = {
+		'First Name':'',
+		'Last Name':'',
+		'Phone':'',
+		'Email':'',
+		'Purchase Timeframe':' ',
+		//'Make An Offer':'',
+		'City':'',
+		'State':' ',
+		'FD or Company': '',
+		'Inquiry Message':''
+	}
+	/* get form field values from cookie and if cookie is set then override it's values */
+	var inquiryFormData = FT_getCookie("inquiryFormData");
+	if( inquiryFormData != "" ) {
+		console.log("cookiedata: ",JSON.parse(inquiryFormData));
+		var frmData = JSON.parse(inquiryFormData);
+		if( frmData['FirstName'] ) fieldToValues['First Name'] = frmData['FirstName'];
+		if( frmData['LastName'] ) fieldToValues['Last Name'] = frmData['LastName'];
+		if( frmData['Phone'] ) fieldToValues['Phone'] = frmData['Phone'];
+		if( frmData['Email'] ) fieldToValues['Email'] = frmData['Email'];
+		if( frmData['PurchaseTimeframe'] ) fieldToValues['Purchase Timeframe'] = frmData['PurchaseTimeframe'];
+		if( frmData['City'] ) fieldToValues['City'] = frmData['City'];
+		if( frmData['State'] ) fieldToValues['State'] = frmData['State'];
+		if( frmData['FDorCompany'] ) fieldToValues['FD or Company'] = frmData['FDorCompany'];
+		if( frmData['InquiryMessage'] ) fieldToValues['Inquiry Message'] = frmData['InquiryMessage'];		
 	}
 	
 	var PurchaseTimeframeOpt = ['', 'Less than 1 month', '1 month - 3 months', '6 months - 12 months', '12 months+'];
@@ -963,8 +993,11 @@ var FT_addInetrestFrom = function() {
 				FT_bindEvent('keyup', FT_processNumberEntry, [dynamicDom]);
 			} else if(fieldName === 'Inquiry Message') {
 				inputContainer.className += 'FT_TextArea';
-			}
+			}			
 		}
+		//populate value from cookie data (check conditions if radio/checkbox field is added in form)
+		if( fieldAndType[fieldName] == 'input' || fieldAndType[fieldName] == 'select' || fieldAndType[fieldName] == 'textarea' )
+			dynamicDom.value = fieldToValues[fieldName];
 		inputContainer.appendChild(dynamicDom);
 		formWarpper.appendChild(inputContainer);
 		index++;
@@ -1180,6 +1213,31 @@ var FT_validateData = function() {
 	return ((isProcced)? inquirJSON : isProcced);
 }
 
+var FT_getCookie = function(cname) {
+	console.log("cokkies: ",document.cookie);
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+var FT_saveFormToCookie = function (formData) {
+    var d = new Date();
+    d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000));
+    var expires = "expires="+d.toUTCString();
+    console.log('formData: ',formData);  
+    document.cookie = "inquiryFormData=" + formData + ";" + expires + ";path=/";  
+    console.log("cookies: ",document.cookie);    
+};
+
 /* A function to submit from for inquiry. */
 var FT_submitEnquiry = function() {
 	var JSON_Buffer = FT_validateData();
@@ -1201,6 +1259,7 @@ var FT_submitEnquiry = function() {
 				var serverData = JSON.parse(JSON.parse(serverResponse.Data));
 				if( serverData.strMessage == 'Success' ) {
 					FT_setMessage(true, 'Your Request Has Been Submited Successfully!');
+					FT_saveFormToCookie(JSON.stringify(JSON_Buffer));					
 				} else {
 					console.log(serverResponse.Message);
 					FT_setMessage(false, 'Something Went Wrong. Please Contact Admin!');
