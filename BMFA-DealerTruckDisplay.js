@@ -204,7 +204,10 @@ var FT_idbSupported = false;
 var FT_idxDb;
 var FT_isIndexedDbCreated = false;
 var FT_loadCachedTruckData = function() {
-	var openRequest = indexedDB.open("FT_trucksDb");	 
+	var accountId = document.getElementById('dealerTruckContainerId').getAttribute('accountId');
+	//create accountId specific detabases so that cache can maintained per account
+	var dbName = (accountId) ? "FT_trucksDb_"+accountId : "FT_trucksDb"; 
+	var openRequest = indexedDB.open(dbName);	 
     openRequest.onupgradeneeded = function(e) {
         var thisDB = e.target.result;	 
         if(!thisDB.objectStoreNames.contains("FT_trucks")) {
