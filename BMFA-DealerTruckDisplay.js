@@ -523,14 +523,13 @@ var FT_getBMFAStorage = function() {
 						if( ob ) {
 			 				ob.onsuccess = function(e) {
 			 					dbResults = e.target.result;
-							 	//console.log("DB results: ",e.target.result);
-							 	resolve(dbResults);
 							 	//get the key from db whether to display truck price or not
 							 	var obj = store.get("FT_isDisplayTruckPricing");
 								if( obj ) {
 									obj.onsuccess = function(e) {
 										isDisplayTruckPricing = e.target.result;
 										console.log('isDisplayTruckPricing',isDisplayTruckPricing);
+										resolve(dbResults);
 									}
 								}
 							}
