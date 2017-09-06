@@ -530,6 +530,7 @@ var FT_getBMFAStorage = function() {
 								if( obj ) {
 									obj.onsuccess = function(e) {
 										isDisplayTruckPricing = e.target.result;
+										console.log('isDisplayTruckPricing',isDisplayTruckPricing);
 									}
 								}
 							}
@@ -754,6 +755,7 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 					}					
 				}
 				miniDetailHtml += '<div class="FT_btmDiv">';
+				console.log('isDisplayTruckPricing1: ',isDisplayTruckPricing);
 				if( isDisplayTruckPricing ) {
 					for(var field in FT_MiniDetailBottomFieldsToStrHTML) {
 						if(truck[field]) {
