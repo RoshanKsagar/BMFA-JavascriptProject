@@ -366,6 +366,7 @@ var FT_processTruckData = function(xhttp) {
 			var serverResponse = JSON.parse(xhttp.responseText);
 			if(serverResponse.Success) {
 				var truckData = JSON.parse(JSON.parse(serverResponse.Data));
+				console.log('truckData: ',truckData);
 				var trucks = truckData.recordList;
 				isDisplayTruckPricing = truckData.isDisplayTruckPricing;
 				if(trucks.length) {
@@ -413,6 +414,7 @@ var FT_processTruckData = function(xhttp) {
 var FT_processCachedTruckData = function() {
 	if(FT_URLParam.category) {
 		var div = document.createElement('div');
+		//isDisplayTruckPricing = truckData.isDisplayTruckPricing;
 		FT_getBMFAStorage().then(function(truckTypeMap) {
 			//store truckTypeMap in global variable for later use
 			FT_truckTypeMap = truckTypeMap;
@@ -487,6 +489,7 @@ var FT_prepareTruckTypeMap = function(trucks) {
 						    //save the timestamp at which data is been cached
 						   	var dataSavedTime = FT_getCurrentTimeStamp();
 						   	store.put(dataSavedTime,'FT_dataSavedTime');
+						   	store.put(isDisplayTruckPricing,'FT_isDisplayTruckPricing');						   	
 						}
 					} else 
 						dbError = true;
@@ -522,6 +525,13 @@ var FT_getBMFAStorage = function() {
 			 					dbResults = e.target.result;
 							 	//console.log("DB results: ",e.target.result);
 							 	resolve(dbResults);
+							 	//get the key from db whether to display truck price or not
+							 	var obj = store.get("FT_isDisplayTruckPricing");
+								if( obj ) {
+									obj.onsuccess = function(e) {
+										isDisplayTruckPricing = e.target.result;
+									}
+								}
 							}
 							ob.onerror = function(e) {
 								//console.log("error in getting db key: ");
