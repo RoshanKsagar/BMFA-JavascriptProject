@@ -414,7 +414,6 @@ var FT_processTruckData = function(xhttp) {
 var FT_processCachedTruckData = function() {
 	if(FT_URLParam.category) {
 		var div = document.createElement('div');
-		//isDisplayTruckPricing = truckData.isDisplayTruckPricing;
 		FT_getBMFAStorage().then(function(truckTypeMap) {
 			//store truckTypeMap in global variable for later use
 			FT_truckTypeMap = truckTypeMap;
@@ -528,7 +527,6 @@ var FT_getBMFAStorage = function() {
 								if( obj ) {
 									obj.onsuccess = function(e) {
 										isDisplayTruckPricing = e.target.result;
-										console.log('isDisplayTruckPricing',isDisplayTruckPricing);
 										resolve(dbResults);
 									}
 								}
@@ -754,7 +752,6 @@ var FT_prepareImageContainer = function(isForCategory, truckDataList, UICclass) 
 					}					
 				}
 				miniDetailHtml += '<div class="FT_btmDiv">';
-				console.log('isDisplayTruckPricing1: ',isDisplayTruckPricing);
 				if( isDisplayTruckPricing ) {
 					for(var field in FT_MiniDetailBottomFieldsToStrHTML) {
 						if(truck[field]) {
