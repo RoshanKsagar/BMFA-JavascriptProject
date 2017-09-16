@@ -36,7 +36,7 @@
 	.FT_spaceBtm{margin-bottom:20px;}
 	.FT_fL { float: right; width: 50%; padding-left: 15px; }
 	.FT_fR { float: left; width: 50%; padding-right: 15px; }
-	.FT_input { border: 1px solid #cdcdcd; border-radius: 3px; padding: 10px; width: 100%; margin: 0 0 20px; height: 37px; }
+	.FT_input { border: 1px solid #cdcdcd; border-radius: 3px; padding: 9px; width: 100%; margin: 0 0 20px; height: 37px; }
 	.FT_fR.FT_TextArea { width: 100%; padding: 0; }
 	.FT_submitBtn { cursor:pointer; width: 100%; background: #999999; color: #fff; border: 1px solid #999; border-radius: 3px; padding: 10px; font-weight: 600; }	
 	.FT_errorMsg { border: 1px solid #fff; display: inline-block; width: 100%; max-width: 300px; padding: 10px; border-left: 3px solid red; background: #fff; border-radius: 3px; margin: 0 auto 15px; box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.09); position: relative; }
@@ -117,6 +117,12 @@
     .FT_modalContent { display: inline-block; vertical-align: middle; }
     span.FT_PriceText {font-weight: 600;}
     .FT_loadingImage {display: block;height: 155px;}
+	
+	/*** */
+	.FT_SellSec {padding: 20px; background: #f4f4f4;}
+	.FT_formSubTitle {padding-bottom: 12px}
+	.FT_select { color: #757575;}
+	.FT_select option { color: black; }
 }
 @media screen and  (max-width:1200px){
 	.FT_modalContent {width: 80%;}

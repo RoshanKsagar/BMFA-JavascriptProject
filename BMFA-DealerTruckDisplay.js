@@ -131,7 +131,7 @@ var FT_PageFooterStrHTML = '<div class="FT_footer" style="background:{0}">' +
 						   '	<img src="'+FT_truckTypeImageUrl['FooterBellImg']+'" class="FT_imgfL"/>'+
 						   '	<img src="'+FT_truckTypeImageUrl['FooterBellImg']+'" class="FT_imgfR"/>'+
 						   '	<h5 style="color:{1}" class="FT_footerHead">Selling A Used Fire Truck?</h5>' +
-						   '	<a href="https://www.firetruckmall.com/Selling-your-Used-Fire-Truck" style="color:{2}" target="_blank">Click Here For More Information </a>' +
+						   '	<a href="javascript:void(0)" onclick="showSellModal()" style="color:{2}" target="_blank">Click Here For More Information </a>' +
 						   '</div>';
 var FT_LoaderHtml = '<div class="FT_container FT_loaderContainer"><div class="bgBlack FT_loader" id="FT_loader"><div class="whtieBg"><div class="loader" style="border-top: 4px solid {0}"></div></div><p class="FT_loaderText">We are finding your fire truck</p></div></div>';
 
@@ -190,6 +190,17 @@ var FT_WebRequestHandler = {
 		xhttp = this.getWebRequestInstance();
 		if(xhttp) {
 			xhttp.open("POST", "https://www.firetruckapi.com/api/services?isSandbox="+isSandbox, true);
+			xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
+			xhttp.send(payload);
+			xhttp.onreadystatechange = function() {
+				callback(this);
+			};
+		}
+	},
+	postRequestCustom : function(payload, url, callback) {
+		xhttp = this.getWebRequestInstance();
+		if(xhttp) {
+			xhttp.open("POST", url , true);
 			xhttp.setRequestHeader("Authorization", "Basic ZnNtLWFkbWluOjhlZDMxMmM4NTE0ZDRhMDI3OWFjOTBjNTQxOGEwOGQ5");
 			xhttp.send(payload);
 			xhttp.onreadystatechange = function() {
@@ -366,7 +377,7 @@ var FT_processTruckData = function(xhttp) {
 			var serverResponse = JSON.parse(xhttp.responseText);
 			if(serverResponse.Success) {
 				var truckData = JSON.parse(JSON.parse(serverResponse.Data));
-				console.log('truckData: ',truckData);
+				//console.log('truckData: ',truckData);
 				var trucks = truckData.recordList;
 				isDisplayTruckPricing = truckData.isDisplayTruckPricing;
 				if(trucks.length) {
@@ -445,6 +456,9 @@ var FT_addPageFooter = function(parent) {
 	var FooterStrHtml = FT_PageFooterStrHTML.FT_format([FT_ThemeProperties.background, FT_ThemeProperties.color, FT_ThemeProperties.color]);
 	var div = document.createElement('div');
 	div.innerHTML = FooterStrHtml;
+	/* create a modal for sell form and append to footer */
+    createSellModal(div);
+	
 	parent.appendChild(div);
 }
 
@@ -592,7 +606,7 @@ var FT_expandCategory = function(element) {
 	
 	containerDiv.appendChild( FT_prepareImageContainer(false, FT_truckTypeMap[category], 'FT_truckList') );
 	FT_BMFA_TruckContainer.appendChild(containerDiv);
-	//FT_addPageFooter(FT_BMFA_TruckContainer);
+	FT_addPageFooter(FT_BMFA_TruckContainer);
 	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('img'));
 	FT_bindEvent('click', FT_prepareTruckDetails, FT_BMFA_TruckContainer.querySelectorAll('a.FT_redBtn'));
 	
@@ -645,7 +659,7 @@ var FT_displayCategories = function(truckTypeMap) {
 	containerDiv.appendChild(titleDiv);
 	containerDiv.appendChild( FT_prepareImageContainer(true, truckTypeMap, 'FT_category') );
 	FT_BMFA_TruckContainer.appendChild(containerDiv);
-	//FT_addPageFooter(FT_BMFA_TruckContainer);
+	FT_addPageFooter(FT_BMFA_TruckContainer);
 
 	FT_bindEvent('click', FT_expandCategory, FT_BMFA_TruckContainer.querySelectorAll('img'));	
 	/* Scroll to top at start of truck container div */
@@ -801,9 +815,15 @@ var FT_plusSlides = function(element) {
 var FT_minusSlides = function(element) {
 	FT_showSlide(FT_slideIndex -= 1);
 }
+
 var FT_closeModal = function(element) {
-	document.getElementById('FT_modal').style.display = "none";
+	document.getElementById('FT_modal').style.display = "none";	
 }
+
+var FT_closeSellModal = function(element) {
+	document.getElementById('FT_sellModal').style.display = "none";	
+}
+
 var FT_openModal = function() {
   document.getElementById('FT_modal').style.display = "block";
 }
@@ -1001,7 +1021,7 @@ var FT_prepareTruckDetails = function(element) {
 		if( swiperMainImg )
 			swiperMainImg.addEventListener("load",FT_setSwiperHeight);		
 	}
-	//FT_addPageFooter(FT_BMFA_TruckContainer);
+	FT_addPageFooter(FT_BMFA_TruckContainer);
 	/* Scroll to top at start of truck container div */
 	FT_scrollTop();
 		
@@ -1177,7 +1197,7 @@ var FT_addInetrestFrom = function() {
 		dynamicDom.name = fieldName.replace(/\s/g,'');
 		dynamicDom.className = fieldToClasses[fieldName];
 		if(fieldName === 'Purchase Timeframe') {
-			dynamicDom.className += ' FT_gryTxt';
+			dynamicDom.className += ' FT_gryTxt FT_select';
 			PurchaseTimeframeOpt.forEach(function(opt) {				
 				var option = document.createElement('option');
 				option.value = (opt) ? opt: ' ';
@@ -1188,8 +1208,10 @@ var FT_addInetrestFrom = function() {
 				}
 				dynamicDom.appendChild(option);
 			});
+			
+			FT_bindEvent('change', removeFT_SelectClass, [dynamicDom]);
 		} else if(fieldName === 'State') {
-			dynamicDom.className += ' FT_gryTxt';
+			dynamicDom.className += ' FT_gryTxt FT_select';
 			StateOpt.forEach(function(opt) {
 				var option = document.createElement('option');
 				option.value = (opt) ? opt: ' ';
@@ -1200,6 +1222,8 @@ var FT_addInetrestFrom = function() {
 				}
 				dynamicDom.appendChild(option);
 			});
+			
+			FT_bindEvent('change', removeFT_SelectClass, [dynamicDom]);
 		} else {
 			dynamicDom.placeholder = fieldName;			
 			if(fieldName === 'Phone') {
@@ -1334,6 +1358,9 @@ var FT_processNumberEntry = function(element) {
 var FT_clearFormMessage = function(element) {
 	var messageContainer = document.getElementById('messageContainerId');
 	messageContainer.innerHTML = '';
+	
+	var sellMessageContainer = document.getElementById('sellMessageContainerId');
+	sellMessageContainer.innerHTML = '';
 }
 
 /* A function to add page message.
@@ -1606,3 +1633,406 @@ function FT_getCurrentTimeStamp() {
 		return Date.now();
 	}
 }
+
+/***Sell Modal**/
+var createSellModal = function(parentNode){	
+	var modalWrap = document.createElement('div');
+	modalWrap.className = 'FT_modal';
+	modalWrap.setAttribute('id','FT_sellModal');
+	var modalContainer = document.createElement('div');
+	modalContainer.className = 'FT_modalContent';
+	
+	
+	var sellForm = FT_addSellFrom();
+	
+	modalContainer.appendChild(sellForm);
+	
+	var closeBtn = document.createElement('span');
+	closeBtn.className = 'FT_modalClose cursor';
+	closeBtn.appendChild(document.createTextNode("x"));
+	
+	FT_bindEvent('click', FT_closeSellModal, [closeBtn]);
+	
+	modalWrap.appendChild(closeBtn);
+	modalWrap.appendChild(modalContainer);
+	
+	parentNode.appendChild(modalWrap);
+	
+}
+
+/* A function to add Intrest form to DOM. */
+var FT_addSellFrom = function() {
+	var fieldAndType = {
+		'First Name':'input',
+		'Last Name':'input',
+		'Fire Department' : 'input',
+		'Email':'input',
+		'Phone':'input',
+		'State':'select',
+		'How many trucks would you like to sell':'input',
+		'Are you also considering buying a used truck' : 'select',		
+		'What year is your truck':'input',
+		'What type of truck' : 'select',
+		'What brand is your truck' : 'input',
+		'When would you like to sell your truck' : 'select',
+		'Have you ordered a replacement truck' : 'select',		
+		'What price is needed for your truck': 'input',
+		'Comments':'textarea'
+	}
+	
+	var fieldToClasses = {	
+		'First Name': 'FT_input FT_required',
+		'Last Name': 'FT_input FT_required',
+		'Fire Department' : 'FT_input FT_required',
+		'Email': 'FT_input FT_required FT_email',
+		'Phone': 'FT_input FT_required',
+		'State': 'FT_input FT_required',
+		'How many trucks would you like to sell': 'FT_input',
+		'Are you also considering buying a used truck' : 'FT_input',
+		'What year is your truck': 'FT_input',
+		'What type of truck' : 'FT_input',
+		'What brand is your truck' : 'FT_input',
+		'When would you like to sell your truck' : 'FT_input',
+		'Have you ordered a replacement truck' : 'FT_input',
+		'What price is needed for your truck': 'FT_input',
+		'Comments' : 'FT_input'
+		
+	}
+	/* set initial values of form fields */
+	var fieldToValues = {
+		'First Name': '',
+		'Last Name': '',
+		'Fire Department' : '',
+		'Email': '',
+		'Phone': '',
+		'State': '',
+		'How many trucks would you like to sell': '',
+		'Are you also considering buying a used truck' : '',
+		'What year is your truck': '',
+		'What type of truck' : '',
+		'What brand is your truck' : '',
+		'When would you like to sell your truck' : '',
+		'Have you ordered a replacement truck' : '',
+		'What price is needed for your truck': '',	
+		'Comments' : ''		
+	}
+	/* get form field values from cookie and if cookie is set then override it's values */
+	var sellFormData = FT_getCookie("sellFormData");
+	//console.log('sellFormData');
+	if( sellFormData != "" ) {
+		var frmData = JSON.parse(sellFormData);
+		if( frmData['FirstName'] ) fieldToValues['First Name'] = frmData['FirstName']; 
+		if( frmData['LastName'] ) fieldToValues['Last Name'] = frmData['LastName'];
+		if( frmData['Phone'] ) fieldToValues['Phone'] = frmData['Phone'];
+		if( frmData['Email'] ) fieldToValues['Email'] = frmData['Email'];
+		if( frmData['FireDepartment'] ) fieldToValues['FireDepartment'] = frmData['FireDepartment'];
+		if( frmData['Howmanytruckswouldyouliketosell'] ) fieldToValues['Howmanytruckswouldyouliketosell'] = frmData['Howmanytruckswouldyouliketosell'];
+		if( frmData['State'] ) fieldToValues['State'] = frmData['State'];
+		if( frmData['Areyoualsoconsideringbuyingausedtruck'] ) fieldToValues['Are you also considering buying a used truck'] = frmData['Areyoualsoconsideringbuyingausedtruck'];
+		if( frmData['Whatyearisyourtruck'] ) fieldToValues['What year is your truck'] = frmData['Whatyearisyourtruck'];	
+		if( frmData['Whattypeoftruck'] ) fieldToValues['What type of truck'] = frmData['Whattypeoftruck'];	
+		if( frmData['Whatbrandisyourtruck'] ) fieldToValues['What brand is your truck'] = frmData['Whatbrandisyourtruck'];	
+		if( frmData['Whenwouldyouliketosellyourtruck'] ) fieldToValues['When would you like to sell your truck'] = frmData['Whenwouldyouliketosellyourtruck'];	
+		if( frmData['Haveyouorderedareplacementtruck'] ) fieldToValues['Have you ordered a replacement truck'] = frmData['Haveyouorderedareplacementtruck'];			
+		if( frmData['Whatpriceisneededforyourtruck'] ) fieldToValues['What price is needed for your truck'] = frmData['Whatpriceisneededforyourtruck'];			
+		if( frmData['Comments'] ) fieldToValues['Comments'] = frmData['Comments'];			
+	}
+	
+	var StateOpt = ['', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'];
+	
+	var BooleanOpt = ['', 'Yes', 'No'];
+	
+	var truckTypeOpt = ['', 'Used Pumper and Engines', 'Rescue Pumper and Engines', 'Used Aerial, Ladder Trucks and Quints', 'Towers and Platforms', 'Used Tankers and Tenders', 'Used Brush Trucks, Quick Attacks and Mini Pumpers', 'Used Rescue Trucks and Squads', 'Command Units', 'Used ARFF and Airport Crash Trucks', 'Ambulances and Transport Units', 'European Style Units', 'Vocational Trucks'];
+	
+	var timeForSellOpt = ['', 'Today', '30 Days', 'May be 6 Months', 'Probably 1 Year Or More'];
+	
+	var replacementOpt = ['', 'Yes', 'No', 'Working On It', 'Not Replacing'];
+	
+	
+	
+	var sellFormSection = document.createElement('div');
+	sellFormSection.id = 'FT_SellSecId';
+	//sellFormSection.style.display = 'none';
+	sellFormSection.className = 'FT_gryTxt FT_container FT_SellSec';
+	
+	var formTitleDiv = document.createElement('div');
+	var titleText = 'Thank you for your interest in contacting us about selling your used fire truck!';
+	formTitleDiv.innerHTML = titleText;
+	formTitleDiv.className = 'FT_formTitle';
+	sellFormSection.appendChild(formTitleDiv);
+	
+	var formSubTitleDiv = document.createElement('div');
+	formSubTitleDiv.className = 'FT_formSubTitle';
+	var subtitleText = '<p>Please fill out the form below, and a member of our team will be in touch with you as soon as possible to answer what questions you have.</p>';
+
+	subtitleText += '<p>Thank you again for your interest – we look forward to speaking with you soon, and working with you in the sale of your used emergency apparatus!</p>';
+	formSubTitleDiv.innerHTML = subtitleText;
+	sellFormSection.appendChild(formSubTitleDiv);
+
+	var formWarpper = document.createElement('div');
+	formWarpper.className = 'sellFrom';
+	var messageContainerDiv = document.createElement('div');
+	messageContainerDiv.id = 'sellMessageContainerId';
+	messageContainerDiv.classClass = 'FT_closeBtn';
+	formWarpper.appendChild(messageContainerDiv);
+	var index = 0;
+	
+	for(var fieldName in fieldAndType) {
+		var inputContainer = document.createElement('div');
+		inputContainer.className += ((index%2) ? 'FT_fL' : 'FT_fR');
+		var dynamicDom = document.createElement(fieldAndType[fieldName]);
+		dynamicDom.name = fieldName.replace(/\s/g,'');
+		dynamicDom.className = fieldToClasses[fieldName];
+		if(fieldName === 'State') {
+			dynamicDom.className += ' FT_gryTxt FT_select';
+			var idx = 0;
+			StateOpt.forEach(function(opt) {	
+				idx++;			
+				var option = document.createElement('option');
+				option.value = (opt) ? opt: '';
+				option.innerHTML = (opt) ? opt: 'State';
+				if(!opt) {
+					option.disabled = true;
+					option.selected = true;
+				}
+				if(idx == 1) option.selected = true;
+				dynamicDom.appendChild(option);
+			});
+			
+			FT_bindEvent('change', removeFT_SelectClass, [dynamicDom]);
+			
+		} else if(fieldName === 'Are you also considering buying a used truck') {
+			dynamicDom.className += ' FT_gryTxt FT_select';
+			BooleanOpt.forEach(function(opt) {
+				var option = document.createElement('option');
+				option.value = (opt) ? opt: '';
+				option.innerHTML = (opt) ? opt : 'Are you also considering buying a used truck?';
+				if(!opt) {
+					option.disabled = true;
+					option.selected = true;
+				}
+				dynamicDom.appendChild(option);
+
+				
+			});
+			FT_bindEvent('change', removeFT_SelectClass, [dynamicDom]);
+
+    //dynamicDom.appendChild(option);
+
+		}else if(fieldName === 'What type of truck') {
+			dynamicDom.className += ' FT_gryTxt FT_select';
+			truckTypeOpt.forEach(function(opt) {
+				var option = document.createElement('option');
+				option.value = (opt) ? opt: '';
+				option.innerHTML = (opt) ? opt : 'What type of truck?';
+				if(!opt) {
+					option.disabled = true;
+					option.selected = true;					
+				}
+				dynamicDom.appendChild(option);
+			});
+			
+			FT_bindEvent('change', removeFT_SelectClass, [dynamicDom]);
+			
+		}else if(fieldName === 'When would you like to sell your truck') {
+			dynamicDom.className += ' FT_gryTxt FT_select';
+			timeForSellOpt.forEach(function(opt) {
+				var option = document.createElement('option');
+				option.value = (opt) ? opt: '';
+				option.innerHTML = (opt) ? opt : 'When would you like to sell your truck?';
+				if(!opt) {
+					option.disabled = true;
+					option.selected = true;
+				}
+				dynamicDom.appendChild(option);
+			});
+			
+			FT_bindEvent('change', removeFT_SelectClass, [dynamicDom]);
+		}
+		else if(fieldName === 'Have you ordered a replacement truck') {
+			dynamicDom.className += ' FT_gryTxt FT_select';
+			replacementOpt.forEach(function(opt) {
+				var option = document.createElement('option');
+				option.value = (opt) ? opt: '';
+				option.innerHTML = (opt) ? opt : 'Have you ordered a replacement truck?';
+				if(!opt) {
+					option.disabled = true;
+					option.selected = true;
+				}
+				dynamicDom.appendChild(option);
+			});
+			
+			FT_bindEvent('change', removeFT_SelectClass, [dynamicDom]);
+		}
+		else {
+			dynamicDom.placeholder = fieldName;			
+			if(fieldName === 'Phone') {
+				FT_bindEvent('keyup', FT_processNumberEntry, [dynamicDom]);
+			} else if(fieldName === 'Comments') {
+				inputContainer.className += 'FT_TextArea';
+			}			
+		}
+		//populate value from cookie data (check conditions if radio/checkbox field is added in form)
+		if( fieldAndType[fieldName] == 'input' || fieldAndType[fieldName] == 'select' || fieldAndType[fieldName] == 'textarea' )
+			dynamicDom.value = fieldToValues[fieldName];
+			
+		inputContainer.appendChild(dynamicDom);
+		formWarpper.appendChild(inputContainer);
+		index++;
+	}
+	
+	var submitButton = document.createElement('button');
+	submitButton.type = 'button';
+	submitButton.className = 'FT_submitBtn';
+	submitButton.innerHTML = 'Submit';
+	formWarpper.appendChild(submitButton);
+	sellFormSection.appendChild(formWarpper);
+	//append loader displayed when for is submitted
+	var loaderDiv = FT_createLoaderNode();
+	sellFormSection.appendChild(loaderDiv);
+	FT_bindEvent('click', FT_submitSell, [submitButton]);
+	return sellFormSection;
+}
+
+var showSellModal = function(){	
+	document.getElementById('FT_sellModal').style.display = 'block';
+	hideLoader('FT_SellSecId');	
+}
+
+var showLoader = function(parentId){
+	var parentElement = document.getElementById(parentId);
+	var childElement = parentElement.getElementsByClassName('FT_loaderContainer');	
+	childElement[0].style.display = 'block';
+}
+
+var hideLoader = function(parentId){
+	var parentElement = document.getElementById(parentId);
+	var childElement = parentElement.getElementsByClassName('FT_loaderContainer');	
+	childElement[0].style.display = 'none';
+}
+
+var FT_submitSell = function() {
+	var JSON_Buffer = FT_validateSellsData();
+	console.log(JSON_Buffer);
+	
+	if(JSON_Buffer) {
+		JSON_Buffer['AccountId'] = FT_DealerAccointId;
+		JSON_Buffer['TruckId'] = FT_TruckId;
+		
+		//-- Need to comment once the service is exposed
+		document.getElementsByClassName('sellFrom')[0].style.display = 'none';		
+		showLoader('FT_SellSecId');
+			
+		FT_WebRequestHandler.postRequestCustom(JSON.stringify(JSON_Buffer), "https://www.firetruckapi.com/api/trucks?issandbox="+isSandbox, function(xhttp) {
+			if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
+				var serverResponse = JSON.parse(xhttp.responseText);
+				//console.log('serverResponse: ',serverResponse);
+				var serverData = JSON.parse(JSON.parse(serverResponse.Data));
+				if( serverData.strMessage == 'Success' ) {
+					FT_setSellMessage(true, 'Your Request Has Been Submited Successfully!');
+					FT_saveSellFormToCookie(JSON.stringify(JSON_Buffer));					
+				} else {
+					console.log(serverResponse.Message);
+					FT_setSellMessage(false, 'Something Went Wrong. Please Contact Admin!');
+				}
+			}
+			//hide loader
+			hideLoader('FT_SellSecId');
+			document.getElementsByClassName('sellFrom')[0].style.display = 'block';
+			document.getElementById('FT_sellModal').style.display = 'none';
+		});
+	}
+}
+
+/* A function to validate data and display error messages if any, before submit. */
+var FT_validateSellsData = function() {
+	var isProcced = true;
+	var inquirJSON = {};
+	var inquiryTab = document.getElementById('FT_SellSecId');
+	var messageContainer = document.getElementById('sellMessageContainerId');
+	messageContainer.innerHTML = '';
+	var fieldElementList = inquiryTab.getElementsByClassName('FT_input');
+	var isFocusSet = false;
+	var isEmailValid = false;
+	var isPhoneValid = false;
+	var requiredEmpty = false;
+	for(var index = 0; index < fieldElementList.length; index++) {
+		var element = fieldElementList[index];
+		var elementValue = element.value;
+		var errorMessage;
+		if(elementValue && elementValue.trim()) {
+			if(FT_hasClass(element, 'FT_required')) {				
+				if(FT_hasClass(element, 'FT_email')) {
+					isEmailValid = FT_emailRegex.test(elementValue);
+					if(!isEmailValid) {
+						errorMessage = 'Invalid Email!';
+						isProcced = false;
+					} else {
+						element.style.borderColor = 'darkgrey';
+					}					
+				} else if(FT_hasClass(element, 'FT_phone')) {
+					isPhoneValid = FT_phoneRegex.test(elementValue);
+					if(!isPhoneValid) {
+						errorMessage = 'Invalid Phone!';
+						isProcced = false;
+					} else {
+						element.style.borderColor = 'darkgrey';
+					}
+				} else {
+					if( !requiredEmpty && isPhoneValid && isEmailValid ) {
+						isProcced = true;
+					}
+					element.style.borderColor = 'darkgrey';
+				}		
+			}
+			if(isProcced) {
+				inquirJSON[element.name] = elementValue;
+				element.style.borderColor = 'darkgrey';
+			} else {
+				//element.style.borderColor = 'red';
+			}
+		} else if(FT_hasClass(element, 'FT_required')) {
+			element.style.borderColor = 'red';
+			if(isProcced) isProcced = false;
+			requiredEmpty = true;
+			errorMessage = 'Please Fill All Required Fields!';
+		}
+		if(!isProcced) {
+			if( !isFocusSet ) {
+				element.focus();
+				isFocusSet = true;
+			}
+			FT_setSellMessage(isProcced, errorMessage);			
+		}		
+	}
+	return ((isProcced)? inquirJSON : isProcced);
+}
+
+var removeFT_SelectClass = function(element){
+	element.classList.remove('FT_select');
+}
+
+/* A function to add page message.
+ * @Param isSuccess	: set message for Error or Success.
+ * @Param errorMessage	: Message to display.
+ */
+var FT_setSellMessage = function(isSuccess, errorMessage) {
+	var messageContainer = document.getElementById('sellMessageContainerId');
+	messageContainer.innerHTML = '';
+	messageDiv = document.createElement('div');
+	messageDiv.className += ((isSuccess) ? 'FT_successMsg' : 'FT_errorMsg');				
+	messageDiv.innerHTML  = errorMessage + '<a class="FT_closeBtn"/>';		
+	messageContainer.appendChild(messageDiv);
+	FT_bindEvent('click', FT_clearFormMessage, messageContainer.getElementsByTagName('a'));
+}
+
+/*
+* Function to save form data to cookie which can be used for furthet form sumissions
+* @formData : form filled data to be saved in cookie
+*/
+var FT_saveSellFormToCookie = function (formData) {   
+	var d = new Date();
+    d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = "sellFormData=" + formData + ";" + expires + ";path=/";  		
+};
