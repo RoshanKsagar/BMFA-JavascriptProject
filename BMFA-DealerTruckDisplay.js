@@ -1357,10 +1357,12 @@ var FT_processNumberEntry = function(element) {
  */
 var FT_clearFormMessage = function(element) {
 	var messageContainer = document.getElementById('messageContainerId');
-	messageContainer.innerHTML = '';
+	if( messageContainer )
+		messageContainer.innerHTML = '';
 	
 	var sellMessageContainer = document.getElementById('sellMessageContainerId');
-	sellMessageContainer.innerHTML = '';
+	if( sellMessageContainer )
+		sellMessageContainer.innerHTML = '';
 }
 
 /* A function to add page message.
