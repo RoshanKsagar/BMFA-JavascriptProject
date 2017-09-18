@@ -1922,28 +1922,44 @@ var FT_submitSell = function() {
 		//-- Need to comment once the service is exposed
 		document.getElementsByClassName('sellFrom')[0].style.display = 'none';		
 		showLoader('FT_SellSecId');
-			
+		var isSellFormError = true;
 		FT_WebRequestHandler.postRequestCustom(JSON.stringify(JSON_Buffer), "https://www.firetruckapi.com/api/trucks?issandbox="+isSandbox, function(xhttp) {
 			if ( xhttp && xhttp.readyState == 4 && xhttp.status == 200 ) {
 				var serverResponse = JSON.parse(xhttp.responseText);
 				//console.log('serverResponse: ',serverResponse);
-				var serverData = JSON.parse(JSON.parse(serverResponse.Data));
-				if( serverData.strMessage == 'Success' ) {
-					FT_setSellMessage(true, 'Your Request Has Been Submited Successfully!');
-					FT_saveSellFormToCookie(JSON.stringify(JSON_Buffer));					
+				var firstParse = JSON.parse(serverResponse.Data);
+				if( FT_isJSON(firstParse) ) {
+					var serverData = JSON.parse(firstParse);
+					if( serverData.strMessage == 'Success' ) {
+						FT_setSellMessage(true, 'Your Request Has Been Submited Successfully!');
+						FT_saveSellFormToCookie(JSON.stringify(JSON_Buffer));					
+					} else {
+						console.log(serverResponse.Message);
+						FT_setSellMessage(false, 'Something Went Wrong. Please Contact Admin!');
+					}
+					isSellFormError = false;
 				} else {
-					console.log(serverResponse.Message);
-					FT_setSellMessage(false, 'Something Went Wrong. Please Contact Admin!');
-				}
+					FT_setSellMessage(false, firstParse[0].message);
+					isSellFormError = true;
+				}				
 			}
 			//hide loader
 			hideLoader('FT_SellSecId');
 			document.getElementsByClassName('sellFrom')[0].style.display = 'block';
-			document.getElementById('FT_sellModal').style.display = 'none';
+			if(!isSellFormError) {
+				document.getElementById('FT_sellModal').style.display = 'none';
+			}
 		});
 	}
 }
 
+function FT_isJSON(str) {
+    try {
+        return (JSON.parse(str) && !!str);
+    } catch (e) {
+        return false;
+    }
+} 
 /* A function to validate data and display error messages if any, before submit. */
 var FT_validateSellsData = function() {
 	var isProcced = true;
