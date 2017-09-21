@@ -1869,20 +1869,23 @@ var FT_addSellFrom = function() {
 		}
 		else {
 				
-			if(fieldName == 'How many trucks would you like to sell' ||			   
-			   fieldName == 'What brand is your truck'){
+			if(fieldName == 'What brand is your truck'){
 				
 				dynamicDom.placeholder = fieldName + '?';
-								
-			}else if(fieldName == 'What price is needed for your truck'){
+			}else if(fieldName == 'How many trucks would you like to sell'){
 				
+				dynamicDom.placeholder = fieldName + '?';
+				FT_bindEvent('keyup', FT_validateNumberOnly, [dynamicDom]);
+			}else if(fieldName == 'What price is needed for your truck'){				
 				dynamicDom.placeholder = fieldName + '?';				
 				dynamicDom.className += ' FT_gryTxt FT_select FT_currency';
 				FT_bindEvent('keyup', FT_validateCurrency, [dynamicDom]);
 				
 			}else if(fieldName == 'What year is your truck' ){
 				dynamicDom.placeholder = fieldName + '?';								
-				dynamicDom.setAttribute("maxlength", "4");							
+				dynamicDom.setAttribute("maxlength", "4");	
+				FT_bindEvent('keyup', FT_validateNumberOnly, [dynamicDom]);
+				
 			}else{
 				dynamicDom.placeholder = fieldName;	
 			}
@@ -2086,35 +2089,37 @@ var FT_saveSellFormToCookie = function (formData) {
     document.cookie = "sellFormData=" + formData + ";" + expires + ";path=/";  		
 };
 
-var clearSellFormData = function(){
-		
-	var sellFrom = document.getElementsByClassName('sellFrom')[0];
-	
-	var inputs = sellFrom.getElementsByClassName('FT_input');
-	
+var clearSellFormData = function(){		
+	var sellFrom = document.getElementsByClassName('sellFrom')[0];	
+	var inputs = sellFrom.getElementsByClassName('FT_input');	
 	for(var i = 0; i < inputs.length; i++){
-		fieldName = inputs[i].getAttribute("Name");
-		
+		fieldName = inputs[i].getAttribute("Name");		
 		if(fieldName == 'Howmanytruckswouldyouliketosell' || fieldName == 'Areyoualsoconsideringbuyingausedtruck' ||
 		   fieldName == 'Whatyearisyourtruck' || fieldName == 'Whattypeoftruck' ||
 		   fieldName == 'Whatbrandisyourtruck' || fieldName == 'Whenwouldyouliketosellyourtruck' ||
 		   fieldName == 'Haveyouorderedareplacementtruck' || fieldName == 'Whatpriceisneededforyourtruck' ||
-		   fieldName == 'Comments'){
-		
-			inputs[i].value = '';
-			
+		   fieldName == 'Comments'){		
+			inputs[i].value = '';			
 			if(inputs[i].tagName === 'SELECT' || inputs[i].tagName === 'select'){
-				console.log(fieldName);
 				inputs[i].classList.add('FT_select');
 			}
 	    }
 	}
 }
+
 var FT_validateCurrency = function (element) {
-	console.log(event.which);
-	if(event.which != 110){
+	if(event.which != 110 && event.which != 190){
 		var n = parseFloat(element.value.replace(/\,/g,''),10);        
 		if(n)
 			element.value = n.toLocaleString();
+		else 
+			element.value = '';
 	}
+}
+
+var FT_validateNumberOnly = function(element){
+	var number =  element.value;
+	if(number)
+		element.value = element.value.replace(/[^0-9]+/g,'');
+				
 }
