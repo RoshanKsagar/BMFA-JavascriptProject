@@ -1,9 +1,9 @@
 /* Inject external script library for making support of Promise in IE */
-var head = document.getElementsByTagName('head')[0];
+/*var head = document.getElementsByTagName('head')[0];
 var script = document.createElement('script');
 script.type = 'text/javascript';
 script.src = 'https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js';
-head.appendChild(script);
+head.appendChild(script);*/
 
 /* Javascript Map for Bind Truck Apparatus Type to respective public image path. */
 var FT_truckTypeImageUrl = {
