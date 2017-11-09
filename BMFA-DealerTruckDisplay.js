@@ -1870,7 +1870,8 @@ var FT_processTruckData = function(xhttp) {
 				console.log('truckData: ',truckData);
 				languageCode = truckData.strLanguageCode;
 				if( languageCode == null || typeof languageCode == 'undefined' ) {
-					languageCode = 'en';
+					//languageCode = 'en';
+					languageCode = 'fr';
 				}
 				console.log('languageCode: ',languageCode);
 				isDisplayTruckPricing = truckData.isDisplayTruckPricing;
@@ -2015,7 +2016,8 @@ function FT_refreashTruckCountMap( xhttp ) {
 				isDisplayTruckPricing = truckData.isDisplayTruckPricing;
 				languageCode = truckData.strLanguageCode;
 				if( languageCode == null || typeof languageCode == 'undefined' ) {
-					languageCode = 'en';
+					//languageCode = 'en';
+					languageCode = 'fr';
 				}
 				//put pagesize in cache
 				var pgSize = FT_BMFA_TruckContainer.getAttribute('pageSize');
