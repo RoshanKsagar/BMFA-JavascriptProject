@@ -1869,6 +1869,9 @@ var FT_processTruckData = function(xhttp) {
 				var truckData = JSON.parse(JSON.parse(serverResponse.Data));
 				console.log('truckData: ',truckData);
 				languageCode = truckData.strLanguageCode;
+				if( languageCode == null || typeof languageCode == 'undefined' ) {
+					languageCode = 'en';
+				}
 				console.log('languageCode: ',languageCode);
 				isDisplayTruckPricing = truckData.isDisplayTruckPricing;
 				//put pagesize in cache
@@ -2011,6 +2014,9 @@ function FT_refreashTruckCountMap( xhttp ) {
 				console.log('truckData: ',truckData);
 				isDisplayTruckPricing = truckData.isDisplayTruckPricing;
 				languageCode = truckData.strLanguageCode;
+				if( languageCode == null || typeof languageCode == 'undefined' ) {
+					languageCode = 'en';
+				}
 				//put pagesize in cache
 				var pgSize = FT_BMFA_TruckContainer.getAttribute('pageSize');
 				if( isNaN(pgSize) || pgSize == 0 || pgSize < 0 ) pgSize = 10;
