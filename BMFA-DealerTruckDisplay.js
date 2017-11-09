@@ -28,6 +28,7 @@ var FT_truckTypeImageUrl = {
 };
 
 var FT_translatableStrings = {
+
 	"footerSellingTxt1" : "Selling A Used Fire Truck?",
 	"footerSellingTxt2" : "Click Here For More Information",
 	"mainPageTitle" : "Shop Our Used Fire Trucks",
@@ -76,7 +77,9 @@ var FT_translatableStrings = {
 	"loaderText" : "We are finding your fire truck",
 	"serverErrorMessage" : "Something went wrong..",
 	"notFoundError" : "Truck not found"
+
 };
+
 /* Javascript Map for Bind Truck Details(HTML) Abstract content dynamically with respective field data of truck. */
 var FT_GlobalFieldToStrHTML = {
 	VF_Main_Title__c : '<h1 class="FT_title">{0}</h1><br/>',
